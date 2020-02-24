@@ -27,7 +27,7 @@ description: >- # this means to ignore newlines until "baseurl:"
 baseurl: "/Codeconut" # the subpath of your site, e.g. /blog
 url: https://glenntws.github.io/Codeconut # the base hostname & protocol for your site
 git_address: https://github.com/glenntws/Codeconut
-git_edit_address: https://github.com/glenntws/Codeconut/docs
+git_edit_address: https://github.com/glenntws/Codeconut/tree/master/docs
 github_username:  glenntws
 lang: en-US
 

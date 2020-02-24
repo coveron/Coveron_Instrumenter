@@ -33,7 +33,7 @@
     - +:tests/**
     - -:tests/support
   :source:
-    - ../../src/instrumentation/**
+    - ../../src/runtime_helper/**
   :support:
     - tests/support
 

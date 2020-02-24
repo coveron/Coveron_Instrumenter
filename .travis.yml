@@ -1,0 +1,48 @@
+os: linux
+dist: xenial
+language: python
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-9
+    - g++-9
+
+env:
+  global:
+  - CXX=g++-9 CC=gcc-9
+  - RUN_LINTER=1
+  - BUILD_DOCS=
+
+matrix:
+  include:
+    - language: python
+      python: 3.7
+      install:
+        - pip install --upgrade pytest lxml jinja2 flake8
+      before_script:
+        - cd tests/instrumenter
+      script:
+        - ls
+        - python3 -m flake8 --ignore=E501
+        - python3 -m pytest
+    - language: python
+      python: 3.7
+      install:
+        - pip install --upgrade pytest lxml jinja2 flake8
+      before_script:
+        - cd tests/analyzer
+      script:
+        - python3 -m flake8 --ignore=E501
+        - python3 -m pytest
+
+    - language: ruby
+      rvm: 2.6
+      install:
+        - gem install ceedling
+      before_script:
+        - cd tests/runtime_helper
+      script:
+        - ceedling clobber test:all

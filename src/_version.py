@@ -41,7 +41,7 @@ def get_config():
     cfg = VersioneerConfig()
     cfg.VCS = "git"
     cfg.style = "pep440"
-    cfg.tag_prefix = "codecova-"
+    cfg.tag_prefix = "codeconut-"
     cfg.parentdir_prefix = "None"
     cfg.versionfile_source = "src/_version.py"
     cfg.verbose = False

@@ -12,9 +12,12 @@ addons:
 
 env:
   global:
-  - CXX=g++-9 CC=gcc-9
+  - CXX=g++-9 CC=gcc-9 GCOV=gcov-9
   - RUN_LINTER=1
   - BUILD_DOCS=
+
+install:
+  - pip install codecov
 
 stages:
   - tests
@@ -30,7 +33,7 @@ matrix:
       before_script:
         - cd tests/instrumenter
       script:       
-        - python3 -m pytest
+        - python3 -m pytest --cov=./
 
     - language: python
       name: "Style check Instrumenter"
@@ -51,7 +54,7 @@ matrix:
         - cd tests/analyzer
       script:
         - python3 -m flake8 --ignore=E501
-        - python3 -m pytest
+        - python3 -m pytest --cov=./
 
     - language: python
       name: "Style check Analyzer"
@@ -71,7 +74,7 @@ matrix:
       before_script:
         - cd tests/runtime_helper
       script:
-        - ceedling clobber test:all
+        - ceedling clobber gcov:all
 
     - language: python
       name: "Style check Runtime Helper"
@@ -82,3 +85,6 @@ matrix:
         - cd src/runtime_helper
       script:
         - cpplint codeconut_helper.c codeconut_helper.h
+    
+after_script:
+  - codecov

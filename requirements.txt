@@ -4,3 +4,4 @@ lxml
 pytest
 pytest-cov
 pyutilib
+cpplint

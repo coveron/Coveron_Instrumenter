@@ -16,9 +16,6 @@ env:
   - RUN_LINTER=1
   - BUILD_DOCS=
 
-install:
-  - pip install codecov
-
 stages:
   - tests
 
@@ -86,6 +83,5 @@ matrix:
       script:
         - cpplint codeconut_helper.c codeconut_helper.h
     
-after_script:
-  - codecov
+after_success:
   - bash <(curl -s https://codecov.io/bash)

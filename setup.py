@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Setup routine for COdeCOnut.
-   COdeCOnut is a code coverage tool for the analysis of
+"""Setup routine for Codeconut.
+   Codeconut is a code coverage tool for the analysis of
    statement, decision and MC/DC coverage metrics for
    C and C++ code.
    For more imformations, look at the README or the docs. 

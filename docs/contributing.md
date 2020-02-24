@@ -1,5 +1,5 @@
 ---
 layout: page
-title: COdeCOnut - Contributing
+title: Codeconut - Contributing
 permalink: /contributing
 ---

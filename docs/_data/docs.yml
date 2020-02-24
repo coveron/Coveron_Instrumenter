@@ -1,0 +1,12 @@
+- title: Getting Started
+  docs:
+  - home
+
+- title: Specifications
+  docs:
+  - architecture
+  - instrumenter
+  - runtime_helper
+  - analyzer
+  - cid_format
+  - cri_format

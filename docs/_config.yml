@@ -18,20 +18,62 @@
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
 
-title: COdeCOnut
+title: Codeconut
 email: glenntoews@outlook.com
 description: >- # this means to ignore newlines until "baseurl:"
-  COdeCOnut is a open source and free code coverage tool
+  Codeconut is a open source and free code coverage tool
   for C and C++ code. It provides statement, decision and MC/DC coverage
   and adheres to guidelines made by standards in the automotive and aviation sector. 
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: "/Codeconut" # the subpath of your site, e.g. /blog
+url: https://glenntws.github.io/Codeconut # the base hostname & protocol for your site
+git_address: https://github.com/glenntws/Codeconut
+git_edit_address: https://github.com/glenntws/Codeconut/docs
 github_username:  glenntws
+lang: en-US
+
+markdown: kramdown
+highlighter: rouge
 
 # Build settings
-theme: jekyll-theme-cayman
+# remote_theme: aksakalli/jekyll-doc-theme@gh-pages
 plugins:
   - jekyll-feed
+  - jekyll-redirect-from
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+bootwatch: codeconut
+
+timezone: Europe/Berlin
+defaults:
+- scope:
+    path: _posts
+    type: posts
+  values:
+    layout: post
+    sectionid: blog
+
+- scope:
+    path: _docs
+    type: docs
+  values:
+    layout: docs
+    sectionid: docs
+    seo:
+      type: "WebPage"
+
+collections:
+  docs:
+    permalink: /:collection/:path/
+    output: true
+  posts:
+    permalink: /blog/:year/:month/:day/:title/
+    output: true
+
+exclude:
+  - .idea/
+  - .gitignore
+  - README.md
 
 # Exclude from processing.
 # The following items will not be processed, by default.

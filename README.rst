@@ -5,7 +5,7 @@ Code coverage tool for c and C++ code. Featuring statement, decision and MC/DC c
 
 website_ • documentation_ • bugtracker_ • `GitHub <repo_>`_
 
-|travis-ci-badge|
+|travis-ci-badge| |codecov-badge|
 
 .. begin abstract
 
@@ -40,5 +40,8 @@ More information to follow.
 .. |travis-ci-badge| image:: https://travis-ci.org/glenntws/COdeCOnut.svg?branch=master
    :target: https://travis-ci.org/glenntws/COdeCOnut
    :alt: Travis CI build status
+.. |codecov-badge| image:: https://codecov.io/gh/glenntws/COdeCOnut/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/glenntws/COdeCOnut
+  :alt: Codecov code coverage status
 
 .. end links

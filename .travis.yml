@@ -88,3 +88,4 @@ matrix:
     
 after_script:
   - codecov
+  - bash <(curl -s https://codecov.io/bash)

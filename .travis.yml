@@ -19,6 +19,7 @@ env:
 matrix:
   include:
     - language: python
+      name: "Unit Tests Instrumenter"
       python: 3.7
       install:
         - pip install --upgrade pytest lxml jinja2 flake8
@@ -29,6 +30,7 @@ matrix:
         - python3 -m flake8 --ignore=E501
         - python3 -m pytest
     - language: python
+      name: "Unit Tests Analyzer"
       python: 3.7
       install:
         - pip install --upgrade pytest lxml jinja2 flake8
@@ -39,6 +41,7 @@ matrix:
         - python3 -m pytest
 
     - language: ruby
+      name: "Unit Tests Runtime Helper"
       rvm: 2.6
       install:
         - gem install ceedling

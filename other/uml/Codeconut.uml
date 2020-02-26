@@ -70,7 +70,7 @@
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/EcorePrimitiveTypes.library.uml#EResource"/>
         </ownedParameter>
       </ownedOperation>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_IW-NIFh4EeqY3o3QLZdP8w" name="create_statement_marker" concurrency="concurrent">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_IW-NIFh4EeqY3o3QLZdP8w" name="create_statement_marker" visibility="public" concurrency="concurrent">
         <ownedParameter xmi:type="uml:Parameter" xmi:id="_nB5x8FiPEeqY3o3QLZdP8w" name="marker_id" direction="return">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
         </ownedParameter>
@@ -98,7 +98,7 @@
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
         </ownedParameter>
       </ownedOperation>
-      <ownedOperation xmi:type="uml:Operation" xmi:id="_SlJZ4FiPEeqY3o3QLZdP8w" name="create_condition_marker" visibility="package" concurrency="guarded">
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_SlJZ4FiPEeqY3o3QLZdP8w" name="create_condition_marker" visibility="public" concurrency="guarded">
         <ownedParameter xmi:type="uml:Parameter" xmi:id="_ykKUMFiPEeqY3o3QLZdP8w" name="marker_id" direction="return">
           <ownedComment xmi:type="uml:Comment" xmi:id="_m76MwFiREeqY3o3QLZdP8w" annotatedElement="_ykKUMFiPEeqY3o3QLZdP8w">
             <body>Return 0 if the condition marker couldn't be created</body>
@@ -312,10 +312,10 @@
   </packagedElement>
   <packagedElement xmi:type="uml:Dependency" xmi:id="_01Yv0FemEeq6X6574UvjaA" name="including" client="_x43UUFemEeq6X6574UvjaA" supplier="_eWdrsFemEeq6X6574UvjaA"/>
   <packagedElement xmi:type="uml:Dependency" xmi:id="_AMCfAFenEeq6X6574UvjaA" name="originates from" client="_34_qwFemEeq6X6574UvjaA" supplier="_i8IWoFejEeq6X6574UvjaA"/>
-  <packagedElement xmi:type="uml:Dependency" xmi:id="_VHTYAFenEeq6X6574UvjaA" name="uses" client="_esTOQFelEeq6X6574UvjaA" supplier="_i8IWoFejEeq6X6574UvjaA"/>
-  <packagedElement xmi:type="uml:Dependency" xmi:id="_HWvVsFeoEeq6X6574UvjaA" name="uses" client="_tZja8FenEeq6X6574UvjaA" supplier="_lCgQcFenEeq6X6574UvjaA"/>
-  <packagedElement xmi:type="uml:Dependency" xmi:id="_JhpHAFeoEeq6X6574UvjaA" name="uses" client="_2GNpEFenEeq6X6574UvjaA" supplier="_Dn9MQFenEeq6X6574UvjaA"/>
-  <packagedElement xmi:type="uml:Dependency" xmi:id="_Lij14FeoEeq6X6574UvjaA" name="uses" client="_D_Y_YFeoEeq6X6574UvjaA" supplier="_i8IWoFejEeq6X6574UvjaA"/>
+  <packagedElement xmi:type="uml:Dependency" xmi:id="_VHTYAFenEeq6X6574UvjaA" name="input file" client="_esTOQFelEeq6X6574UvjaA" supplier="_i8IWoFejEeq6X6574UvjaA"/>
+  <packagedElement xmi:type="uml:Dependency" xmi:id="_HWvVsFeoEeq6X6574UvjaA" name="CID input" client="_tZja8FenEeq6X6574UvjaA" supplier="_lCgQcFenEeq6X6574UvjaA"/>
+  <packagedElement xmi:type="uml:Dependency" xmi:id="_JhpHAFeoEeq6X6574UvjaA" name="CRI input" client="_2GNpEFenEeq6X6574UvjaA" supplier="_Dn9MQFenEeq6X6574UvjaA"/>
+  <packagedElement xmi:type="uml:Dependency" xmi:id="_Lij14FeoEeq6X6574UvjaA" name="Analysis source input" client="_D_Y_YFeoEeq6X6574UvjaA" supplier="_i8IWoFejEeq6X6574UvjaA"/>
   <packagedElement xmi:type="uml:Actor" xmi:id="_h8iLwFesEeq6X6574UvjaA" name="User"/>
   <packagedElement xmi:type="uml:Usage" xmi:id="_V5LAMFevEeq6X6574UvjaA" name="" client="_93eMoFesEeq6X6574UvjaA" supplier="_esTOQFelEeq6X6574UvjaA"/>
   <packagedElement xmi:type="uml:Realization" xmi:id="_UP05YFiXEeqY3o3QLZdP8w" client="_GdjigFh6EeqY3o3QLZdP8w" supplier="_ZYh8oFenEeq6X6574UvjaA"/>

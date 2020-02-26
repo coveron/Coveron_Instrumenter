@@ -1,5 +1,3 @@
-
-
 # C extensions
 *.o
 *.so
@@ -31,3 +29,6 @@ pip-log.txt
 *.exe
 .tox
 test_executable
+
+# Papyrus
+other/uml/*/*.properties

@@ -31,4 +31,4 @@ pip-log.txt
 test_executable
 
 # Papyrus
-other/uml/*/*.properties
+other/uml/**/*.properties

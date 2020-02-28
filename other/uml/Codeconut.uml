@@ -70,7 +70,7 @@
         <ownedParameter xmi:type="uml:Parameter" xmi:id="_nB5x8FiPEeqY3o3QLZdP8w" name="marker_id" direction="return">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
         </ownedParameter>
-        <ownedParameter xmi:type="uml:Parameter" xmi:id="_5sfUoFlGEeqBqOWApGODhg" name="decision_marker_id">
+        <ownedParameter xmi:type="uml:Parameter" xmi:id="_5sfUoFlGEeqBqOWApGODhg" name="parent_id">
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
         </ownedParameter>
         <ownedParameter xmi:type="uml:Parameter" xmi:id="_wKMWsFiQEeqY3o3QLZdP8w" name="statement_collection" type="_Z8MLwFlGEeqBqOWApGODhg">
@@ -302,7 +302,7 @@
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
     </ownedAttribute>
     <ownedAttribute xmi:type="uml:Property" xmi:id="_yKxkwFlIEeqBqOWApGODhg" name="marker_type" type="_EthHMFlJEeqBqOWApGODhg"/>
-    <ownedAttribute xmi:type="uml:Property" xmi:id="_h6digFlJEeqBqOWApGODhg" name="decision_marker_id">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_h6digFlJEeqBqOWApGODhg" name="parent_id">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
     </ownedAttribute>
     <ownedAttribute xmi:type="uml:Property" xmi:id="_8c3DIFlJEeqBqOWApGODhg" name="code_section_data" type="_Z8MLwFlGEeqBqOWApGODhg"/>
@@ -313,9 +313,6 @@
     <ownedLiteral xmi:type="uml:EnumerationLiteral" xmi:id="_R8d0wFlJEeqBqOWApGODhg" name="CONDITION"/>
   </packagedElement>
   <packagedElement xmi:type="uml:DataType" xmi:id="_RwM9kFlNEeqBqOWApGODhg" name="CIDData" isAbstract="true">
-    <ownedAttribute xmi:type="uml:Property" xmi:id="_HVUdoFlOEeqBqOWApGODhg" name="cid_version">
-      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-    </ownedAttribute>
     <ownedAttribute xmi:type="uml:Property" xmi:id="_04pG8FlNEeqBqOWApGODhg" name="source_code_filename">
       <ownedComment xmi:type="uml:Comment" xmi:id="_04pG8VlNEeqBqOWApGODhg" annotatedElement="_04pG8FlNEeqBqOWApGODhg">
         <body>Relative filepath + filename from the executing directory of the instrumenter</body>

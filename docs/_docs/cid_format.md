@@ -45,7 +45,7 @@ The main file content is a gzip compressed string representation of a JSON objec
 The structure of the contained JSON object is explained in the following section.
 
 
-## JSON Schema for definition and validation
+### JSON Schema for definition and validation
 
 To define and validate the JSON object of the CID-File, the following JSON schema is used:
 
@@ -140,7 +140,7 @@ To define and validate the JSON object of the CID-File, the following JSON schem
 ```
 
 
-## Explanatory example for the JSON object format
+### Explanatory example for the JSON object format
 
 The JSON object has the following structure:
 
@@ -187,7 +187,7 @@ Detailed info on the elements inside the JSON object:
     - **end_column**: Column number (starting from 1) for the end of the code section
 
 
-## Marker type enum
+### Marker type enum
 
 The enum for the marker type can have the following values:
 

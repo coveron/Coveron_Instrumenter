@@ -855,6 +855,20 @@
           <element xmi:type="uml:Operation" href="Codeconut.uml#_KtxJwFiWEeqY3o3QLZdP8w"/>
           <layoutConstraint xmi:type="notation:Location" xmi:id="_KuN1sViWEeqY3o3QLZdP8w"/>
         </children>
+        <children xmi:type="notation:Shape" xmi:id="_aVZLIFxVEeqR5N5gtDToMw" type="Operation_ClassOperationLabel">
+          <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_ab9tMFxVEeqR5N5gtDToMw" source="PapyrusCSSForceValue">
+            <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_ab9tMVxVEeqR5N5gtDToMw" key="mutable" value="true"/>
+          </eAnnotations>
+          <element xmi:type="uml:Operation" href="Codeconut.uml#_aNZFsFxVEeqR5N5gtDToMw"/>
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_aVZLIVxVEeqR5N5gtDToMw"/>
+        </children>
+        <children xmi:type="notation:Shape" xmi:id="_uNGVYFxVEeqR5N5gtDToMw" type="Operation_ClassOperationLabel">
+          <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_uScvcFxVEeqR5N5gtDToMw" source="PapyrusCSSForceValue">
+            <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_uScvcVxVEeqR5N5gtDToMw" key="mutable" value="true"/>
+          </eAnnotations>
+          <element xmi:type="uml:Operation" href="Codeconut.uml#_uLUMsFxVEeqR5N5gtDToMw"/>
+          <layoutConstraint xmi:type="notation:Location" xmi:id="_uNGVYVxVEeqR5N5gtDToMw"/>
+        </children>
         <styles xmi:type="notation:TitleStyle" xmi:id="_GeJYaVh6EeqY3o3QLZdP8w"/>
         <styles xmi:type="notation:SortingStyle" xmi:id="_GeJYalh6EeqY3o3QLZdP8w"/>
         <styles xmi:type="notation:FilteringStyle" xmi:id="_GeJYa1h6EeqY3o3QLZdP8w"/>

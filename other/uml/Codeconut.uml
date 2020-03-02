@@ -231,6 +231,12 @@
           <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
         </ownedParameter>
       </ownedOperation>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_aNZFsFxVEeqR5N5gtDToMw" name="_write_markers" visibility="private"/>
+      <ownedOperation xmi:type="uml:Operation" xmi:id="_uLUMsFxVEeqR5N5gtDToMw" name="_write_wrapper" visibility="private">
+        <ownedComment xmi:type="uml:Comment" xmi:id="_uLUMsVxVEeqR5N5gtDToMw" annotatedElement="_uLUMsFxVEeqR5N5gtDToMw">
+          <body>This function adds additional calls to the runtime helper (i.e. flush buffer)</body>
+        </ownedComment>
+      </ownedOperation>
     </packagedElement>
   </packagedElement>
   <packagedElement xmi:type="uml:Component" xmi:id="_Ok5-0FejEeq6X6574UvjaA" name="Codeconut Runtime Helper">

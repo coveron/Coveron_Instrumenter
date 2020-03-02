@@ -57,7 +57,10 @@
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_hfKSQFe3Eeq6X6574UvjaA" value="1"/>
       </ownedAttribute>
       <ownedAttribute xmi:type="uml:Property" xmi:id="_ajo_sFe5Eeq6X6574UvjaA" name="_cid_data" visibility="private" type="_RwM9kFlNEeqBqOWApGODhg"/>
-      <ownedAttribute xmi:type="uml:Property" xmi:id="_9VB1wFiPEeqY3o3QLZdP8w" name="_input_hash" visibility="private">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_9VB1wFiPEeqY3o3QLZdP8w" name="input_hash" visibility="public">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_KcTDIFxjEeqKBqmiKzgIhw" name="instrumentation_random" visibility="public">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
       </ownedAttribute>
       <ownedOperation xmi:type="uml:Operation" xmi:id="_AHVdwFhuEeqY3o3QLZdP8w" name="__init__">

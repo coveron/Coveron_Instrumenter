@@ -23,7 +23,7 @@ The header contains the following information:
 - Magic number for CID files (0x49 0x4D 0x41 0x43 0x49 0x44 0x46 0x21)
   - The magic number can be interpreted in UTF-8 to get: IMACIDF! (*I'm a Codeconut Instrumentation Data File!*)
 - Version of the CID-File (2 bytes wide)
-- line break (0x0A)
+- Line break (0x0A)
 
 The header for the current version of the CID-Format looks like this:
 
@@ -54,7 +54,7 @@ To define and validate the JSON object of the CID-File, the following JSON schem
     "$schema": "http://json-schema.org/draft/2019-09/schema",
     "title": "Codeconut Instrumentation Data",
     "type": "object",
-    "required": ["source_code_filename", "source_code_hash", "statement_markers_enabled", "decision_markers_enabled", "condition_markers_enabled", "marker_data"],
+    "required": ["source_code_filename", "source_code_hash", "instrumentation_random", "statement_markers_enabled", "decision_markers_enabled", "condition_markers_enabled", "marker_data"],
     "properties": {
         "source_code_filename": {
             "type": "string",
@@ -65,6 +65,11 @@ To define and validate the JSON object of the CID-File, the following JSON schem
             "type": "string",
             "description": "SHA-256 hash of the data inside the source code file",
             "pattern": "^[0-9a-fA-F]{64}$"
+        },
+        "instrumentation_random": {
+            "type": "string",
+            "description": "Random 8 char string generated during instrumentation time (link to CRI file)",
+            "pattern": "^[0-9a-fA-F]{8}$"
         },
         "statement_markers_enabled": {
             "type": "boolean",
@@ -148,6 +153,7 @@ The JSON object has the following structure:
 {
     "source_code_filename": string,
     "source_code_hash": string,
+    "instrumentation_random": string,
     "statement_markers_enabled": boolean,
     "decision_markers_enabled": boolean,
     "condition_markers_enabled": boolean,
@@ -173,6 +179,7 @@ Detailed info on the elements inside the JSON object:
 
 - **source_code_filename**: Filename and relative path to the source code file (path is relative to the execution path of the instrumenter)
 - **source_code_hash**: SHA-256 hash of the data inside the source code file
+- **instrumentation_random**: Random 8 char string to link CID and CRI files
 - **statement_markers_enabled**: Defines, if the instrumentation includes statement markers
 - **decision_markers_enabled**: Defines, if the instrumentation includes decision markers
 - **condition_markers_enabled**: Defines, if the instrumentation includes condition markers

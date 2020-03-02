@@ -21,7 +21,7 @@ The instrumenter and analyzer are installed as one Python package, but are execu
 - "codeconut-instrumenter" for the instrumenter
 - "codeconut-analyzer" for the analyzer
 
-The runtime helper consists of a C file and the according header file, which are downloadable for the website.
+The runtime helper consists of a C file and the according header file, which are downloadable from the website.
 It automatically get's included by every instrumented source file and should be placed inside a folder fitting the build process of the code that's to be analyzed.
 
 
@@ -42,7 +42,7 @@ The instrumenter uses a parser that is able to detect the neccessary keywords in
 
 The runtime helper includes functions responsible for writting the markers to the output file ([Codeconut Runtime Information]({{site.baseurl}}{% link _docs/cri_format.md %})).
 
-TBD
+The runtime helper generates a file pointer for each instrumented source code file. These pointers are used as the target for the output data of the runtime helper. For each function return, the output buffer is flushed to insure that the runtime information is stored when the program exits.
 
 
 ### Analyzer

@@ -11,17 +11,21 @@
  * SECTION   INCLUDES
  */
 #include <stdint.h>
+#include <stdio.h>
+// !SECTION
 
 /*
  * SECTION   TYPEDEFS
  */
-
 typedef enum
 {
     ___CODECONUT_BOOL_FALSE,
     ___CODECONUT_BOOL_TRUE
 } ___CODECONUT_BOOL_T;
 
+/* NOTE The codeconut file variable name should include the instrumentation random
+ *      to prevent duplicate variable names when directly including c files
+ */
 typedef struct ___CODECONUT_FILE_S
 {
     // SHA256 hash of uninstrumented source code (length = 32 bytes)
@@ -29,22 +33,32 @@ typedef struct ___CODECONUT_FILE_S
 
     // Instrumentation random (length = 16 bytes)
     uint8_t instrumentationRandom[16];
+
+    // Status variable to see, if the helper is initialized for this file
+    ___CODECONUT_BOOL_T helperInitialized;
+
+    // File pointer
+    FILE *criFile;
+
+    // Filename for the output file (last item because of variable size)
+    char outputFilename[];
 } ___CODECONUT_FILE_T;
+// !SECTION
 
 /*
  * SECTION   PUBLIC FUNCTION DECLARATIONS
  */
-
-#ifdef ___CODECONUT_STATEMENT_ANALYSIS_ENABLED
-void ___CODECONUT_SET_STATEMENT_MARKER(uint32_t markerId, ___CODECONUT_FILE_T *codeconutFile, ___CODECONUT_BOOL_T flushBuffer);
+#ifdef CODECONUT_STATEMENT_ANALYSIS_ENABLED
+void ___CODECONUT_SET_STATEMENT_MARKER(uint8_t markerId_B0, uint8_t markerId_B1, uint8_t markerId_B2, uint8_t markerId_B3, ___CODECONUT_FILE_T *codeconutFile);
 #endif
 
-#ifdef ___CODECONUT_DECISION_ANALYSIS_ENABLED
-void ___CODECONUT_SET_DECISION_MARKER(uint32_t markerId, ___CODECONUT_FILE_T *codeconutFile, ___CODECONUT_BOOL_T decision);
+#ifdef CODECONUT_DECISION_ANALYSIS_ENABLED
+void ___CODECONUT_SET_DECISION_MARKER(uint8_t markerId_B0, uint8_t markerId_B1, uint8_t markerId_B2, uint8_t markerId_B3, ___CODECONUT_FILE_T *codeconutFile, ___CODECONUT_BOOL_T decision);
 #endif
 
-#ifdef ___CODECONUT_CONDITION_ANALYSIS_ENABLED
-void ___CODECONUT_SET_CONDITION_MARKER(uint32_t markerId, ___CODECONUT_FILE_T *codeconutFile, ___CODECONUT_BOOL_T condition);
+#ifdef CODECONUT_CONDITION_ANALYSIS_ENABLED
+void ___CODECONUT_SET_CONDITION_MARKER(uint8_t markerId_B0, uint8_t markerId_B1, uint8_t markerId_B2, uint8_t markerId_B3, ___CODECONUT_FILE_T *codeconutFile, ___CODECONUT_BOOL_T condition);
 #endif
+// !SECTION
 
 #endif // ___CODECONUT_HELPER_

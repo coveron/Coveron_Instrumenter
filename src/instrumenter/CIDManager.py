@@ -63,7 +63,7 @@ class CIDManager:
         # TODO Implement function
         return True
 
-    def create_statement_marker(self, statement_collection: List[CodeSectionData], includes_return: bool) -> int:
+    def create_statement_marker(self, statement_collection: List[CodeSectionData]) -> int:
         """Creates a new statement marker from the specified statement collection"""
 
         # TODO Implement function

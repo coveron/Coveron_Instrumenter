@@ -78,7 +78,6 @@ The statement marker contains information, if the statement got evaluated to tru
 The Runtime Helper checks eventually existing files for the following information to validate, if a concatenated execution is possible:
 
 - Equal header (magic number, CRI file version, checksum)
-- Line break at EOF(0x0A)
 
 
 ### New execution marker

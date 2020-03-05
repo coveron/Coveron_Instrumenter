@@ -80,9 +80,6 @@
         <ownedParameter xmi:type="uml:Parameter" xmi:id="_wKMWsFiQEeqY3o3QLZdP8w" name="statement_collection" type="_Z8MLwFlGEeqBqOWApGODhg">
           <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_i2f0UFlGEeqBqOWApGODhg" value="*"/>
         </ownedParameter>
-        <ownedParameter xmi:type="uml:Parameter" xmi:id="_Y7UCwF4WEeqMEdu_eMs_Hg" name="includes_return">
-          <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
-        </ownedParameter>
       </ownedOperation>
       <ownedOperation xmi:type="uml:Operation" xmi:id="_KW4PYFh4EeqY3o3QLZdP8w" name="create_decision_marker" visibility="public">
         <ownedParameter xmi:type="uml:Parameter" xmi:id="_sj73IFiPEeqY3o3QLZdP8w" name="marker_id" direction="return">
@@ -487,12 +484,6 @@
     <ownedAttribute xmi:type="uml:Property" xmi:id="_yKxkwFlIEeqBqOWApGODhg" name="marker_type" type="_EthHMFlJEeqBqOWApGODhg"/>
     <ownedAttribute xmi:type="uml:Property" xmi:id="_h6digFlJEeqBqOWApGODhg" name="parent_id">
       <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
-    </ownedAttribute>
-    <ownedAttribute xmi:type="uml:Property" xmi:id="_oZxU0F4WEeqMEdu_eMs_Hg" name="should_write">
-      <ownedComment xmi:type="uml:Comment" xmi:id="_oZxU0V4WEeqMEdu_eMs_Hg" annotatedElement="_oZxU0F4WEeqMEdu_eMs_Hg">
-        <body>Defines, if this marker should write to output (i.e. because it includes a return).</body>
-      </ownedComment>
-      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Boolean"/>
     </ownedAttribute>
     <ownedAttribute xmi:type="uml:Property" xmi:id="_8c3DIFlJEeqBqOWApGODhg" name="code_section_data" type="_Z8MLwFlGEeqBqOWApGODhg">
       <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_KUT6AF1OEeqL5aO2Q7BVgg" value="*"/>

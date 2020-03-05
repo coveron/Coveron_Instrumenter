@@ -81,7 +81,7 @@ matrix:
       before_script:
         - cd src/runtime_helper
       script:
-        - cpplint codeconut_helper.c codeconut_helper.h
+        - cpplint --linelength=100 codeconut_helper.c codeconut_helper.h
     
 after_success:
   - bash <(curl -s https://codecov.io/bash)

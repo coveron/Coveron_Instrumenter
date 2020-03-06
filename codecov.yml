@@ -1,0 +1,9 @@
+coverage:
+  precision: 2
+  round: down
+  range: "80...100"
+
+ignore:
+  - "tests/**/*.c"  # ignore all code inside the test folder (we just care for our source)
+  - "tests/**/*.cpp"  # ignore all code inside the test folder (we just care for our source)
+  - "tests/**/*.py"  # ignore all code inside the test folder (we just care for our source)

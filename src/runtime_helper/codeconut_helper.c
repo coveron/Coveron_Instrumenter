@@ -129,7 +129,7 @@ ___CODECONUT_BOOL_T ___CODECONUT_SETUP_INSTRUMENTATION(
     /*
      * set initialization var to true
      */
-    codeconutFile->helperInitialized == ___CODECONUT_BOOL_TRUE;
+    codeconutFile->helperInitialized = ___CODECONUT_BOOL_TRUE;
 
     return ___CODECONUT_BOOL_TRUE;
 }
@@ -140,7 +140,8 @@ ___CODECONUT_BOOL_T ___CODECONUT_CREATE_NEW_OUTPUT_FILE(
      * load input file
      */
     // load file as read and write
-    freopen(codeconutFile->outputFilename, "wb+", codeconutFile->criFile);
+    codeconutFile->criFile =
+        freopen(codeconutFile->outputFilename, "wb+", codeconutFile->criFile);
 
     // check if file was successfully opened
     if (codeconutFile->criFile == NULL) {
@@ -166,7 +167,7 @@ ___CODECONUT_BOOL_T ___CODECONUT_CREATE_NEW_OUTPUT_FILE(
     /*
      * set initialization var to true
      */
-    codeconutFile->helperInitialized == ___CODECONUT_BOOL_TRUE;
+    codeconutFile->helperInitialized = ___CODECONUT_BOOL_TRUE;
 }
 
 ___CODECONUT_BOOL_T ___CODECONUT_EQUAL_ARRAYS(uint8_t *Array1,
@@ -259,36 +260,65 @@ inline void ___CODECONUT_SET_STATEMENT_MARKER(uint8_t markerId_B0,
         ___CODECONUT_SETUP_INSTRUMENTATION(codeconutFile) == ___CODECONUT_BOOL_FALSE) {
         return;
     }
+
+    uint8_t markerData[5] = {markerId_B0, markerId_B1, markerId_B2, markerId_B3, 0x00};
+    fwrite(markerData, 1, 5, codeconutFile->criFile);
 }
 #endif
 
 #ifdef CODECONUT_DECISION_ANALYSIS_ENABLED
-inline void ___CODECONUT_SET_DECISION_MARKER(uint8_t markerId_B0,
-                                             uint8_t markerId_B1,
-                                             uint8_t markerId_B2,
-                                             uint8_t markerId_B3,
-                                             ___CODECONUT_FILE_T *codeconutFile,
-                                             ___CODECONUT_BOOL_T decision) {
+inline ___CODECONUT_BOOL_T ___CODECONUT_SET_DECISION_MARKER(
+    uint8_t markerId_B0,
+    uint8_t markerId_B1,
+    uint8_t markerId_B2,
+    uint8_t markerId_B3,
+    ___CODECONUT_FILE_T *codeconutFile,
+    ___CODECONUT_BOOL_T decision) {
     // check, if the helper was initialized
     if (codeconutFile->helperInitialized == ___CODECONUT_BOOL_FALSE &&
         ___CODECONUT_SETUP_INSTRUMENTATION(codeconutFile) == ___CODECONUT_BOOL_FALSE) {
-        return;
+        return decision;
     }
+
+    // create output array
+    uint8_t markerData[5] = {markerId_B0, markerId_B1, markerId_B2, markerId_B3, 0x59};
+    if (decision == ___CODECONUT_BOOL_TRUE) {
+        markerData[4] = 0xA6;
+    }
+
+    // write marker to output file
+    fwrite(markerData, 1, 5, codeconutFile->criFile);
+
+    // pass on the input data
+    return decision;
 }
 #endif
 
 #ifdef CODECONUT_CONDITION_ANALYSIS_ENABLED
-inline void ___CODECONUT_SET_CONDITION_MARKER(uint8_t markerId_B0,
-                                              uint8_t markerId_B1,
-                                              uint8_t markerId_B2,
-                                              uint8_t markerId_B3,
-                                              ___CODECONUT_FILE_T *codeconutFile,
-                                              ___CODECONUT_BOOL_T condition) {
+inline ___CODECONUT_BOOL_T ___CODECONUT_SET_CONDITION_MARKER(
+    uint8_t markerId_B0,
+    uint8_t markerId_B1,
+    uint8_t markerId_B2,
+    uint8_t markerId_B3,
+    ___CODECONUT_FILE_T *codeconutFile,
+    ___CODECONUT_BOOL_T condition) {
     // check, if the helper was initialized
     if (codeconutFile->helperInitialized == ___CODECONUT_BOOL_FALSE &&
         ___CODECONUT_SETUP_INSTRUMENTATION(codeconutFile) == ___CODECONUT_BOOL_FALSE) {
-        return;
+        return condition;
     }
+
+    // create output array
+    uint8_t markerData[5] = {markerId_B0, markerId_B1, markerId_B2, markerId_B3, 0x59};
+    if (condition == ___CODECONUT_BOOL_TRUE) {
+        markerData[4] = 0xA6;
+    }
+
+    // write marker to output file
+    fwrite(markerData, 1, 5, codeconutFile->criFile);
+
+    // pass on the input data
+    return condition;
 }
 #endif
 // !SECTION

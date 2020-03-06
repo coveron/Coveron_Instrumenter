@@ -66,21 +66,21 @@ void ___CODECONUT_SET_STATEMENT_MARKER(uint8_t markerId_B0,
 #endif
 
 #ifdef CODECONUT_DECISION_ANALYSIS_ENABLED
-void ___CODECONUT_SET_DECISION_MARKER(uint8_t markerId_B0,
-                                      uint8_t markerId_B1,
-                                      uint8_t markerId_B2,
-                                      uint8_t markerId_B3,
-                                      ___CODECONUT_FILE_T *codeconutFile,
-                                      ___CODECONUT_BOOL_T decision);
+___CODECONUT_BOOL_T ___CODECONUT_SET_DECISION_MARKER(uint8_t markerId_B0,
+                                                     uint8_t markerId_B1,
+                                                     uint8_t markerId_B2,
+                                                     uint8_t markerId_B3,
+                                                     ___CODECONUT_FILE_T *codeconutFile,
+                                                     ___CODECONUT_BOOL_T decision);
 #endif
 
 #ifdef CODECONUT_CONDITION_ANALYSIS_ENABLED
-void ___CODECONUT_SET_CONDITION_MARKER(uint8_t markerId_B0,
-                                       uint8_t markerId_B1,
-                                       uint8_t markerId_B2,
-                                       uint8_t markerId_B3,
-                                       ___CODECONUT_FILE_T *codeconutFile,
-                                       ___CODECONUT_BOOL_T condition);
+___CODECONUT_BOOL_T ___CODECONUT_SET_CONDITION_MARKER(uint8_t markerId_B0,
+                                                      uint8_t markerId_B1,
+                                                      uint8_t markerId_B2,
+                                                      uint8_t markerId_B3,
+                                                      ___CODECONUT_FILE_T *codeconutFile,
+                                                      ___CODECONUT_BOOL_T condition);
 #endif
 // !SECTION
 

@@ -11,17 +11,13 @@
    Coordinates all the modules responsible for parsing the source code.
 """
 
-from typing import List
-from .DataTypes import *
+from .DataTypes import SourceCode
 
 from .Configuration import Configuration
 from .CIDManager import CIDManager
 from .Sanitizer import Sanitizer
 from .StatementParser import StatementParser
 from .DecisionParser import DecisionParser
-
-import hashlib
-import string
 
 
 class Parser:

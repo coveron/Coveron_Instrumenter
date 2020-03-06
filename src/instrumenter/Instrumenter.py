@@ -12,7 +12,7 @@
 """
 
 from typing import List
-from .DataTypes import *
+from .DataTypes import SourceCode, MarkerData
 
 from .Configuration import Configuration
 from .CIDManager import CIDManager

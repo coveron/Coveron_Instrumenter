@@ -11,8 +11,7 @@
    Extends the decision parser by parsing individual conditions (useful for MC/DC).
 """
 
-from typing import List
-from .DataTypes import *
+from .DataTypes import SourceCode
 
 from .CIDManager import CIDManager
 

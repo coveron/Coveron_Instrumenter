@@ -12,8 +12,7 @@
    Parsing is done on sanitized code and instrumntation is done on the real code.
 """
 
-from typing import List
-from .DataTypes import *
+from .DataTypes import SourceCode
 
 
 class Sanitizer:

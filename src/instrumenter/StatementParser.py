@@ -10,7 +10,7 @@
 """Statement parser for Codeconut Instrumenter.
 """
 
-from .DataTypes import *
+from .DataTypes import SourceCode
 from .Configuration import Configuration
 from .CIDManager import CIDManager
 

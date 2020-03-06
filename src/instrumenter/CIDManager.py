@@ -12,12 +12,13 @@
 """
 
 from typing import List
-from .DataTypes import *
+from .DataTypes import SourceCode, CodeSectionData, MarkerData, CIDData
 
 from .Configuration import Configuration
 
 import hashlib
 import string
+import random
 
 
 class CIDManager:

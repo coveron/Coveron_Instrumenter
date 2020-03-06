@@ -10,12 +10,11 @@
 """Decision parser for Codeconut Instrumenter.
 """
 
-from typing import List
-from .DataTypes import *
+from .DataTypes import SourceCode
 
 from .Configuration import Configuration
 from .CIDManager import CIDManager
-from .ConditionParser import ConditionParser
+# from .ConditionParser import ConditionParser
 
 
 class DecisionParser:

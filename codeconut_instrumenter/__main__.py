@@ -15,3 +15,7 @@
 # from .CIDManager import CIDManager
 # from .Instrumenter import Instrumenter
 # from .Parser import Parser
+
+
+def main():
+    return

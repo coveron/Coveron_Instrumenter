@@ -1,32 +1,31 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Setup routine for Codeconut.
+"""Setup routine for Codeconut Analyzer.
    Codeconut is a code coverage tool for the analysis of
    statement, decision and MC/DC coverage metrics for
    C and C++ code.
-   For more imformations, look at the README or the docs. 
+   For more information, look at the README or the docs. 
 """
 
 from runpy import run_path
-from setuptools import setup
+from setuptools import setup, find_packages
 import versioneer
 
 setup(name='codeconut',
       version=versioneer.get_version(),
       cmdclass=versioneer.get_cmdclass(),
       platforms=["any"],
-      python_requires='>=3.5',
+      python_requires='>=3.7',
       packages=['codeconut_instrumenter', 'codeconut_analyzer'],
-      package_dir={'codeconut_instrumenter': 'src/instrumenter',
-                   'codeconut_analyzer': 'src/analyzer'},
       install_requires=[
           'jinja2',
           'lxml',
       ],
       package_data={
-          'codeconut_analyzer': ['src/analyzer/data/*.css', 'src/analyzer/data/*.html'],
+          'codeconut_analyzer': ['codeconut_analyzer/data/*.css', 'codeconut_analyzer/data/*.html'],
       },
+      include_package_data=True,
       entry_points={
           'console_scripts': [
               'codeconut_instrumenter=codeconut_instrumenter.__main__:main',

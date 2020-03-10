@@ -29,7 +29,8 @@ matrix:
         - pip install --upgrade pytest pytest-cov lxml jinja2
       before_script:
         - cd codeconut_instrumenter/tests/unit_tests
-      script:       
+      script:
+        - pip install -e .
         - python3 -m pytest --cov=./
 
     - language: python
@@ -50,6 +51,7 @@ matrix:
       before_script:
         - cd codeconut_analyzer/tests/unit_tests
       script:
+        - pip install -e .
         - python3 -m pytest --cov=./ --exclude tests
 
     - language: python

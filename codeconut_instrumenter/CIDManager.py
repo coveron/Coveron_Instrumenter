@@ -37,9 +37,11 @@ class CIDManager:
         # Load configuration
         self._config = config
 
-        # Set filename and hash for he soruce code file
+        # Set filename and hash for the soruce code file
+        self._cid_data = CIDData()
         self._cid_data.source_code_filename = input_filename
-        self._cid_data.source_code_hash = hashlib.sha256(input_code)
+        self._cid_data.source_code_hash = hashlib.sha256(
+            input_code.encode('utf-8'))
 
         # Generate instrumentation random (16 chars, a-zA-Z0-9 possible)
         self._cid_data.instrumentation_random = ''.join(random.choice(

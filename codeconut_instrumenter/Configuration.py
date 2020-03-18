@@ -28,4 +28,8 @@ class Configuration:
         """Initializes the ConditionParser"""
 
         # TODO implement default values
+        self.statement_analysis_enabled = False
+        self.decision_analysis_enabled = False
+        self.condition_analysis_enabled = False
+
         return

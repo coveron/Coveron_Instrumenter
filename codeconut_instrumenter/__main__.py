@@ -10,12 +10,14 @@
 """Package main for Codeconut Instrumenter.
 """
 
-# from .Configuration import Configuration
+from .Configuration import Configuration
 # from .ArgumentHandler import ArgumentHandler
-# from .CIDManager import CIDManager
+from .CIDManager import CIDManager
 # from .Instrumenter import Instrumenter
 # from .Parser import Parser
 
 
 def main():
+    config = Configuration()
+    cid_manager = CIDManager(config, 'test_filename.c', 'test_code')
     return

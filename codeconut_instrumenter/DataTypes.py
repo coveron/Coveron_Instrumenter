@@ -223,7 +223,7 @@ class CIDData:
     def get_condition_markers_enabled(self) -> bool:
         return self._condition_markers_enabled
 
-    def get_marker_data(self) -> list:
+    def get_marker_data(self) -> List[MarkerData]:
         return self._marker_data
     # !SECTION
 

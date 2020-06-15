@@ -11,7 +11,7 @@
    Extends the decision parser by parsing individual conditions (useful for MC/DC).
 """
 
-from .DataTypes import SourceCode
+from .DataTypes import SourceCode, CodeSectionData
 
 from .CIDManager import CIDManager
 
@@ -21,12 +21,18 @@ class ConditionParser:
        Parses the given code to find conditions inside a decision and pass them to the given CID Manager.
     """
 
-    __slots__ = ["_cid_manager", "_input_code"]
+    __slots__ = ["_cid_manager", "_input_code", "_parent_id", "_code_section"]
 
     _cid_manager: CIDManager
     _input_code: SourceCode
+    _parent_id: int
+    _code_section: CodeSectionData
 
-    def __init__(self, cid_manager: CIDManager, input_code: SourceCode):
+    def __init__(self,
+                 cid_manager: CIDManager,
+                 input_code: SourceCode,
+                 parent_id: int,
+                 code_section: CodeSectionData):
         """Initializes the ConditionParser"""
 
         # TODO implement value initialization (and sanity checks)

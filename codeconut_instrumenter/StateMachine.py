@@ -32,19 +32,21 @@ class State(StateParent):
     """State machine state pattern class
     """
     # SECTION   State private attribute definitions
-    __slots__ = ['_parent', '_return_state', '_child_state']
+    __slots__ = ['_parent', '_stateMachine', '_return_state', '_child_state']
 
     _parent: StateParent
+    _state_machine: 'StateMachine'
     _return_state: 'State'
     _child_state: 'State'
     # !SECTION
 
     # SECTION   State initialization
-    def __init__(self, parent, return_state: None, child_state: None):
+    def __init__(self, parent, state_machine, return_state=None, child_state=None):
         """Initialization routine for state machine pattern
         """
         StateParent.__init__(self)
         self.parent = parent
+        self.state_machine = state_machine
         if return_state is not None:
             self.return_state = return_state
         if child_state is not None:
@@ -55,6 +57,9 @@ class State(StateParent):
     # SECTION   State getter functions
     def _get_parent(self) -> StateParent:
         return self._parent
+
+    def _get_state_machine(self) -> 'StateMachine':
+        return self._state_machine
 
     def _get_return_state(self) -> 'State':
         return self._return_state
@@ -67,15 +72,23 @@ class State(StateParent):
     def _set_parent(self, parent):
         if parent is None:
             raise ValueError("parent not defined!")
-        elif not issubclass(parent, StateParent):
+        elif not issubclass(type(parent), StateParent):
             raise TypeError("parent shall be of type StateParent!")
         else:
             self._parent = parent
 
+    def _set_state_machine(self, state_machine):
+        if state_machine is None:
+            raise ValueError("state_machine not defined!")
+        elif not issubclass(type(state_machine), StateMachine):
+            raise TypeError("state_machine shall be of type StateParent!")
+        else:
+            self._state_machine = state_machine
+
     def _set_return_state(self, return_state):
         if return_state is None:
             raise ValueError("return_state not defined!")
-        elif not issubclass(return_state, 'State'):
+        elif not issubclass(type(return_state), State):
             raise TypeError("return_state shall be of type State!")
         else:
             self._return_state = return_state
@@ -83,7 +96,7 @@ class State(StateParent):
     def _set_child_state(self, child_state):
         if child_state is None:
             raise ValueError("child_state not defined!")
-        elif not issubclass(child_state, 'State'):
+        elif not issubclass(type(child_state), 'State'):
             raise TypeError("child_state shall be of type State!")
         else:
             self._child_state = child_state
@@ -91,6 +104,7 @@ class State(StateParent):
 
     # SECTION   State property definitions
     parent = property(_get_parent, _set_parent)
+    state_machine = property(_get_state_machine, _set_state_machine)
     return_state = property(_get_return_state, _set_return_state)
     child_state = property(_get_child_state, _set_child_state)
     # !SECTION
@@ -101,7 +115,7 @@ class State(StateParent):
         raise NotImplementedError("run function wasn't declared!")
         return
 
-    def next(self, parent, input):
+    def next(self, input):
         """Determine next state for state"""
         raise NotImplementedError("next function wasn't declared!")
         return
@@ -112,38 +126,39 @@ class StateMachine(StateParent):
     """State machine pattern class
     """
     # SECTION   StateMachine private attribute definitions
-    __slots__ = ['_active_state']
+    __slots__ = ['_child_state', 'states']
 
-    _active_state: State
+    _child_state: State
     # !SECTION
 
     # SECTION   StateMachine initialization
-    def __init__(self, active_state=None):
+    def __init__(self, child_state=None):
         """Initialization routine for state machine pattern
         """
         StateParent.__init__(self)
-        if active_state is not None:
-            self.active_state = active_state
+        if child_state is not None:
+            self.child_state = child_state
         return
     # !SECTION
 
     # SECTION   StateMachine getter functions
-    def _get_active_state(self) -> State:
-        return self._active_state
+    def _get_child_state(self) -> State:
+        return self._child_state
     # !SECTION
 
     # SECTION   StateMachine setter functions
-    def _set_active_state(self, next_state):
+    def _set_child_state(self, next_state):
         if next_state is None:
             raise ValueError("next_state not defined!")
-        elif not issubclass(next_state, State):
+        elif not issubclass(type(next_state), State):
             raise TypeError("next_state shall be of type State!")
         else:
-            self._active_state = next_state
+            self._child_state = next_state
     # !SECTION
 
     # SECTION   StateMachine property definitions
-    active_state = property(_get_active_state, _set_active_state)
+    active_state = property(_get_child_state, _set_child_state)
+    child_state = property(_get_child_state, _set_child_state)
     # !SECTION
 
     # SECTION   State machine public function definitions

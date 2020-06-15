@@ -245,7 +245,6 @@ void ___CODECONUT_GENERATE_EXECUTION_MARKER(___CODECONUT_FILE_T *codeconutFile) 
            codeconutFile->criFile);
 }
 // !SECTION
-
 /*
  * SECTION   PUBLIC FUNCTION DEFINITIONS
  */

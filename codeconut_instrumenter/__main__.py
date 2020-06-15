@@ -14,10 +14,17 @@ from .Configuration import Configuration
 # from .ArgumentHandler import ArgumentHandler
 from .CIDManager import CIDManager
 # from .Instrumenter import Instrumenter
-# from .Parser import Parser
+from .Parser import Parser
 
 
 def main():
     config = Configuration()
     cid_manager = CIDManager(config, 'test_filename.c', 'test_code')
+
+    parser = Parser(config, cid_manager, "")
+    parser.start_parser()
     return
+
+
+if __name__ == "__main__":
+    main()

@@ -105,21 +105,21 @@ class MarkerData:
     # !SECTION
 
     # SECTION   MarkerData getter functions
-    def get_marker_id(self) -> int:
+    def _get_marker_id(self) -> int:
         return self._marker_id
 
-    def get_marker_type(self) -> MarkerTypeEnum:
+    def _get_marker_type(self) -> MarkerTypeEnum:
         return self._marker_type
 
-    def get_parent_id(self) -> int:
+    def _get_parent_id(self) -> int:
         return self._parent_id
 
-    def get_code_section_data(self) -> List[CodeSectionData]:
+    def _get_code_section_data(self) -> List[CodeSectionData]:
         return self._code_section_data
     # !SECTION
 
     # SECTION   MarkerData setter functions
-    def set_marker_id(self, marker_id):
+    def _set_marker_id(self, marker_id):
         if marker_id is None:
             raise ValueError("marker_id not defined!")
         elif not isinstance(marker_id, int):
@@ -127,7 +127,7 @@ class MarkerData:
         else:
             self._marker_id = marker_id
 
-    def set_marker_type(self, marker_type):
+    def _set_marker_type(self, marker_type):
         if marker_type is None:
             raise ValueError("marker_type not defined!")
         elif not isinstance(marker_type, MarkerTypeEnum):
@@ -135,13 +135,13 @@ class MarkerData:
         else:
             self._marker_type = marker_type
 
-    def set_parent_id(self, parent_id):
+    def _set_parent_id(self, parent_id):
         if isinstance(parent_id, int):
             self._parent_id = parent_id
         elif parent_id is not None:
             raise TypeError("parent_id shall be of type int!")
 
-    def set_code_section_data(self, code_section_data):
+    def _set_code_section_data(self, code_section_data):
         if code_section_data is None:
             raise ValueError("code_section_data not defined!")
         elif not isinstance(code_section_data, list):
@@ -159,13 +159,13 @@ class MarkerData:
 
     # SECTION   MarkerData property definitions
     marker_id = property(
-        get_marker_id, set_marker_id)
+        _get_marker_id, _set_marker_id)
     marker_type = property(
-        get_marker_type, set_marker_type)
+        _get_marker_type, _set_marker_type)
     parent_id = property(
-        get_parent_id, set_parent_id)
+        _get_parent_id, _set_parent_id)
     code_section_data = property(
-        get_code_section_data, set_code_section_data)
+        _get_code_section_data, _set_code_section_data)
     # !SECTION
 
 
@@ -205,30 +205,30 @@ class CIDData:
     # !SECTION
 
     # SECTION   CIDData getter functions
-    def get_source_code_filename(self) -> str:
+    def _get_source_code_filename(self) -> str:
         return self._source_code_filename
 
-    def get_source_code_hash(self) -> str:
+    def _get_source_code_hash(self) -> str:
         return self._source_code_hash
 
-    def get_instrumentation_random(self) -> str:
+    def _get_instrumentation_random(self) -> str:
         return self._instrumentation_random
 
-    def get_statement_markers_enabled(self) -> bool:
+    def _get_statement_markers_enabled(self) -> bool:
         return self._statement_markers_enabled
 
-    def get_decision_markers_enabled(self) -> bool:
+    def _get_decision_markers_enabled(self) -> bool:
         return self._decision_markers_enabled
 
-    def get_condition_markers_enabled(self) -> bool:
+    def _get_condition_markers_enabled(self) -> bool:
         return self._condition_markers_enabled
 
-    def get_marker_data(self) -> List[MarkerData]:
+    def _get_marker_data(self) -> List[MarkerData]:
         return self._marker_data
     # !SECTION
 
     # SECTION   CIDData setter functions
-    def set_source_code_filename(self, source_code_filename):
+    def _set_source_code_filename(self, source_code_filename):
         if source_code_filename is None:
             raise ValueError("source_code_filename not defined!")
         elif not isinstance(source_code_filename, str):
@@ -236,7 +236,7 @@ class CIDData:
         else:
             self._source_code_filename = source_code_filename
 
-    def set_source_code_hash(self, source_code_hash):
+    def _set_source_code_hash(self, source_code_hash):
         if source_code_hash is None:
             raise ValueError("source_code_hash not defined!")
         elif not isinstance(source_code_hash, str):
@@ -248,7 +248,7 @@ class CIDData:
         else:
             self._source_code_hash = source_code_hash
 
-    def set_instrumentation_random(self, instrumentation_random):
+    def _set_instrumentation_random(self, instrumentation_random):
         if instrumentation_random is None:
             raise ValueError("instrumentation_random not defined!")
         elif not isinstance(instrumentation_random, str):
@@ -260,7 +260,7 @@ class CIDData:
         else:
             self._instrumentation_random = instrumentation_random
 
-    def set_statement_markers_enabled(self, statement_markers_enabled):
+    def _set_statement_markers_enabled(self, statement_markers_enabled):
         if statement_markers_enabled is None:
             raise ValueError("statement_markers_enabled not defined!")
         elif not isinstance(statement_markers_enabled, bool):
@@ -268,7 +268,7 @@ class CIDData:
         else:
             self._statement_markers_enabled = statement_markers_enabled
 
-    def set_decision_markers_enabled(self, decision_markers_enabled):
+    def _set_decision_markers_enabled(self, decision_markers_enabled):
         if decision_markers_enabled is None:
             raise ValueError("decision_markers_enabled not defined!")
         elif not isinstance(decision_markers_enabled, bool):
@@ -276,7 +276,7 @@ class CIDData:
         else:
             self._decision_markers_enabled = decision_markers_enabled
 
-    def set_condition_markers_enabled(self, condition_markers_enabled):
+    def _set_condition_markers_enabled(self, condition_markers_enabled):
         if condition_markers_enabled is None:
             raise ValueError("condition_markers_enabled not defined!")
         elif not isinstance(condition_markers_enabled, bool):
@@ -310,16 +310,16 @@ class CIDData:
 
     # SECTION   CIDData property definitions
     source_code_filename = property(
-        get_source_code_filename, set_source_code_filename)
+        _get_source_code_filename, _set_source_code_filename)
     source_code_hash = property(
-        get_source_code_hash, set_source_code_hash)
+        _get_source_code_hash, _set_source_code_hash)
     instrumentation_random = property(
-        get_instrumentation_random, set_instrumentation_random)
+        _get_instrumentation_random, _set_instrumentation_random)
     statement_markers_enabled = property(
-        get_statement_markers_enabled, set_statement_markers_enabled)
+        _get_statement_markers_enabled, _set_statement_markers_enabled)
     decision_markers_enabled = property(
-        get_decision_markers_enabled, set_decision_markers_enabled)
+        _get_decision_markers_enabled, _set_decision_markers_enabled)
     condition_markers_enabled = property(
-        get_condition_markers_enabled, set_condition_markers_enabled)
-    marker_data = property(get_marker_data)  # read-only
+        _get_condition_markers_enabled, _set_condition_markers_enabled)
+    marker_data = property(_get_marker_data)  # read-only
     # !SECTION

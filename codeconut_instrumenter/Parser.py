@@ -12,31 +12,29 @@
 """
 
 from .DataTypes import SourceCode
+from .StateMachine import StateMachine, State
 
 from .Configuration import Configuration
 from .CIDManager import CIDManager
-from .Sanitizer import Sanitizer
-from .StatementParser import StatementParser
-from .DecisionParser import DecisionParser
 
 
 class Parser:
     """Parser class.
        Coordinates all parsers for the source code.
     """
-
-    __slots__ = ['_config', '_cid_manager', '_sanitizer', '_input_code',
-                 '_sanitized_code', '_statement_parser', '_decision_parser']
+    # SECTION   Parser private attribute definitions
+    __slots__ = ['_config', '_cid_manager', '_input_code']
 
     _config: Configuration
     _cid_manager: CIDManager
-    _sanitizer: Sanitizer
     _input_code: SourceCode
-    _sanitizied_code: SourceCode
-    _statement_parser: StatementParser
-    _decision_parser: DecisionParser
+    # !SECTION
 
-    def __init__(self, config: Configuration, input_filename: str, input_code: SourceCode):
+    # SECTION   Parser getter functions
+
+    # !SECTION
+
+    def __init__(self, config: Configuration, cid_manager: CIDManager, input_code: SourceCode):
         """Initializes the new Parser"""
 
         # TODO implement variable initialization (and sanity checks)
@@ -45,23 +43,269 @@ class Parser:
     def start_parser(self):
         """Starts the parsing of the input source code"""
 
-        # TODO implement function
-        return
-
-    def _parser_stage_sanitize(self):
-        """Execute the sanitizer for the input source code"""
-
-        # TODO implement function
-        return
-
-    def _parser_stage_statements(self):
-        """Execute the statements parsing stage for the input source code"""
+        input_data = {
+            "code": "TEST",
+            "current_line": 0,
+            "current_column": 0
+        }
 
         # TODO implement function
+        state_machine = ParserStateMachine()
+        state_machine.init(self._cid_manager)
+        state_machine.run(input_data)
+
         return
 
-    def _parser_stage_decisions(self):
-        """Execute the decisions parsing stage for the input source code"""
 
-        # TODO implement function
-        return
+class ParserStateMachine(StateMachine):
+    """State machine for Parser"""
+    # SECTION   ParserStateMachine private attribute definitions
+    __slots__ = ['_cid_manager']
+
+    _cid_manager: CIDManager
+    # !SECTION
+
+    # SECTION   ParserStateMachine getter functions
+    def _get_cid_manager(self) -> CIDManager:
+        return self._cid_manager
+    # !SECTION
+
+    # SECTION   ParserStateMachine setter functions
+    def _set_cid_manager(self, cid_manager):
+        if cid_manager is None:
+            raise ValueError("cid_manager not defined!")
+        elif not issubclass(cid_manager, CIDManager):
+            raise TypeError("cid_manager shall be of type CIDManager!")
+        else:
+            self._cid_manager = cid_manager
+    # !SECTION
+
+    # SECTION   ParserStateMachine property definitions
+    cid_manager = property(_get_cid_manager, _set_cid_manager)
+    # !SECTION
+
+    def init(self, cid_manager):
+        self.cid_manager = cid_manager
+        self.active_state = ParserStateMachine.IdleState(
+            self, self.cid_manager)
+
+    def run(self, input_data):
+        self.active_state.run(input_data)
+        self.active_state.next(input_data)
+
+    class IdleState(State):
+        """Idle State for Parser"""
+        __slots__ = ['_cid_manager']
+
+        def __init__(self, parent, cid_manager):
+            State.__init__(self, parent)
+            self._cid_manager = cid_manager
+
+        def run(self, input):
+            """Run function for state"""
+            # TODO implement function
+            return
+
+        def next(self, input):
+            """Determine next state for state"""
+            # TODO implement function
+            return
+
+    class DQMStringState(State):
+        """Double quotation mark state for Parser"""
+        __slots__ = ['_cid_manager']
+
+        def __init__(self, parent, cid_manager, last_state):
+            State.__init__(self, parent, last_state, None)
+            self._cid_manager = cid_manager
+
+        def run(self, input, cid_manager):
+            """Run function for state"""
+            # TODO implement function
+            return
+
+        def next(self, parent, input):
+            """Determine next state for state"""
+            # TODO implement function
+            return
+
+    class DQMStringNormalState(State):
+        """Double quotation mark normal state for Parser"""
+        ___slots__ = ['_cid_manager']
+
+        def __init__(self, parent, cid_manager):
+            State.__init__(self, parent)
+            self._cid_manager = cid_manager
+
+        def run(self, input, cid_manager):
+            """Run function for state"""
+            # TODO implement function
+            return
+
+        def next(self, parent, input):
+            """Determine next state for state"""
+            # TODO implement function
+            return
+
+    class DQMStringEscapeState(State):
+        """Double quotation mark escape state for Parser"""
+        __slots__ = ['_cid_manager']
+
+        def __init__(self, parent, cid_manager):
+            State.__init__(self, parent)
+            self._cid_manager = cid_manager
+
+        def run(self, input, cid_manager):
+            """Run function for state"""
+            # TODO implement function
+            return
+
+        def next(self, parent, input):
+            """Determine next state for state"""
+            # TODO implement function
+            return
+
+    class SQMStringState(State):
+        """Single quotation mark state for Parser"""
+        __slots__ = ['_cid_manager']
+
+        def __init__(self, parent, cid_manager, last_state):
+            State.__init__(self, parent, last_state, None)
+            self._cid_manager = cid_manager
+
+        def run(self, input, cid_manager):
+            """Run function for state"""
+            # TODO implement function
+            return
+
+        def next(self, parent, input):
+            """Determine next state for state"""
+            # TODO implement function
+            return
+
+    class SQMStringNormalState(State):
+        """Single quotation mark normal state for Parser"""
+        __slots__ = ['_cid_manager']
+
+        def __init__(self, parent, cid_manager):
+            State.__init__(self, parent)
+            self._cid_manager = cid_manager
+
+        def run(self, input, cid_manager):
+            """Run function for state"""
+            # TODO implement function
+            return
+
+        def next(self, parent, input):
+            """Determine next state for state"""
+            # TODO implement function
+            return
+
+    class SQMStringEscapeState(State):
+        """Single quotation mark escape state for Parser"""
+        __slots__ = ['_cid_manager']
+
+        def __init__(self, parent, cid_manager):
+            State.__init__(self, parent)
+            self._cid_manager = cid_manager
+
+        def run(self, input, cid_manager):
+            """Run function for state"""
+            # TODO implement function
+            return
+
+        def next(self, parent, input):
+            """Determine next state for state"""
+            # TODO implement function
+            return
+
+    class SLCommentState(State):
+        """Single line comment state for Parser"""
+        __slots__ = ['_cid_manager']
+
+        def __init__(self, parent, cid_manager, last_state):
+            State.__init__(self, parent, last_state)
+            self._cid_manager = cid_manager
+
+        def run(self, input, cid_manager):
+            """Run function for state"""
+            # TODO implement function
+            return
+
+        def next(self, parent, input):
+            """Determine next state for state"""
+            # TODO implement function
+            return
+
+    class MLCommentState(State):
+        """Multi line comment state for Parser"""
+        __slots__ = ['_cid_manager']
+
+        def __init__(self, parent, cid_manager, last_state):
+            State.__init__(self, parent, last_state)
+            self._cid_manager = cid_manager
+
+        def run(self, input, cid_manager):
+            """Run function for state"""
+            # TODO implement function
+            return
+
+        def next(self, parent, input):
+            """Determine next state for state"""
+            # TODO implement function
+            return
+
+    class ClassState(State):
+        """Class State (inside a class) for Parser"""
+        __slots__ = ['_cid_manager']
+
+        def __init__(self, parent, cid_manager):
+            State.__init__(self, parent)
+            self._cid_manager = cid_manager
+
+        def run(self, input, cid_manager):
+            """Run function for state"""
+            # TODO implement function
+            return
+
+        def next(self, parent, input):
+            """Determine next state for state"""
+            # TODO implement function
+            return
+
+    class FunctionState(State):
+        """Function State (inside a function) for Parser"""
+        __slots__ = ['_cid_manager']
+
+        def __init__(self, parent, cid_manager):
+            State.__init__(
+                self, parent, FunctionIdleState(self, cid_manager))
+            self._cid_manager = cid_manager
+
+        def run(self, input, cid_manager):
+            """Run function for state"""
+            # TODO implement function
+            return
+
+        def next(self, parent, input):
+            """Determine next state for state"""
+            # TODO implement function
+            return
+
+    class FunctionIdleState(State):
+        """Idle State (inside a class) for Parser"""
+        __slots__ = ['_cid_manager']
+
+        def __init__(self, parent, cid_manager):
+            State.__init__(self, parent)
+            self._cid_manager = cid_manager
+
+        def run(self, input, cid_manager):
+            """Run function for state"""
+            # TODO implement function
+            return
+
+        def next(self, parent, input):
+            """Determine next state for state"""
+            # TODO implement function
+            return

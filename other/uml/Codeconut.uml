@@ -196,6 +196,8 @@
             </subvertex>
           </region>
         </subvertex>
+        <subvertex xmi:type="uml:State" xmi:id="_fIxW0K7kEeqVCLx0lILd4Q" name="SLCommentState"/>
+        <subvertex xmi:type="uml:State" xmi:id="_g7QoIK7kEeqVCLx0lILd4Q" name="MLCommentState"/>
       </region>
     </ownedBehavior>
     <packagedElement xmi:type="uml:Class" xmi:id="_wu1icFesEeq6X6574UvjaA" name="Parser" visibility="public">

@@ -31,6 +31,15 @@ class Parser:
     _input_code: SourceCode
     # !SECTION
 
+    # SECTION   Parser initialization
+    def __init__(self, config: Configuration, cid_manager: CIDManager, input_code: SourceCode):
+        """Initializes the new Parser"""
+        self.config = config
+        self.cid_manager = cid_manager
+        self.input_code = input_code
+        return
+    # !SECTION
+
     # SECTION   Parser getter functions
     def _get_config(self) -> Configuration:
         return self._config
@@ -74,13 +83,7 @@ class Parser:
     input_code = property(_get_input_code, _set_input_code)
     # !SECTION
 
-    def __init__(self, config: Configuration, cid_manager: CIDManager, input_code: SourceCode):
-        """Initializes the new Parser"""
-        self.config = config
-        self.cid_manager = cid_manager
-        self.input_code = input_code
-        return
-
+    # SECTION   Parser public function definitions
     def start_parser(self):
         """Starts the parsing of the input source code"""
 
@@ -96,3 +99,4 @@ class Parser:
         state_machine.run(input_data)
 
         return
+    # !SECTION

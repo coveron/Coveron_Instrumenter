@@ -185,8 +185,12 @@ class ClassState(State):
     """Class State (inside a class) for Parser"""
     state_machine: 'ParserStateMachine'
 
+    __slots__ = ["code_block_depth"]
+    code_block_depth: int
+
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
+        self.code_block_depth = 0
 
     def run(self, input):
         """Run function for state"""
@@ -197,6 +201,9 @@ class ClassState(State):
     def next(self, input):
         """Determine next state for state"""
         # TODO implement function
+        # NOTE If code_block_depth get smaller than 0, we're out of the code block.
+        #      Verify, that we're in IdleState, otherwise invoke a error
+        #      (Code Blocks not correct).
         return
 
 
@@ -204,8 +211,12 @@ class FunctionState(State):
     """Function State (inside a function) for Parser"""
     state_machine: 'ParserStateMachine'
 
+    __slots__ = ["code_block_depth"]
+    code_block_depth: int
+
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
+        self.code_block_depth = 0
 
     def run(self, input):
         """Run function for state"""
@@ -216,6 +227,9 @@ class FunctionState(State):
     def next(self, input):
         """Determine next state for state"""
         # TODO implement function
+        # NOTE If code_block_depth get smaller than 0, we're out of the code block.
+        #      Verify, that we're in FunctionIdleState, otherwise invoke a error
+        #      (Code Blocks not correct).
         return
 
 
@@ -297,6 +311,9 @@ class WhileLoopInsideState(State):
     """While Loop Decision State for Parser"""
     state_machine: 'ParserStateMachine'
 
+    __slots__ = ["code_block_depth"]
+    code_block_depth: int
+
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
@@ -309,6 +326,9 @@ class WhileLoopInsideState(State):
     def next(self, input):
         """Determine next state for state"""
         # TODO implement function
+        # NOTE If code_block_depth get smaller than 0, we're out of the code block.
+        #      Verify, that we're in FunctionIdleState, otherwise invoke a error
+        #      (Code Blocks not correct).
         return
 
 
@@ -372,6 +392,9 @@ class ForLoopInsideState(State):
     """For Loop Inside State for Parser"""
     state_machine: 'ParserStateMachine'
 
+    __slots__ = ["code_block_depth"]
+    code_block_depth: int
+
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
@@ -410,6 +433,9 @@ class DoWhileLoopInsideState(State):
     """Do While Loop Inside State for Parser"""
     state_machine: 'ParserStateMachine'
 
+    __slots__ = ["code_block_depth"]
+    code_block_depth: int
+
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
@@ -421,6 +447,9 @@ class DoWhileLoopInsideState(State):
     def next(self, input):
         """Determine next state for state"""
         # TODO implement function
+        # NOTE If code_block_depth get smaller than 0, we're out of the code block.
+        #      Verify, that we're in FunctionIdleState, otherwise invoke a error
+        #      (Code Blocks not correct).
         return
 
 
@@ -502,6 +531,9 @@ class SwitchBranchInsideState(State):
     """Switch Branch Inside State for Parser"""
     state_machine: 'ParserStateMachine'
 
+    __slots__ = ["code_block_depth"]
+    code_block_depth: int
+
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
@@ -514,6 +546,9 @@ class SwitchBranchInsideState(State):
     def next(self, input):
         """Determine next state for state"""
         # TODO implement function
+        # NOTE If code_block_depth get smaller than 0, we're out of the code block.
+        #      Verify, that we're in FunctionIdleState, otherwise invoke a error
+        #      (Code Blocks not correct).
         return
 
 
@@ -577,6 +612,9 @@ class IfBranchInsideState(State):
     """If Branch Inside State for Parser"""
     state_machine: 'ParserStateMachine'
 
+    __slots__ = ["code_block_depth"]
+    code_block_depth: int
+
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
@@ -589,6 +627,9 @@ class IfBranchInsideState(State):
     def next(self, input):
         """Determine next state for state"""
         # TODO implement function
+        # NOTE If code_block_depth get smaller than 0, we're out of the code block.
+        #      Verify, that we're in FunctionIdleState, otherwise invoke a error
+        #      (Code Blocks not correct).
         return
 
 
@@ -596,6 +637,9 @@ class ElseBranchState(State):
     """Else Branch State for Parser"""
     state_machine: 'ParserStateMachine'
 
+    __slots__ = ["code_block_depth"]
+    code_block_depth: int
+
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
@@ -608,6 +652,9 @@ class ElseBranchState(State):
     def next(self, input):
         """Determine next state for state"""
         # TODO implement function
+        # NOTE If code_block_depth get smaller than 0, we're out of the code block.
+        #      Verify, that we're in FunctionIdleState, otherwise invoke a error
+        #      (Code Blocks not correct).
         return
 # !SECTION
 

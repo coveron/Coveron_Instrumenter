@@ -3534,6 +3534,32 @@
               <element xmi:type="uml:State" href="Codeconut.uml#_-0h4kK7REeqVCLx0lILd4Q"/>
               <layoutConstraint xmi:type="notation:Bounds" xmi:id="_-1AZsa7REeqVCLx0lILd4Q" x="459" y="279" width="881" height="881"/>
             </children>
+            <children xmi:type="notation:Shape" xmi:id="_fJ2U4K7kEeqVCLx0lILd4Q" type="State_Shape">
+              <children xmi:type="notation:DecorationNode" xmi:id="_fJ2U4q7kEeqVCLx0lILd4Q" type="State_NameLabel">
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_iP0nUK7kEeqVCLx0lILd4Q" width="160"/>
+              </children>
+              <children xmi:type="notation:DecorationNode" xmi:id="_fJ2U467kEeqVCLx0lILd4Q" type="State_FloatingNameLabel">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_fJ278K7kEeqVCLx0lILd4Q" x="40"/>
+              </children>
+              <children xmi:type="notation:BasicCompartment" xmi:id="_fJ278a7kEeqVCLx0lILd4Q" type="State_RegionCompartment">
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_fJ278q7kEeqVCLx0lILd4Q" y="-1" width="160"/>
+              </children>
+              <element xmi:type="uml:State" href="Codeconut.uml#_fIxW0K7kEeqVCLx0lILd4Q"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_fJ2U4a7kEeqVCLx0lILd4Q" x="19" y="539" width="160" height="61"/>
+            </children>
+            <children xmi:type="notation:Shape" xmi:id="_g8YpgK7kEeqVCLx0lILd4Q" type="State_Shape">
+              <children xmi:type="notation:DecorationNode" xmi:id="_g8ZQkK7kEeqVCLx0lILd4Q" type="State_NameLabel">
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_kMSUAK7kEeqVCLx0lILd4Q" width="160"/>
+              </children>
+              <children xmi:type="notation:DecorationNode" xmi:id="_g8ZQka7kEeqVCLx0lILd4Q" type="State_FloatingNameLabel">
+                <layoutConstraint xmi:type="notation:Location" xmi:id="_g8ZQkq7kEeqVCLx0lILd4Q" x="40"/>
+              </children>
+              <children xmi:type="notation:BasicCompartment" xmi:id="_g8ZQk67kEeqVCLx0lILd4Q" type="State_RegionCompartment">
+                <layoutConstraint xmi:type="notation:Bounds" xmi:id="_g8ZQlK7kEeqVCLx0lILd4Q" y="-1" width="160"/>
+              </children>
+              <element xmi:type="uml:State" href="Codeconut.uml#_g7QoIK7kEeqVCLx0lILd4Q"/>
+              <layoutConstraint xmi:type="notation:Bounds" xmi:id="_g8Ypga7kEeqVCLx0lILd4Q" x="239" y="539" width="160" height="61"/>
+            </children>
             <layoutConstraint xmi:type="notation:Bounds" xmi:id="_UVutCa7OEeqVCLx0lILd4Q"/>
           </children>
           <element xmi:type="uml:Region" href="Codeconut.uml#_UVrpsK7OEeqVCLx0lILd4Q"/>

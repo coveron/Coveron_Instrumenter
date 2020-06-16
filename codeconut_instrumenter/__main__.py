@@ -18,7 +18,11 @@ from .Parser import Parser
 
 
 def main():
+    # load configuration
     config = Configuration()
+
+    # load inputfile
+
     cid_manager = CIDManager(config, 'test_filename.c', 'test_code')
 
     parser = Parser(config, cid_manager, "")

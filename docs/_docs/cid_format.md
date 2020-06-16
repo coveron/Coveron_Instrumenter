@@ -52,6 +52,425 @@ To define and validate the JSON object of the CID-File, the following JSON schem
 ```json
 {
     "$schema": "http://json-schema.org/draft/2019-09/schema",
+    "title": "Codeconut Instrumentation Data"
+    "required": ["source_code_filename", "source_code_hash", "instrumentation_random", "statement_markers_enabled", "decision_markers_enabled", "condition_markers_enabled", "marker_data", "code_data"],
+    "properties": {
+        "source_code_filename": {
+            "type": "string",
+            "description": "Filename and relative path to the source code file (path is relative to the execution path of the instrumenter)",
+            "pattern": "^[\\\/]*([A-z0-9-_+.]+\\\/)*([A-z0-9]+\\.([a-zA-Z+]+))$"
+        },
+        "source_code_hash": {
+            "type": "string",
+            "description": "SHA-256 hash of the data inside the source code file",
+            "pattern": "^[0-9a-fA-F]{64}$"
+        },
+        "instrumentation_random": {
+            "type": "string",
+            "description": "Random 8 char string generated during instrumentation time (link to CRI file)",
+            "pattern": "^[0-9a-fA-F]{8}$"
+        },
+        "checkpoint_markers_enabled": {
+            "type": "boolean",
+            "description": "Defines, if the instrumentation includes checkpoint markers"
+        },
+        "evaluation_markers_enabled": {
+            "type": "boolean",
+            "description": "Defines, if the instrumentation includes evaluation markers"
+        },
+        "marker_data": {
+            "type": "object",
+            "description": "Marker definitions",
+            "required": ["checkpoint_markers", "evaluation_markers"],
+            "properties": {
+                "checkpoint_markers": {
+                    "type": "array",
+                    "description": "List of all Checkpoint marker IDs used during the instrumentation process",
+                    "minItems": 0,
+                    "items": {
+                        "type": "integer",
+                        "description": "Checkpoint Marker ID",
+                        "minimum": 0
+                    }
+                },
+                "evaluation_markers": {
+                    "type": "array",
+                    "description": "List of all Evaluation marker IDs used during the instrumentation process",
+                    "minItems": 0,
+                    "items": {
+                        "type": "integer",
+                        "description": "Checkpoint Marker ID",
+                        "minimum": 0
+                    }
+                }
+            }
+        },
+        "code_data": {
+            "type": "object",
+            "description": "Code data dictionary",
+            "required": ["classes", "functions", "statements", "if_branches", "switch_branches", "for_loops", "while_loops", "do_while_loops"],
+            "properties": {
+                "classes": {
+                    "type": "array",
+                    "description": "List of all found classes",
+                    "minItems": 0,
+                    "items": {
+                        "type": "object",
+                        "description": "Class description object",
+                        "required": ["class_id", "class_name"],
+                        "properties": {
+                            "class_id": {
+                                "type": "integer",
+                                "description": "Unique ID for the specific class"
+                            },
+                            "class_name": {
+                                "type": "string",
+                                "description": "Name of the class"
+                            }
+                        }
+                    }
+                },
+                "functions": {
+                    "type": "array",
+                    "description": "List of all found functions",
+                    "minItems": 0,
+                    "items": {
+                        "type": "object",
+                        "description": "Function description object",
+                        "required": ["function_id", "function_name", "checkpoint_marker_id", "header_code_section", "inner_code_section"],
+                        "properties": {
+                            "function_id": {
+                                "type": "integer",
+                                "description": "Unique ID for the specific function"
+                            },
+                            "function_name": {
+                                "type": "string",
+                                "description": "Name of the function"
+                            },
+                            "checkpoint_marker_id": {
+                                "type": "integer",
+                                "description": "ID of the correlating checkpoint marker"
+                            },
+                            "header_code_section": {
+                                "type": "object",
+                                "description": "Code section of the function header",
+                                "required": ["start_line", "start_column", "end_line", "end_column"],
+                                "properties": {
+                                    "start_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "start_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    }
+                                }
+                            },
+                            "inner_code_section": {
+                                "type": "object",
+                                "description": "Code section of the function body",
+                                "required": ["start_line", "start_column", "end_line", "end_column"],
+                                "properties": {
+                                    "start_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "start_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "statements": {
+                    "type": "array",
+                    "description": "List of all found statements",
+                    "minItems": 0,
+                    "items": {
+                        "type": "object",
+                        "description": "Statement description object",
+                        "required": ["statement_id", "statement_type", "function_id", "checkpoint_marker_id", "code_section"],
+                        "properties": {
+                            "statement_id": {
+                                "type": "integer",
+                                "description": "ID of the specific statement",
+                            },
+                            "statement_type": {
+                                "type": "integer",
+                                "description": "Type of the statement (see rest of docs)",
+                                "enum": [1, 2, 3, 4, 5]
+                            },
+                            "function_id": {
+                                "type": "integer",
+                                "description": "ID of the parent function"
+                            },
+                            "checkpoint_marker_id": {
+                                "type": "integer",
+                                "description": "ID of the correlating checkpoint marker"
+                            },
+                            "code_section": {
+                                "type": "object",
+                                "description": "Code section of the function body",
+                                "required": ["start_line", "start_column", "end_line", "end_column"],
+                                "properties": {
+                                    "start_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "start_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "if_branches": {
+                    "type": "array",
+                    "description": "List of if-type branches",
+                    "minItems": 0,
+                    "items": {
+                        "type": "object",
+                        "description": "If branch description object",
+                        "required": ["if_branch_id", "function_id", "branch_results"],
+                        "properties": {
+                            "if_branch_id": {
+                                "type": "integer",
+                                "description": "Unique id for the branch"
+                            },
+                            "function_id": {
+                                "type": "integer",
+                                "description": "ID of the parent function"
+                            },
+                            "branch_results": {
+                                "type": "array",
+                                "description": "List of all branches of the if-branch",
+                                "minItems": 1,
+                                "items": {
+                                    "type": "object",
+                                    "description": "If branch result description",
+                                    "required": ["evaluation_marker_id", "conditions", "result_evaluation_code_section", "result_body_code_section"],
+                                    "properties": {
+                                        "evaluation_marker_id": {
+                                            "type": "integer",
+                                            "description": "ID of the evaluation marker for the decision"
+                                        },
+                                        "conditions": {
+                                            "type": "array",
+                                            "description": "Array of contained conditions",
+                                            "minItems": 0,
+                                            "items": {
+                                                "type": "object",
+                                                "description": "Condition description",
+                                                "required": ["evaluation_marker_id", "code_section"],
+                                                "properties": {
+                                                    "evaluation_marker_id": {
+                                                        "type": "integer",
+                                                        "description": "ID of the evaluation marker for the condition"
+                                                    },
+                                                    "code_section": {
+                                                        "type": "object",
+                                                        "description": "Code section of the function body",
+                                                        "required": ["start_line", "start_column", "end_line", "end_column"],
+                                                        "properties": {
+                                                            "start_line": {
+                                                                "type": "integer",
+                                                                "description": "Line number (starting from 1) for the start of the code section",
+                                                                "minimum": 1
+                                                            },
+                                                            "start_column": {
+                                                                "type": "integer",
+                                                                "description": "Column number (starting from 1) for the start of the code section",
+                                                                "minimum": 1
+                                                            },
+                                                            "end_line": {
+                                                                "type": "integer",
+                                                                "description": "Line number (starting from 1) for the end of the code section",
+                                                                "minimum": 1
+                                                            },
+                                                            "end_column": {
+                                                                "type": "integer",
+                                                                "description": "Column number (starting from 1) for the end of the code section",
+                                                                "minimum": 1
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "result_evaluation_code_section": {
+                                            "type": "object",
+                                            "description": "Code section of the result evaluation",
+                                            "required": ["start_line", "start_column", "end_line", "end_column"],
+                                            "properties": {
+                                                "start_line": {
+                                                    "type": "integer",
+                                                    "description": "Line number (starting from 1) for the start of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "start_column": {
+                                                    "type": "integer",
+                                                    "description": "Column number (starting from 1) for the start of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "end_line": {
+                                                    "type": "integer",
+                                                    "description": "Line number (starting from 1) for the end of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "end_column": {
+                                                    "type": "integer",
+                                                    "description": "Column number (starting from 1) for the end of the code section",
+                                                    "minimum": 1
+                                                }
+                                            }
+                                        },
+                                        "result_body_code_section": {
+                                            "type": "object",
+                                            "description": "Code section of the result body",
+                                            "required": ["start_line", "start_column", "end_line", "end_column"],
+                                            "properties": {
+                                                "start_line": {
+                                                    "type": "integer",
+                                                    "description": "Line number (starting from 1) for the start of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "start_column": {
+                                                    "type": "integer",
+                                                    "description": "Column number (starting from 1) for the start of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "end_line": {
+                                                    "type": "integer",
+                                                    "description": "Line number (starting from 1) for the end of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "end_column": {
+                                                    "type": "integer",
+                                                    "description": "Column number (starting from 1) for the end of the code section",
+                                                    "minimum": 1
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "switch_branches": {
+                    "type": "array",
+                    "description": "List of switch-type branches",
+                    "minItems": 0,
+                    "items": {
+                        "type": "object",
+                        "description": "Switch branch description",
+                        "required": ["switch_branch_id", "expression_code_section", "cases"],
+                        "properties": {
+                            "switch_branch_id": {
+                                "type": "integer",
+                                "description": "Unique ID for the switch branch",
+                            },
+                            "expression_code_section": {
+                                "type": "object",
+                                "description": "Code section of the switch expression",
+                                "required": ["start_line", "start_column", "end_line", "end_column"],
+                                "properties": {
+                                    "start_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "start_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    }
+                                }
+                            },
+                            "cases": {
+                                "type": "array",
+                                "description": "List of possible switch cases",
+                                "minItems": 0,
+                                "items": {
+                                    "type": "object",
+                                    "description": "Switch case description",
+                                    "required": ["execution_marker_id", "case_type", "evaluation_code_section", "body_code_section"],
+                                    "properties": {
+                                        
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "for_loops": {
+
+                },
+                "while_loops": {
+
+                },
+                "do_while_loops": {
+
+                }
+            }
+        }
+    }
+}
+```
+
+```json
+{
+    "$schema": "http://json-schema.org/draft/2019-09/schema",
     "title": "Codeconut Instrumentation Data",
     "type": "object",
     "required": ["source_code_filename", "source_code_hash", "instrumentation_random", "statement_markers_enabled", "decision_markers_enabled", "condition_markers_enabled", "marker_data"],
@@ -139,276 +558,6 @@ To define and validate the JSON object of the CID-File, the following JSON schem
                     }
                 }
             }
-        },
-        "markup_data": {
-            "type": "array",
-            "description": "Array of markup definitions (including links to relevant marker-ids)",
-            "minItems": 0,
-            "items": {
-                "type": "object",
-                "required": ["markup_id", "markup_type"],
-                "properties": {
-                    "markup_id": {
-                        "type": "integer",
-                        "description": "Unique id for the specific marker",
-                        "minimum": 0
-                    },
-                    "markup_type": {
-                        "type": "integer",
-                        "description": "Type of marker",
-                        "enum": [1, 2, 3, 4, 5, 6]
-                    },
-                    "function_markup": {
-                        "type": "object",
-                        "required": ["function_header_code_section", "marker_id"],
-                        "properties": {
-                            "function_header_code_section": {
-                                "type": "object",
-                                "required": ["start_line", "start_column", "end_line", "end_column"],
-                                "properties": {
-                                    "start_line": {
-                                        "type": "integer",
-                                        "description": "Line number (starting from 1) for the start of the code section",
-                                        "minimum": 1
-                                    },
-                                    "start_column": {
-                                        "type": "integer",
-                                        "description": "Column number (starting from 1) for the start of the code section",
-                                        "minimum": 1
-                                    },
-                                    "end_line": {
-                                        "type": "integer",
-                                        "description": "Line number (starting from 1) for the end of the code section",
-                                        "minimum": 1
-                                    },
-                                    "end_column": {
-                                        "type": "integer",
-                                        "description": "Column number (starting from 1) for the end of the code section",
-                                        "minimum": 1
-                                    }
-                                }
-                            },
-                            "marker_id": {
-                                "type": "integer",
-                                "description": "id for the related marker",
-                                "minimum": 0
-                            }
-                        }
-                    },
-                    "code_block_markup": {
-                        "type": "object",
-                        "required": ["code_block_section", "marker_id"],
-                        "properties": {
-                            "code_block_section": {
-                                "type": "object",
-                                "required": ["start_line", "start_column", "end_line", "end_column"],
-                                "properties": {
-                                    "start_line": {
-                                        "type": "integer",
-                                        "description": "Line number (starting from 1) for the start of the code section",
-                                        "minimum": 1
-                                    },
-                                    "start_column": {
-                                        "type": "integer",
-                                        "description": "Column number (starting from 1) for the start of the code section",
-                                        "minimum": 1
-                                    },
-                                    "end_line": {
-                                        "type": "integer",
-                                        "description": "Line number (starting from 1) for the end of the code section",
-                                        "minimum": 1
-                                    },
-                                    "end_column": {
-                                        "type": "integer",
-                                        "description": "Column number (starting from 1) for the end of the code section",
-                                        "minimum": 1
-                                    }
-                                }
-                            },
-                            "marker_id": {
-                                "type": "integer",
-                                "description": "id for the related marker",
-                                "minimum": 0
-                            }
-                        }
-                    },
-                    "if_branch_markup": {
-                        "type": "object",
-                        "description": "Markup info for if-branch",
-                        "required": ["branch_code_section", "branches"],
-                        "properties": {
-                            "branch_code_section": {
-                                "type": "object",
-                                "required": ["start_line", "start_column", "end_line", "end_column"],
-                                "properties": {
-                                    "start_line": {
-                                        "type": "integer",
-                                        "description": "Line number (starting from 1) for the start of the code section",
-                                        "minimum": 1
-                                    },
-                                    "start_column": {
-                                        "type": "integer",
-                                        "description": "Column number (starting from 1) for the start of the code section",
-                                        "minimum": 1
-                                    },
-                                    "end_line": {
-                                        "type": "integer",
-                                        "description": "Line number (starting from 1) for the end of the code section",
-                                        "minimum": 1
-                                    },
-                                    "end_column": {
-                                        "type": "integer",
-                                        "description": "Column number (starting from 1) for the end of the code section",
-                                        "minimum": 1
-                                    }
-                                }
-                            },
-                            "branches": {
-                                "type": "array",
-                                "description": "Array of if-branch markups",
-                                "minItems": 1,
-                                "items": {
-                                    "type": "object",
-                                    "required": ["if_type", "header_code_section", "code_block_section", "marker_id"],
-                                    "properties": {
-                                        "if_type": {
-                                            "type": "integer",
-                                            "description": "Type of branch (1=if, 2=else if, 3=else)",
-                                            "enum": [1, 2, 3]
-                                        },
-                                        "header_code_section": {
-                                            "type": "object",
-                                            "required": ["start_line", "start_column", "end_line", "end_column"],
-                                            "properties": {
-                                                "start_line": {
-                                                    "type": "integer",
-                                                    "description": "Line number (starting from 1) for the start of the code section",
-                                                    "minimum": 1
-                                                },
-                                                "start_column": {
-                                                    "type": "integer",
-                                                    "description": "Column number (starting from 1) for the start of the code section",
-                                                    "minimum": 1
-                                                },
-                                                "end_line": {
-                                                    "type": "integer",
-                                                    "description": "Line number (starting from 1) for the end of the code section",
-                                                    "minimum": 1
-                                                },
-                                                "end_column": {
-                                                    "type": "integer",
-                                                    "description": "Column number (starting from 1) for the end of the code section",
-                                                    "minimum": 1
-                                                }
-                                            }
-                                        },
-                                        "core_decision_code_section": {
-                                            "type": "object",
-                                            "required": ["start_line", "start_column", "end_line", "end_column"],
-                                            "properties": {
-                                                "start_line": {
-                                                    "type": "integer",
-                                                    "description": "Line number (starting from 1) for the start of the code section",
-                                                    "minimum": 1
-                                                },
-                                                "start_column": {
-                                                    "type": "integer",
-                                                    "description": "Column number (starting from 1) for the start of the code section",
-                                                    "minimum": 1
-                                                },
-                                                "end_line": {
-                                                    "type": "integer",
-                                                    "description": "Line number (starting from 1) for the end of the code section",
-                                                    "minimum": 1
-                                                },
-                                                "end_column": {
-                                                    "type": "integer",
-                                                    "description": "Column number (starting from 1) for the end of the code section",
-                                                    "minimum": 1
-                                                }
-                                            }
-                                        },
-                                        "code_block_section": {
-                                            "type": "object",
-                                            "required": ["start_line", "start_column", "end_line", "end_column"],
-                                            "properties": {
-                                                "start_line": {
-                                                    "type": "integer",
-                                                    "description": "Line number (starting from 1) for the start of the code section",
-                                                    "minimum": 1
-                                                },
-                                                "start_column": {
-                                                    "type": "integer",
-                                                    "description": "Column number (starting from 1) for the start of the code section",
-                                                    "minimum": 1
-                                                },
-                                                "end_line": {
-                                                    "type": "integer",
-                                                    "description": "Line number (starting from 1) for the end of the code section",
-                                                    "minimum": 1
-                                                },
-                                                "end_column": {
-                                                    "type": "integer",
-                                                    "description": "Column number (starting from 1) for the end of the code section",
-                                                    "minimum": 1
-                                                }
-                                            }
-                                        },
-                                        "marker_id": {
-                                            "type": "integer",
-                                            "description": "id for the related marker",
-                                            "minimum": 0
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "switch_branch_markup": {
-                        "type": "object",
-                        "description": "Markup for switch type branch",
-                        "required": ["branch_code_section", "head_expression", "branches"],
-                        "properties": {
-                            "branch_code_section": {
-                                "type": "object",
-                                "required": ["start_line", "start_column", "end_line", "end_column"],
-                                "properties": {
-                                    "start_line": {
-                                        "type": "integer",
-                                        "description": "Line number (starting from 1) for the start of the code section",
-                                        "minimum": 1
-                                    },
-                                    "start_column": {
-                                        "type": "integer",
-                                        "description": "Column number (starting from 1) for the start of the code section",
-                                        "minimum": 1
-                                    },
-                                    "end_line": {
-                                        "type": "integer",
-                                        "description": "Line number (starting from 1) for the end of the code section",
-                                        "minimum": 1
-                                    },
-                                    "end_column": {
-                                        "type": "integer",
-                                        "description": "Column number (starting from 1) for the end of the code section",
-                                        "minimum": 1
-                                    }
-                                }
-                            },
-                            ""
-                        }
-                    },
-                    "for_loop_markup": {
-
-                    },
-                    "while_loop_markup": {
-
-                    },
-                    "do_while_loop_markup": {
-
-                    }
-                }
-            }
         }
     }
 }
@@ -471,3 +620,4 @@ The enum for the marker type can have the following values:
 1. STATEMENT
 2. DECISION
 3. CONDITION
+4. CASE-DECISION

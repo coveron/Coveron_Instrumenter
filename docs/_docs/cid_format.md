@@ -139,6 +139,276 @@ To define and validate the JSON object of the CID-File, the following JSON schem
                     }
                 }
             }
+        },
+        "markup_data": {
+            "type": "array",
+            "description": "Array of markup definitions (including links to relevant marker-ids)",
+            "minItems": 0,
+            "items": {
+                "type": "object",
+                "required": ["markup_id", "markup_type"],
+                "properties": {
+                    "markup_id": {
+                        "type": "integer",
+                        "description": "Unique id for the specific marker",
+                        "minimum": 0
+                    },
+                    "markup_type": {
+                        "type": "integer",
+                        "description": "Type of marker",
+                        "enum": [1, 2, 3, 4, 5, 6]
+                    },
+                    "function_markup": {
+                        "type": "object",
+                        "required": ["function_header_code_section", "marker_id"],
+                        "properties": {
+                            "function_header_code_section": {
+                                "type": "object",
+                                "required": ["start_line", "start_column", "end_line", "end_column"],
+                                "properties": {
+                                    "start_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "start_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    }
+                                }
+                            },
+                            "marker_id": {
+                                "type": "integer",
+                                "description": "id for the related marker",
+                                "minimum": 0
+                            }
+                        }
+                    },
+                    "code_block_markup": {
+                        "type": "object",
+                        "required": ["code_block_section", "marker_id"],
+                        "properties": {
+                            "code_block_section": {
+                                "type": "object",
+                                "required": ["start_line", "start_column", "end_line", "end_column"],
+                                "properties": {
+                                    "start_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "start_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    }
+                                }
+                            },
+                            "marker_id": {
+                                "type": "integer",
+                                "description": "id for the related marker",
+                                "minimum": 0
+                            }
+                        }
+                    },
+                    "if_branch_markup": {
+                        "type": "object",
+                        "description": "Markup info for if-branch",
+                        "required": ["branch_code_section", "branches"],
+                        "properties": {
+                            "branch_code_section": {
+                                "type": "object",
+                                "required": ["start_line", "start_column", "end_line", "end_column"],
+                                "properties": {
+                                    "start_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "start_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    }
+                                }
+                            },
+                            "branches": {
+                                "type": "array",
+                                "description": "Array of if-branch markups",
+                                "minItems": 1,
+                                "items": {
+                                    "type": "object",
+                                    "required": ["if_type", "header_code_section", "code_block_section", "marker_id"],
+                                    "properties": {
+                                        "if_type": {
+                                            "type": "integer",
+                                            "description": "Type of branch (1=if, 2=else if, 3=else)",
+                                            "enum": [1, 2, 3]
+                                        },
+                                        "header_code_section": {
+                                            "type": "object",
+                                            "required": ["start_line", "start_column", "end_line", "end_column"],
+                                            "properties": {
+                                                "start_line": {
+                                                    "type": "integer",
+                                                    "description": "Line number (starting from 1) for the start of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "start_column": {
+                                                    "type": "integer",
+                                                    "description": "Column number (starting from 1) for the start of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "end_line": {
+                                                    "type": "integer",
+                                                    "description": "Line number (starting from 1) for the end of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "end_column": {
+                                                    "type": "integer",
+                                                    "description": "Column number (starting from 1) for the end of the code section",
+                                                    "minimum": 1
+                                                }
+                                            }
+                                        },
+                                        "core_decision_code_section": {
+                                            "type": "object",
+                                            "required": ["start_line", "start_column", "end_line", "end_column"],
+                                            "properties": {
+                                                "start_line": {
+                                                    "type": "integer",
+                                                    "description": "Line number (starting from 1) for the start of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "start_column": {
+                                                    "type": "integer",
+                                                    "description": "Column number (starting from 1) for the start of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "end_line": {
+                                                    "type": "integer",
+                                                    "description": "Line number (starting from 1) for the end of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "end_column": {
+                                                    "type": "integer",
+                                                    "description": "Column number (starting from 1) for the end of the code section",
+                                                    "minimum": 1
+                                                }
+                                            }
+                                        },
+                                        "code_block_section": {
+                                            "type": "object",
+                                            "required": ["start_line", "start_column", "end_line", "end_column"],
+                                            "properties": {
+                                                "start_line": {
+                                                    "type": "integer",
+                                                    "description": "Line number (starting from 1) for the start of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "start_column": {
+                                                    "type": "integer",
+                                                    "description": "Column number (starting from 1) for the start of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "end_line": {
+                                                    "type": "integer",
+                                                    "description": "Line number (starting from 1) for the end of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "end_column": {
+                                                    "type": "integer",
+                                                    "description": "Column number (starting from 1) for the end of the code section",
+                                                    "minimum": 1
+                                                }
+                                            }
+                                        },
+                                        "marker_id": {
+                                            "type": "integer",
+                                            "description": "id for the related marker",
+                                            "minimum": 0
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "switch_branch_markup": {
+                        "type": "object",
+                        "description": "Markup for switch type branch",
+                        "required": ["branch_code_section", "head_expression", "branches"],
+                        "properties": {
+                            "branch_code_section": {
+                                "type": "object",
+                                "required": ["start_line", "start_column", "end_line", "end_column"],
+                                "properties": {
+                                    "start_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "start_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    }
+                                }
+                            },
+                            ""
+                        }
+                    },
+                    "for_loop_markup": {
+
+                    },
+                    "while_loop_markup": {
+
+                    },
+                    "do_while_loop_markup": {
+
+                    }
+                }
+            }
         }
     }
 }

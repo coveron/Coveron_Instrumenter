@@ -12,10 +12,10 @@
 """
 
 from typing import List
-from .DataTypes import SourceCode, MarkerData
+from DataTypes import SourceCode, MarkerData
 
-from .Configuration import Configuration
-from .CIDManager import CIDManager
+from Configuration import Configuration
+from CIDManager import CIDManager
 
 
 class Instrumenter:

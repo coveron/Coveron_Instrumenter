@@ -11,11 +11,11 @@
    Coordinates all the modules responsible for parsing the source code.
 """
 
-from .DataTypes import SourceCode
-from .StateMachine import StateMachine, State
+from DataTypes import SourceCode, SourceStream
+from StateMachine import StateMachine, State
 
-from .Configuration import Configuration
-from .CIDManager import CIDManager
+from Configuration import Configuration
+from CIDManager import CIDManager
 
 
 # SECTION   STATE LIST
@@ -23,15 +23,20 @@ class IdleState(State):
     """Idle State for Parser"""
     state_machine: 'ParserStateMachine'
 
-    def __init__(self, parent, state_machine):
+    last_expression: str = ""
+    last_char: str = ""
+
+    def __init__(self, parent, state_machine: 'ParserStateMachine'):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
+        currentChar = self.state_machine.currentChar
+        # print(self.state_machine.input_stream.get_char())
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -44,12 +49,12 @@ class DQMStringState(State):
     def __init__(self, parent, state_machine, last_state):
         State.__init__(self, parent, state_machine, last_state)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -62,12 +67,12 @@ class DQMStringNormalState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -80,12 +85,12 @@ class DQMStringEscapeState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -98,12 +103,12 @@ class SQMStringState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -116,12 +121,12 @@ class SQMStringNormalState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -134,12 +139,12 @@ class SQMStringEscapeState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -152,12 +157,12 @@ class SLCommentState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -170,12 +175,12 @@ class MLCommentState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -192,13 +197,13 @@ class ClassState(State):
         State.__init__(self, parent, state_machine)
         self.code_block_depth = 0
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         # NOTE This state also has a child state. The initial child state is "IdleState"
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         # NOTE If code_block_depth get smaller than 0, we're out of the code block.
@@ -218,13 +223,13 @@ class FunctionState(State):
         State.__init__(self, parent, state_machine)
         self.code_block_depth = 0
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         # NOTE This state also has a child state. The initial child state is "FunctionIdleState"
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         # NOTE If code_block_depth get smaller than 0, we're out of the code block.
@@ -240,12 +245,12 @@ class FunctionIdleState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -258,13 +263,13 @@ class WhileLoopState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         # NOTE This state also has a child state. The initial child state is "WhileLoopDecisionState"
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -277,13 +282,13 @@ class WhileLoopDecisionState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         # NOTE This state also has a child state. The initial child state is "WhileLoopConditionState"
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -296,12 +301,12 @@ class WhileLoopConditionState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -317,13 +322,13 @@ class WhileLoopInsideState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         # NOTE This state also has a child state. The initial child state is "FunctionState"
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         # NOTE If code_block_depth get smaller than 0, we're out of the code block.
@@ -339,13 +344,13 @@ class ForLoopState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         # NOTE This state also has a child state. The initial child state is "ForLoopDecisionState"
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -358,13 +363,13 @@ class ForLoopDecisionState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         # NOTE This state also has a child state. The initial child state is "ForLoopConditionState"
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -377,12 +382,12 @@ class ForLoopConditionState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -398,13 +403,13 @@ class ForLoopInsideState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         # NOTE This state also has a child state. The initial child state is "FunctionState"
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -417,13 +422,13 @@ class DoWhileLoopState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         # NOTE This state also has a child state. The initial child state is "DoWhileLoopInsideState"
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -439,12 +444,12 @@ class DoWhileLoopInsideState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         # NOTE If code_block_depth get smaller than 0, we're out of the code block.
@@ -460,13 +465,13 @@ class DoWhileLoopDecisionState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         # NOTE This state also has a child state. The initial child state is "DoWhileLoopConditionState"
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -479,12 +484,12 @@ class DoWhileLoopConditionState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -497,13 +502,13 @@ class SwitchBranchState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         # NOTE This state also has a child state. The initial child state is "SwitchBranchExpressionState"
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -516,12 +521,12 @@ class SwitchBranchExpressionState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -537,13 +542,13 @@ class SwitchBranchInsideState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         # NOTE This state also has a child state. The initial child state is "FunctionState"
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         # NOTE If code_block_depth get smaller than 0, we're out of the code block.
@@ -559,13 +564,13 @@ class IfBranchState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         # NOTE This state also has a child state. The initial child state is "IfBranchDecisionState"
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -578,13 +583,13 @@ class IfBranchDecisionState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         # NOTE This state also has a child state. The initial child state is "IfBranchConditionState"
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -597,12 +602,12 @@ class IfBranchConditionState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         return
@@ -618,13 +623,13 @@ class IfBranchInsideState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         # NOTE This state also has a child state. The initial child state is "FunctionState"
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         # NOTE If code_block_depth get smaller than 0, we're out of the code block.
@@ -643,13 +648,13 @@ class ElseBranchState(State):
     def __init__(self, parent, state_machine):
         State.__init__(self, parent, state_machine)
 
-    def run(self, input):
+    def run(self):
         """Run function for state"""
         # TODO implement function
         # NOTE This state also has a child state. The initial child state is "FunctionState"
         return
 
-    def next(self, input):
+    def next(self):
         """Determine next state for state"""
         # TODO implement function
         # NOTE If code_block_depth get smaller than 0, we're out of the code block.
@@ -663,37 +668,56 @@ class ElseBranchState(State):
 class ParserStateMachine(StateMachine):
     """State machine for Parser"""
     # SECTION   ParserStateMachine private attribute definitions
-    __slots__ = ['_cid_manager']
+    __slots__ = ['_cid_manager', '_input_stream']
 
     _cid_manager: CIDManager
+    _input_stream: SourceStream
     # !SECTION
 
     # SECTION   ParserStateMachine getter functions
     def _get_cid_manager(self) -> CIDManager:
         return self._cid_manager
+
+    def _get_input_stream(self) -> SourceStream:
+        return self._input_stream
     # !SECTION
 
     # SECTION   ParserStateMachine setter functions
-    def _set_cid_manager(self, cid_manager):
+    def _set_cid_manager(self, cid_manager: CIDManager):
         if cid_manager is None:
             raise ValueError("cid_manager not defined!")
         elif not isinstance(cid_manager, CIDManager):
             raise TypeError("cid_manager shall be of type CIDManager!")
         else:
             self._cid_manager = cid_manager
+
+    def _set_input_stream(self, input_stream: SourceStream):
+        if input_stream is None:
+            raise ValueError("input_stream not defined!")
+        elif not isinstance(input_stream, SourceStream):
+            raise TypeError("input_stream shall be of type SourceStream!")
+        elif input_stream.eof:
+            raise RuntimeError(
+                "passed input_stream already is at end of file!")
+        else:
+            self._input_stream = input_stream
     # !SECTION
 
     # SECTION   ParserStateMachine property definitions
-    cid_manager = property(_get_cid_manager, _set_cid_manager)
+    cid_manager: CIDManager = property(_get_cid_manager, _set_cid_manager)
+    input_stream: SourceStream = property(_get_input_stream, _set_input_stream)
     # !SECTION
 
     # SECTION   ParserStateMachine public function overrides
-    def init(self, cid_manager):
+    def init(self, cid_manager: CIDManager, input_stream: SourceStream):
+
         self.cid_manager = cid_manager
+        self.input_stream = input_stream
         self.active_state = IdleState(self, self)
 
-    def run(self, input_data):
-        self.active_state.run(input_data)
-        self.active_state.next(input_data)
+    def run(self):
+        self.currentChar = self.input_stream.get_char()
+        self.active_state.run()
+        self.active_state.next()
     # !SECTION
 # !SECTION

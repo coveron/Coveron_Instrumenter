@@ -12,9 +12,9 @@
 """
 
 from typing import List
-from .DataTypes import SourceCode, CodeSectionData, MarkerData, CIDData
+from DataTypes import SourceCode, CodeSectionData, MarkerData, CIDData
 
-from .Configuration import Configuration
+from Configuration import Configuration
 
 import hashlib
 import string
@@ -31,14 +31,14 @@ class CIDManager:
     _config: Configuration
     _cid_data: CIDData
 
-    def __init__(self, config: Configuration, input_filename: str, input_code: SourceCode):
+    def __init__(self, config: Configuration, input_code: SourceCode):
         """Initializes the new CID Manager"""
 
         # Load configuration
         self._config = config
 
         # Set filename and hash for the soruce code file
-        self._cid_data = CIDData(source_code_filename=input_filename,
+        self._cid_data = CIDData(source_code_filename=self._config.input_filename,
                                  source_code_hash=hashlib.sha256(
                                      input_code.encode('utf-8')).hexdigest(),
                                  instrumentation_random=''.join(random.choice(

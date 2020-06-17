@@ -11,12 +11,12 @@
    Coordinates all the modules responsible for parsing the source code.
 """
 
-from .DataTypes import SourceCode
+from DataTypes import SourceCode, SourceStream
 
-from .Configuration import Configuration
-from .CIDManager import CIDManager
+from Configuration import Configuration
+from CIDManager import CIDManager
 
-from .ParserStateMachine import ParserStateMachine
+from ParserStateMachine import ParserStateMachine
 
 
 class Parser:
@@ -87,16 +87,16 @@ class Parser:
     def start_parser(self):
         """Starts the parsing of the input source code"""
 
-        input_data = {
-            "code": "TEST",
-            "current_line": 0,
-            "current_column": 0
-        }
+        # Create SourceStream from input_code
+        input_stream = SourceStream(self.input_code)
 
-        # TODO implement function
+        # Instantiate and initialize ParserStateMachine
         state_machine = ParserStateMachine()
-        state_machine.init(self.cid_manager)
-        state_machine.run(input_data)
+        state_machine.init(self.cid_manager, input_stream)
+
+        # Run state_machine while we haven't achieved the End of File...
+        while not input_stream.eof:
+            state_machine.run()
 
         return
     # !SECTION

@@ -15,9 +15,176 @@ from enum import Enum
 
 import re
 
+# SECTION   SourceFile class
+class SourceFile:
+    """Contains all information about a source file passed to the instrumenter"""
 
+    # SECTION   SourceFile private attribute definitions
+    __slots__ = ['_input_filename', '_output_filename', '_cid_filename']
+
+    _input_filename: str
+    _output_filename: str
+    _cid_filename: str
+    # !SECTION
+
+    # SECTION   SourceFile public attribute definitions
+    # !SECTION
+
+    # SECTION   SourceFile initialization
+    def __init__(self, source_file: str):
+        # set input_filename
+        self.input_filename = source_file
+
+        # determine instrumented source name and cid name
+        _output_filename = source_file[0:source_file.rindex(
+            '.')+1] + "instr." + source_file[source_file.rindex(
+                '.')+1:]
+
+        # determine cid filename
+        _cid_filename = self.output_filename[0:self.output_filename.rindex(
+            '.')+1] + "cid"
+    # !SECTION
+
+    # SECTION   SourceFile getter functions
+    def _get_input_filename(self) -> str:
+        return self._input_filename
+
+    def _get_output_filename(self) -> str:
+        return self._output_filename
+
+    def _get_cid_filename(self) -> str:
+        return self._cid_filename
+    # !SECTION
+
+    # SECTION   SourceFile setter functions
+    def _set_input_filename(self, input_filename):
+        if input_filename is None:
+            raise ValueError("input_filename can't be none")
+        if not isinstance(input_filename, str):
+            raise TypeError("input_filename has to be a str")
+        else:
+            self._input_filename = input_filename
+    # !SECTION
+
+    # SECTION   SourceFile property definitions
+    input_filename = property(fget=_get_input_filename,
+                              fset=_set_input_filename,
+                              doc="Filename of the input file")
+    output_filename = property(fget=_get_output_filename,
+                               doc="Filename of the output file")
+    cid_filename = property(fget=_get_cid_filename,
+                            doc="Filename of the output CID file")
+    # !SECTION
+
+    # SECTION   SourceFile private functions
+    # !SECTION
+
+    # SECTION   SourceFile public functions
+    # !SECTION
+#!SECTION
+
+
+#SECTION    SourceCode class
 SourceCode = str
+#!SECTION
 
+
+class SourceStream:
+    """Contains a source file stream with line and column information"""
+
+    # SECTION   SourceStream private attribute definitions
+    __slots__ = ['_code', '_active_line', '_active_col']
+
+    _code: List[List[str]]
+    # !SECTION
+
+    # SECTION   SourceStream initialization
+    def __init__(self, source_code: SourceCode):
+        # set active line and col to first position
+        self._active_line = 0
+        self._active_col = 0
+
+        # check if input code is of correct type
+        if not isinstance(source_code, SourceCode):
+            raise TypeError("source_code has to be of type SourceCode")
+
+        # split code into lines
+        self._code = []
+        for sourceline in source_code.splitlines():
+            # add newline char for improved analysis
+            self._code.append([char for char in (sourceline + "\n")])
+    # !SECTION
+
+    # SECTION   SourceStream getter functions
+    def _get_active_line(self) -> int:
+        return self._active_line + 1
+
+    def _get_active_col(self) -> int:
+        return self._active_col + 1
+
+    def _get_eof(self) -> bool:
+        if len(self._code) < (self._active_line + 1):
+            return True
+        elif len(self._code) == (self._active_line + 1) and self._active_col >= len(self._code[self._active_line]):
+            return True
+        else:
+            return False
+    # !SECTION
+
+    # SECTION   SourceStream setter functions
+    def _set_active_line(self, new_line):
+        if not isinstance(new_line, int):
+            raise TypeError("new_line has to be a int")
+        elif (new_line - 1) < 0:
+            raise ValueError("new_line can't be smaller than 0")
+        elif (new_line - 1) > len(self._code):
+            raise ValueError("new_line is out of source code bounds")
+        else:
+            self._active_line = new_line - 1
+
+        if len(self._code[self._active_line]) < self._active_col:
+            # set _active_col to begin of line if the pointer is out of line bounds
+            self._active_col = 0
+
+    def _set_active_col(self, new_col):
+        if not isinstance(new_col, int):
+            raise TypeError("new_col has to be a int")
+        elif (new_col - 1) < 0:
+            raise ValueError("new_col can't be smaller than 0")
+        elif (new_col - 1) > len(self._code[self._active_line]):
+            raise ValueError("new_line is out of source code bounds")
+        else:
+            self._active_col = new_col - 1
+    # !SECTION
+
+    # SECTION   SourceStream property definitions
+    active_line = property(_get_active_line, _set_active_line)
+    active_col = property(_get_active_col, _set_active_col)
+    eof = property(_get_eof)
+    # !SECTION
+
+    # SECTION   SourceStream public function definitions
+    def get_char(self) -> str:
+        # check if end of file was reached
+        if self.eof:
+            return None
+
+        # get currently active char
+        active_char = self._code[self._active_line][self._active_col]
+
+        # set next char position
+        if (self._active_col + 1) < len(self._code[self._active_line]):
+            self._active_col += 1
+        else:
+            self._active_line += 1
+            self._active_col = 0
+
+        return active_char
+    # !SECTION
+
+
+class CodePositionData:
+    """Empty for now"""
 
 class CodeSectionData:
     """Stores the start and end position of a specific code section"""

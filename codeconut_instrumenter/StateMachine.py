@@ -41,7 +41,7 @@ class State(StateParent):
     # !SECTION
 
     # SECTION   State initialization
-    def __init__(self, parent, state_machine, return_state=None, child_state=None):
+    def __init__(self, parent: 'StateParent', state_machine: 'StateMachine', return_state: 'State' = None, child_state: 'State' = None):
         """Initialization routine for state machine pattern
         """
         StateParent.__init__(self)
@@ -69,7 +69,7 @@ class State(StateParent):
     # !SECTION
 
     # SECTION   State setter functions
-    def _set_parent(self, parent):
+    def _set_parent(self, parent: 'StateParent'):
         if parent is None:
             raise ValueError("parent not defined!")
         elif not issubclass(type(parent), StateParent):
@@ -77,7 +77,7 @@ class State(StateParent):
         else:
             self._parent = parent
 
-    def _set_state_machine(self, state_machine):
+    def _set_state_machine(self, state_machine: 'StateMachine'):
         if state_machine is None:
             raise ValueError("state_machine not defined!")
         elif not issubclass(type(state_machine), StateMachine):
@@ -85,7 +85,7 @@ class State(StateParent):
         else:
             self._state_machine = state_machine
 
-    def _set_return_state(self, return_state):
+    def _set_return_state(self, return_state: 'State'):
         if return_state is None:
             raise ValueError("return_state not defined!")
         elif not issubclass(type(return_state), State):
@@ -93,7 +93,7 @@ class State(StateParent):
         else:
             self._return_state = return_state
 
-    def _set_child_state(self, child_state):
+    def _set_child_state(self, child_state: 'State'):
         if child_state is None:
             raise ValueError("child_state not defined!")
         elif not issubclass(type(child_state), 'State'):
@@ -132,7 +132,7 @@ class StateMachine(StateParent):
     # !SECTION
 
     # SECTION   StateMachine initialization
-    def __init__(self, child_state=None):
+    def __init__(self, child_state: 'State' = None):
         """Initialization routine for state machine pattern
         """
         StateParent.__init__(self)
@@ -147,7 +147,7 @@ class StateMachine(StateParent):
     # !SECTION
 
     # SECTION   StateMachine setter functions
-    def _set_child_state(self, next_state):
+    def _set_child_state(self, next_state: 'State'):
         if next_state is None:
             raise ValueError("next_state not defined!")
         elif not issubclass(type(next_state), State):
@@ -170,7 +170,6 @@ class StateMachine(StateParent):
 
     def run(self):
         """Run the state machine"""
-        print("Hello!")
         raise NotImplementedError(
             "State machine run function wasn't declared!")
         return

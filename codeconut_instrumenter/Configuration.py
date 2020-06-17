@@ -14,133 +14,142 @@
 import argparse
 import os.path
 
+from DataTypes import SourceFile
 
+# SECTION   Configuration class
 class Configuration:
     """Configuration class.
        Stores all configuration values for the instrumenter.
     """
 
-    # SECTION  Configuration private attribute definitions
-    __slots__ = ["_statement_analysis_enabled",
-                 "_decision_analysis_enabled", "_condition_analysis_enabled",
-                 "_input_filename", "_output_filename", "_cid_filename",
-                 "_argparser", "_args"]
+    # SECTION   Configuration private attribute definitions
+    __slots__ = ["_checkpoint_markers_enabled",
+                 "_evaluation_markers_enabled",
+                 "_source_files",
+                 "_compiler_exec",
+                 "_compiler_args",
+                 "_clang_args"]
 
-    _statement_analysis_enabled: bool
-    _decision_analysis_enabled: bool
-    _condition_analysis_enabled: bool
-    _input_filename: str
-    _output_filename: str
-    _cid_filename: str
+    _checkpoint_markers_enabled: bool
+    _evaluation_markers_enabled: bool
+    _source_files: list
+    _compiler_exec: str
+    _compiler_args: str
+    _clang_args: str
     # !SECTION
 
-    # SECTION Configuration Initialization function
+    # SECTION   Configuration public attribute definitions
+    # !SECTION
+
+    # SECTION Configuration initialization
     def __init__(self):
-        """Initializes the Configuration"""
-
         # set default values
-        self._statement_analysis_enabled = True
-        self._decision_analysis_enabled = False
-        self._condition_analysis_enabled = False
-        self._input_filename = ""
-        self._output_filename = ""
-        self._cid_filename = ""
+        self.checkpoint_markers_enabled = True
+        self.evaluation_markers_enabled = False
+        self.source_files = list()
+        self.compiler_exec = ""
+        self.compiler_args = ""
+        self.clang_args = ""
 
-        # configure argparse and parse arguments
-        self._argparse_config()
-        self._parse_args()
-
-        # debug
-        print(self.input_filename)
-        print(self.output_filename)
-        print(self.cid_filename)
         return
     # !SECTION
 
     # SECTION   Configuration getter functions
-    def _get_statement_analysis_enabled(self) -> bool:
-        return self._statement_analysis_enabled
+    def _get_checkpoint_markers_enabled(self) -> bool:
+        return self._checkpoint_markers_enabled
 
-    def _get_decision_analysis_enabled(self) -> bool:
-        return self._decision_analysis_enabled
+    def _get_evaluation_markers_enabled(self) -> bool:
+        return self._evaluation_markers_enabled
 
-    def _get_condition_analysis_enabled(self) -> bool:
-        return self._condition_analysis_enabled
+    def _get_source_files(self) -> list:
+        return self._source_files
 
-    def _get_input_filename(self) -> str:
-        return self._input_filename
+    def _get_compiler_exec(self) -> str:
+        return self._compiler_exec
 
-    def _get_output_filename(self) -> str:
-        return self._output_filename
+    def _get_compiler_args(self) -> str:
+        return self._compiler_args
 
-    def _get_cid_filename(self) -> str:
-        return self._cid_filename
+    def _get_clang_args(self) -> str:
+        return self._clang_args
+    # !SECTION
+
+    # SECTION   Configuration setter functions
+    def _set_checkpoint_markers_enabled(self, checkpoint_markers_enabled):
+        if checkpoint_markers_enabled is None:
+            raise ValueError("checkpoint_markers_enabled can't be none")
+        if not isinstance(checkpoint_markers_enabled, bool):
+            raise TypeError("checkpoint_markers_enabled has to be a bool")
+        else:
+            self._checkpoint_markers_enabled = checkpoint_markers_enabled
+
+    def _set_evaluation_markers_enabled(self, evaluation_markers_enabled):
+        if evaluation_markers_enabled is None:
+            raise ValueError("evaluation_markers_enabled can't be none")
+        if not isinstance(evaluation_markers_enabled, bool):
+            raise TypeError("evaluation_markers_enabled has to be a bool")
+        else:
+            self._evaluation_markers_enabled = evaluation_markers_enabled
+
+    def _set_source_files(self, source_files):
+        if source_files is None:
+            raise ValueError("source_files can't be none")
+        if not isinstance(source_files, list):
+            raise TypeError("source_files has to be a list")
+        if not all(isinstance(source_file, SourceFile) for source_file in source_files):
+            raise TypeError("all items in source_files have to be of type SourceFile")
+        else:
+            self._source_files = source_files
+
+    def _set_compiler_exec(self, compiler_exec):
+        if compiler_exec is None:
+            raise ValueError("compiler_exec can't be none")
+        if not isinstance(compiler_exec, str):
+            raise TypeError("compiler_exec has to be a string")
+        else:
+            self._compiler_exec = compiler_exec
+
+    def _set_compiler_args(self, compiler_args):
+        if compiler_args is None:
+            raise ValueError("compiler_args can't be none")
+        if not isinstance(compiler_args, str):
+            raise TypeError("compiler_args has to be a string")
+        else:
+            self._compiler_args = compiler_args
+
+    def _set_clang_args(self, clang_args):
+        if clang_args is None:
+            raise ValueError("clang_args can't be none")
+        if not isinstance(clang_args, str):
+            raise TypeError("clang_args has to be a string")
+        else:
+            self._clang_args = clang_args
     # !SECTION
 
     # SECTION   Configuration property definitions
-    statement_analysis_enabled = property(_get_statement_analysis_enabled)
-    decision_analysis_enabled = property(_get_decision_analysis_enabled)
-    condition_analysis_enabled = property(_get_condition_analysis_enabled)
-    input_filename = property(_get_input_filename)
-    output_filename = property(_get_output_filename)
-    cid_filename = property(_get_cid_filename)
+    checkpoint_markers_enabled = property(fget=_get_checkpoint_markers_enabled,
+                                          fset=_set_checkpoint_markers_enabled,
+                                          doc="Controls the creation of checkpoint markers")
+    evaluation_markers_enabled = property(fget=_get_evaluation_markers_enabled,
+                                          fset=_set_evaluation_markers_enabled,
+                                          doc="Controls the creation of evaluation markers")
+    source_files = property(fget=_get_source_files,
+                            fset=_set_source_files,
+                            doc="List of all source files that should be instrumented")
+    compiler_exec = property(fget=_get_compiler_exec,
+                             fset=_set_compiler_exec,
+                             doc="Path to compiler executable")
+    compiler_args = property(fget=_get_compiler_args,
+                             fset=_set_compiler_args,
+                             doc="String of compiler arguments")
+    clang_args = property(fget=_get_clang_args,
+                          fset=_set_clang_args,
+                          doc="String of clang analysis arguments")                        
     # !SECTION
 
     # SECTION   Configuration private functions
-    def _argparse_config(self):
-        self._argparser = argparse.ArgumentParser(description='''Codeconut Instrumenter.
-            Instrumentize C/C++ source code for runtime code coverage analysis.
-            Code coverage output files can be post-processed and reviewed
-            with Codeconut Analyzer.''')
-
-        self._argparser.add_argument('-s', '--source',
-                                     dest='sourcefile',
-                                     type=str, required=True,
-                                     help='Input source file')
-
-        self._argparser.add_argument('-o', '--outpath',
-                                     dest='outputpath',
-                                     type=str,
-                                     help='Output source file path')
-
-        self._argparser.add_argument('-d', '--decision',
-                                     dest='decision_analysis', action='store_const',
-                                     const=True, default=False,
-                                     help='Activate decision analysis (required for DC)')
-
-        self._argparser.add_argument('-c', '--condition',
-                                     dest='condition_analysis', action='store_const',
-                                     const=True, default=False,
-                                     help='Activate condition analysis (required for MC/DC)')
-
-    def _parse_args(self):
-        # parse and save arguments
-        self._args = self._argparser.parse_args()
-
-        # configure decision and condition analysis switches
-        self._decision_analysis_enabled = self._args.decision_analysis
-        self._condition_analysis_enabled = self._args.condition_analysis
-
-        # determine input filename
-        self._input_filename = self._args.sourcefile
-
-        # check, if input file exists
-        if not os.path.isfile(self.input_filename):
-            raise FileNotFoundError("source file can't be found")
-
-        # determine output filename
-        outfile_name = self._args.sourcefile[0:self._args.sourcefile.rindex(
-            '.')+1] + "instr." + self._args.sourcefile[self._args.sourcefile.rindex(
-                '.')+1:]
-        if self._args.outputpath is not None:
-            output_path = self._args.outputpath.replace(
-                '\\\\', '/').replace('\\', '/').split('/')
-            self._output_filename = os.path.join(
-                *output_path, outfile_name)
-        else:
-            self._output_filename = outfile_name
-
-        # determine cid filename
-        self._cid_filename = self.output_filename[0:self.output_filename.rindex(
-            '.')+1] + "cid"
     # !SECTION
+
+    # SECTION   Configuration public functions
+    # !SECTION
+# !SECTION

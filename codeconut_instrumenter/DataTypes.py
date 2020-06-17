@@ -594,7 +594,10 @@ class CaseData:
     
     # SECTION   CaseData initialization
     def __init__(self, checkpoint_marker_id: int, case_type: CaseType, evaluation_code_section: CodeSectionData, body_code_section: CodeSectionData):
-        
+        self.checkpoint_marker_id = checkpoint_marker_id
+        self.case_type = case_type
+        self.evaluation_code_section = evaluation_code_section
+        self.body_code_section = body_code_section
         return
     # !SECTION
     
@@ -647,6 +650,18 @@ class CaseData:
     # !SECTION
     
     # SECTION   CaseData property definitions
+    checkpoint_marker_id: int = property(fget=_get_checkpoint_marker_id,
+                  fset=_set_checkpoint_marker_id,
+                  doc="Stores the ID of the corresponding checkpoint marker")
+    case_type: CaseType = property(fget=_get_case_type,
+                  fset=_set_case_type,
+                  doc="Stores the type of the case")
+    evaluation_code_section: CodeSectionData = property(fget=_get_evaluation_code_section,
+                  fset=_set_evaluation_code_section,
+                  doc="Stores the code section of the case evaluation")
+    body_code_section: CodeSectionData = property(fget=_get_body_code_section,
+                  fset=_set_body_code_section,
+                  doc="Stoes the code section of the case body")
     # !SECTION
     
     # SECTION   CaseData private functions
@@ -663,23 +678,90 @@ class BranchResultData:
     """
     
     # SECTION   BranchResultData private attribute definitions
+    __slots__ = ["_evaluation_marker_id", "_conditions", "_result_evaluation_code_section",
+                 "_result_body_code_section"]
+
+    _evaluation_marker_id: int
+    _conditions: List[ConditionData]
+    _result_evaluation_code_section: CodeSectionData
+    _result_body_code_section: CodeSectionData
     # !SECTION
     
     # SECTION   BranchResultData public attribute definitions
     # !SECTION
     
     # SECTION   BranchResultData initialization
-    def __init__(self):
+    def __init__(self, evaluation_marker_id: int, conditions: List[ConditionData],
+            result_evaluation_code_section: CodeSectionData,
+            result_body_code_section: CodeSectionData):
+        self.evaluation_marker_id = evaluation_marker_id
+        self.conditions = conditions
+        self.result_evaluation_code_section = result_evaluation_code_section
+        self.result_body_code_section = result_body_code_section
         return
     # !SECTION
     
     # SECTION   BranchResultData getter functions
+    def _get_evaluation_marker_id(self) -> int:
+        return self._evaluation_marker_id
+
+    def _get_conditions(self) -> List[ConditionData]:
+        return self._conditions
+
+    def _get_result_evaluation_code_section(self) -> CodeSectionData:
+        return self._result_evaluation_code_section
+
+    def _get_result_body_code_section(self) -> CodeSectionData:
+        return self._result_body_code_section
     # !SECTION
     
     # SECTION   BranchResultData setter functions
+    def _set_evaluation_marker_id(self, evaluation_marker_id:int):
+        if evaluation_marker_id is None:
+            raise ValueError("evaluation_marker_id can't be none")
+        elif not isinstance(evaluation_marker_id, int):
+            raise TypeError("evaluation_marker_id shall be of type int")
+        else:
+            self._evaluation_marker_id = evaluation_marker_id
+
+    def _set_conditions(self, conditions:List[ConditionData]):
+        if conditions is None:
+            raise ValueError("conditions can't be none")
+        elif not isinstance(conditions, List[ConditionData]):
+            raise TypeError("conditions shall be of type List[ConditionData]")
+        else:
+            self._conditions = conditions
+
+    def _set_result_evaluation_code_section(self, result_evaluation_code_section:CodeSectionData):
+        if result_evaluation_code_section is None:
+            raise ValueError("result_evaluation_code_section can't be none")
+        elif not isinstance(result_evaluation_code_section, CodeSectionData):
+            raise TypeError("result_evaluation_code_section shall be of type CodeSectionData")
+        else:
+            self._result_evaluation_code_section = result_evaluation_code_section
+        
+    def _set_result_body_code_section(self, result_body_code_section:CodeSectionData):
+        if result_body_code_section is None:
+            raise ValueError("result_body_code_section can't be none")
+        elif not isinstance(result_body_code_section, CodeSectionData):
+            raise TypeError("result_body_code_section shall be of type CodeSectionData")
+        else:
+            self._result_body_code_section = result_body_code_section
     # !SECTION
     
     # SECTION   BranchResultData property definitions
+    evaluation_marker_id: int = property(fget=_get_evaluation_marker_id,
+                  fset=_set_evaluation_marker_id,
+                  doc="Stores the ID of the according evaluation marker")
+    conditions: List[ConditionData] = property(fget=_get_conditions,
+                  fset=_set_conditions,
+                  doc="Stores the conditions of the evaluation")
+    result_evaluation_code_section: CodeSectionData = property(fget=_get_result_evaluation_code_section,
+                  fset=_set_result_evaluation_code_section,
+                  doc="Stores the code section of the evaluation")
+    result_body_code_section: CodeSectionData = property(fget=_get_result_body_code_section,
+                  fset=_set_result_body_code_section,
+                  doc="Stores the code section of the result code body")
     # !SECTION
     
     # SECTION   BranchResultData private functions
@@ -696,23 +778,55 @@ class ClassData:
     """
     
     # SECTION   ClassData private attribute definitions
+    __slots__ = ["_class_id", "_class_name"]
+
+    _class_id: int
+    _class_name: str
     # !SECTION
     
     # SECTION   ClassData public attribute definitions
     # !SECTION
     
     # SECTION   ClassData initialization
-    def __init__(self):
+    def __init__(self, class_id: int, class_name: str):
+        self.class_id = class_id
+        self.class_name = class_name
         return
     # !SECTION
     
     # SECTION   ClassData getter functions
+    def _get_class_id(self) -> int:
+        return self._class_id
+
+    def _get_class_name(self) -> str:
+        return self._class_name
     # !SECTION
     
     # SECTION   ClassData setter functions
+    def _set_class_id(self, class_id:int):
+        if class_id is None:
+            raise ValueError("class_id can't be none")
+        elif not isinstance(class_id, int):
+            raise TypeError("class_id shall be of type int")
+        else:
+            self._class_id = class_id
+
+    def _set_class_name(self, class_name:str):
+        if class_name is None:
+            raise ValueError("class_name can't be none")
+        elif not isinstance(class_name, str):
+            raise TypeError("class_name shall be of type str")
+        else:
+            self._class_name = class_name
     # !SECTION
     
     # SECTION   ClassData property definitions
+    class_id: int = property(fget=_get_class_id,
+                  fset=_set_class_id,
+                  doc="Stores a unique id for the class")
+    class_name: str = property(fget=_get_class_name,
+                  fset=_set_class_name,
+                  doc="Stores the name of the class")
     # !SECTION
     
     # SECTION   ClassData private functions
@@ -729,23 +843,134 @@ class FunctionData:
     """
     
     # SECTION   FunctionData private attribute definitions
+    __slots__ = ["_function_id", "_function_name", "_function_type",
+            "_parent_function_id", "_checkpoint_marker_id",
+            "_header_code_section", "_inner_code_section"]
+
+    _function_id: int
+    _function_name: str
+    _function_type: FunctionType
+    _parent_function_id: int
+    _checkpoint_marker_id: int
+    _header_code_section: CodeSectionData
+    _inner_code_section: CodeSectionData
     # !SECTION
     
     # SECTION   FunctionData public attribute definitions
     # !SECTION
     
     # SECTION   FunctionData initialization
-    def __init__(self):
+    def __init__(self, function_id: int, function_name: str,
+            function_type: FunctionType, parent_function_id: int,
+            checkpoint_marker_id: int, header_code_section: CodeSectionData,
+            inner_code_section: CodeSectionData):
+        
         return
     # !SECTION
     
     # SECTION   FunctionData getter functions
+    def _get_function_id(self) -> int:
+        return self._function_id
+    
+    def _get_function_name(self) -> str:
+        return self._function_name
+
+    def _get_function_type(self) -> FunctionType:
+        return self._function_type
+
+    def _get_parent_function_id(self) -> int:
+        return self._parent_function_id
+
+    def _get_checkpoint_marker_id(self) -> int:
+        return self._checkpoint_marker_id
+
+    def _get_header_code_section(self) -> CodeSectionData:
+        return self._header_code_section
+
+    def _get_inner_code_section(self) -> CodeSectionData:
+        return self._inner_code_section
     # !SECTION
     
     # SECTION   FunctionData setter functions
+    def _set_function_id(self, function_id:int):
+        if function_id is None:
+            raise ValueError("function_id can't be none")
+        elif not isinstance(function_id, int):
+            raise TypeError("function_id shall be of type int")
+        else:
+            self._function_id = function_id
+
+    def _set_function_name(self, function_name:str):
+        if function_name is None:
+            raise ValueError("function_name can't be none")
+        elif not isinstance(function_name, str):
+            raise TypeError("function_name shall be of type str")
+        else:
+            self._function_name = function_name
+
+    def _set_function_type(self, function_type:FunctionType):
+        if function_type is None:
+            raise ValueError("function_type can't be none")
+        elif not isinstance(function_type, FunctionType):
+            raise TypeError("function_type shall be of type FunctionType")
+        else:
+            self._function_type = function_type
+
+    def _set_parent_function_id(self, parent_function_id:int):
+        if parent_function_id is None:
+            raise ValueError("parent_function_id can't be none")
+        elif not isinstance(parent_function_id, int):
+            raise TypeError("parent_function_id shall be of type int")
+        else:
+            self._parent_function_id = parent_function_id
+
+    def _set_checkpoint_marker_id(self, checkpoint_marker_id:int):
+        if checkpoint_marker_id is None:
+            raise ValueError("checkpoint_marker_id can't be none")
+        elif not isinstance(checkpoint_marker_id, int):
+            raise TypeError("checkpoint_marker_id shall be of type int")
+        else:
+            self._checkpoint_marker_id = checkpoint_marker_id
+
+    def _set_header_code_section(self, header_code_section:CodeSectionData):
+        if header_code_section is None:
+            raise ValueError("header_code_section can't be none")
+        elif not isinstance(header_code_section, CodeSectionData):
+            raise TypeError("header_code_section shall be of type CodeSectionData")
+        else:
+            self._header_code_section = header_code_section
+
+    def _set_inner_code_section(self, inner_code_section:CodeSectionData):
+        if inner_code_section is None:
+            raise ValueError("inner_code_section can't be none")
+        elif not isinstance(inner_code_section, CodeSectionData):
+            raise TypeError("inner_code_section shall be of type CodeSectionData")
+        else:
+            self._inner_code_section = inner_code_section
     # !SECTION
     
     # SECTION   FunctionData property definitions
+    function_id: int = property(fget=_get_function_id,
+                  fset=_set_function_id,
+                  doc="Stores a unique id for the specific function")
+    function_name: str = property(fget=_get_function_name,
+                  fset=_set_function_name,
+                  doc="Stores the name of the function")
+    function_type: FunctionType = property(fget=_get_function_type,
+                  fset=_set_function_type,
+                  doc="Stores the type of the function")
+    parent_function_id: int = property(fget=_get_parent_function_id,
+                  fset=_set_parent_function_id,
+                  doc="Stores the id of the parent function (if no parent function, this is -1)")
+    checkpoint_marker_id: int = property(fget=_get_checkpoint_marker_id,
+                  fset=_set_checkpoint_marker_id,
+                  doc="Stores the ID of the according checkpoint marker")
+    header_code_section: CodeSectionData = property(fget=_get_header_code_section,
+                  fset=_set_header_code_section,
+                  doc="Stores the code section of the function header")
+    inner_code_section: CodeSectionData = property(fget=_get_inner_code_section,
+                  fset=_set_inner_code_section,
+                  doc="Stores the code section of the function body")
     # !SECTION
     
     # SECTION   FunctionData private functions
@@ -762,23 +987,101 @@ class StatementData:
     """
     
     # SECTION   StatementData private attribute definitions
+    __slots__ = ["_statement_id", "_statement_type", "_function_id", "_checkpoint_marker_id",
+                 "_code_section"]
+
+    _statement_id: int
+    _statement_type: StatementType
+    _function_id: int
+    _checkpoint_marker_id: int
+    _code_section: CodeSectionData
     # !SECTION
     
     # SECTION   StatementData public attribute definitions
     # !SECTION
     
     # SECTION   StatementData initialization
-    def __init__(self):
+    def __init__(self, statement_id: int, statement_type: StatementType,
+            function_id: int, checkpoint_marker_id: int, code_section: CodeSectionData):
+        
         return
     # !SECTION
     
     # SECTION   StatementData getter functions
+    def _get_statement_id(self) -> int:
+        return self._statement_id
+
+    def _get_statement_type(self) -> StatementType:
+        return self._statement_type
+
+    def _get_function_id(self) -> int:
+        return self._function_id
+
+    def _get_checkpoint_marker_id(self) -> int:
+        return self._checkpoint_marker_id
+
+    def _get_code_section(self) -> CodeSectionData:
+        return self._code_section
     # !SECTION
     
     # SECTION   StatementData setter functions
+    def _set_statement_id(self, statement_id:int):
+        if statement_id is None:
+            raise ValueError("statement_id can't be none")
+        elif not isinstance(statement_id, int):
+            raise TypeError("statement_id shall be of type int")
+        else:
+            self._statement_id = statement_id
+
+    def _set_statement_type(self, statement_type:StatementType):
+        if statement_type is None:
+            raise ValueError("statement_type can't be none")
+        elif not isinstance(statement_type, StatementType):
+            raise TypeError("statement_type shall be of type StatementType")
+        else:
+            self._statement_type = statement_type
+    
+    def _set_function_id(self, function_id:int):
+        if function_id is None:
+            raise ValueError("function_id can't be none")
+        elif not isinstance(function_id, int):
+            raise TypeError("function_id shall be of type int")
+        else:
+            self._function_id = function_id
+
+    def _set_checkpoint_marker_id(self, checkpoint_marker_id:int):
+        if checkpoint_marker_id is None:
+            raise ValueError("checkpoint_marker_id can't be none")
+        elif not isinstance(checkpoint_marker_id, int):
+            raise TypeError("checkpoint_marker_id shall be of type int")
+        else:
+            self._checkpoint_marker_id = checkpoint_marker_id
+
+    def _set_code_section(self, code_section:CodeSectionData):
+        if code_section is None:
+            raise ValueError("code_section can't be none")
+        elif not isinstance(code_section, CodeSectionData):
+            raise TypeError("code_section shall be of type CodeSectionData")
+        else:
+            self._code_section = code_section
     # !SECTION
     
     # SECTION   StatementData property definitions
+    statement_id: int = property(fget=_get_statement_id,
+                  fset=_set_statement_id,
+                  doc="Stores a unique ID for the statement")
+    statement_type: StatementType = property(fget=_get_statement_type,
+                  fset=_set_statement_type,
+                  doc="Stores the type of the statement")
+    function_id: int = property(fget=_get_function_id,
+                  fset=_set_function_id,
+                  doc="Stores the ID of the parent function")
+    checkpoint_marker_id: int = property(fget=_get_checkpoint_marker_id,
+                  fset=_set_checkpoint_marker_id,
+                  doc="Stores the ID of the according checkpoint marker")
+    code_section: CodeSectionData = property(fget=_get_code_section,
+                  fset=_set_code_section,
+                  doc="Stores the code section of the statement")
     # !SECTION
     
     # SECTION   StatementData private functions

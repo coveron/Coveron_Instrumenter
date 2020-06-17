@@ -472,6 +472,10 @@ To define and validate the JSON object of the CID-File, the following JSON schem
                                 "type": "integer",
                                 "description": "Unique ID for the switch branch",
                             },
+                            "function_id": {
+                                "type": "integer",
+                                "description": "ID of the parent function"
+                            },
                             "expression_code_section": {
                                 "type": "object",
                                 "description": "Code section of the switch expression",
@@ -508,9 +512,9 @@ To define and validate the JSON object of the CID-File, the following JSON schem
                                     "description": "Switch case description",
                                     "required": ["execution_marker_id", "case_type", "evaluation_code_section", "body_code_section"],
                                     "properties": {
-                                        "execution_marker_id": {
+                                        "checkpoint_marker_id": {
                                             "type": "integer",
-                                            "description": "ID of the according execution marker"
+                                            "description": "ID of the according checkpoint marker"
                                         },
                                         "case_type": {
                                             "type": "integer",
@@ -586,7 +590,7 @@ To define and validate the JSON object of the CID-File, the following JSON schem
                         "description": "Loop description",
                         "required": ["loop_id", "loop_type", "evaluation_marker_id", "evaluation_code_section", "body_code_section", "conditions"],
                         "properties": {
-                            "for_loop_id": {
+                            "loop_id": {
                                 "type": "integer",
                                 "description": "Unique ID for the loop"
                             },
@@ -594,6 +598,10 @@ To define and validate the JSON object of the CID-File, the following JSON schem
                                 "type": "integer",
                                 "description": "Type of the loop (1=for, 2=while, 3=do-while)",
                                 "enum": [1, 2, 3]
+                            },
+                            "function_id": {
+                                "type": "integer",
+                                "description": "ID of the parent function"
                             },
                             "evaluation_marker_id": {
                                 "type": "integer",
@@ -779,13 +787,14 @@ Detailed info on the elements inside the JSON object:
           - **end_column**: Column number (starting from 1) for the end of the code section
     - **switch_branches**: Array with all switch branches inside of the parsed code
       - **switch_branch_id**: Unique ID for the switch branch
+      - **function_id**: ID of the parent function
       - **expression_code_section**: Code section of the evaluated switch expression
         - **start_line**: Line number (starting from 1) for the start of the code section
         - **start_column**: Column number (starting from 1) for the start of the code section
         - **end_line**: Line number (starting from 1) for the end of the code section
         - **end_column**: Column number (starting from 1) for the end of the code section
       - **cases**: Array of cases inside the switch branch
-        - **execution_marker_id**: Unique ID for the according execution marker
+        - **checkpoint_marker_id**: Unique ID for the according checkpoint marker
         - **case_type**: Type of the case (enum, 1=normal case, 2=default case)
         - **evaluation_code_section**: Code section of the evaluation
           - **start_line**: Line number (starting from 1) for the start of the code section
@@ -800,6 +809,7 @@ Detailed info on the elements inside the JSON object:
     - **loops**: Array with all loops inside of the parsed code
       - **loop_id**: Unique ID for the loop
       - **loop_type**: Loop type (enum, 1=for, 2=while, 3=do-while)
+      - **function_id**: ID of the parent function
       - **evaluation_marker_id**: ID of the according evaluation marker
       - **evaluation_code_section**: Code section of the evaluation
         - **start_line**: Line number (starting from 1) for the start of the code section

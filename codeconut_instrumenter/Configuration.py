@@ -23,13 +23,15 @@ class Configuration:
     """
 
     # SECTION   Configuration private attribute definitions
-    __slots__ = ["_checkpoint_markers_enabled",
+    __slots__ = ["_verbose",
+                 "_checkpoint_markers_enabled",
                  "_evaluation_markers_enabled",
                  "_source_files",
                  "_compiler_exec",
                  "_compiler_args",
                  "_clang_args"]
 
+    _verbose: bool
     _checkpoint_markers_enabled: bool
     _evaluation_markers_enabled: bool
     _source_files: list
@@ -44,6 +46,7 @@ class Configuration:
     # SECTION Configuration initialization
     def __init__(self):
         # set default values
+        self.verbose = False
         self.checkpoint_markers_enabled = True
         self.evaluation_markers_enabled = False
         self.source_files = list()
@@ -55,6 +58,9 @@ class Configuration:
     # !SECTION
 
     # SECTION   Configuration getter functions
+    def _get_verbose(self) -> bool:
+        return self._verbose
+
     def _get_checkpoint_markers_enabled(self) -> bool:
         return self._checkpoint_markers_enabled
 
@@ -75,19 +81,27 @@ class Configuration:
     # !SECTION
 
     # SECTION   Configuration setter functions
-    def _set_checkpoint_markers_enabled(self, checkpoint_markers_enabled):
+    def _set_verbose(self, verbose:bool):
+        if verbose is None:
+            raise ValueError("verbose can't be none")
+        elif not isinstance(verbose, bool):
+            raise TypeError("verbose shall be of type bool")
+        else:
+            self._verbose = verbose
+
+    def _set_checkpoint_markers_enabled(self, checkpoint_markers_enabled:bool):
         if checkpoint_markers_enabled is None:
             raise ValueError("checkpoint_markers_enabled can't be none")
-        if not isinstance(checkpoint_markers_enabled, bool):
-            raise TypeError("checkpoint_markers_enabled has to be a bool")
+        elif not isinstance(checkpoint_markers_enabled, bool):
+            raise TypeError("checkpoint_markers_enabled shall be of type bool")
         else:
             self._checkpoint_markers_enabled = checkpoint_markers_enabled
 
-    def _set_evaluation_markers_enabled(self, evaluation_markers_enabled):
+    def _set_evaluation_markers_enabled(self, evaluation_markers_enabled:bool):
         if evaluation_markers_enabled is None:
             raise ValueError("evaluation_markers_enabled can't be none")
-        if not isinstance(evaluation_markers_enabled, bool):
-            raise TypeError("evaluation_markers_enabled has to be a bool")
+        elif not isinstance(evaluation_markers_enabled, bool):
+            raise TypeError("evaluation_markers_enabled shall be of type bool")
         else:
             self._evaluation_markers_enabled = evaluation_markers_enabled
 
@@ -95,54 +109,57 @@ class Configuration:
         if source_files is None:
             raise ValueError("source_files can't be none")
         if not isinstance(source_files, list):
-            raise TypeError("source_files has to be a list")
+            raise TypeError("source_files shall be of type list")
         if not all(isinstance(source_file, SourceFile) for source_file in source_files):
             raise TypeError("all items in source_files have to be of type SourceFile")
         else:
             self._source_files = source_files
 
-    def _set_compiler_exec(self, compiler_exec):
+    def _set_compiler_exec(self, compiler_exec:str):
         if compiler_exec is None:
             raise ValueError("compiler_exec can't be none")
-        if not isinstance(compiler_exec, str):
-            raise TypeError("compiler_exec has to be a string")
+        elif not isinstance(compiler_exec, str):
+            raise TypeError("compiler_exec shall be of type str")
         else:
             self._compiler_exec = compiler_exec
 
-    def _set_compiler_args(self, compiler_args):
+    def _set_compiler_args(self, compiler_args:str):
         if compiler_args is None:
             raise ValueError("compiler_args can't be none")
-        if not isinstance(compiler_args, str):
-            raise TypeError("compiler_args has to be a string")
+        elif not isinstance(compiler_args, str):
+            raise TypeError("compiler_args shall be of type str")
         else:
             self._compiler_args = compiler_args
 
-    def _set_clang_args(self, clang_args):
+    def _set_clang_args(self, clang_args:str):
         if clang_args is None:
             raise ValueError("clang_args can't be none")
-        if not isinstance(clang_args, str):
-            raise TypeError("clang_args has to be a string")
+        elif not isinstance(clang_args, str):
+            raise TypeError("clang_args shall be of type str")
         else:
             self._clang_args = clang_args
     # !SECTION
 
     # SECTION   Configuration property definitions
-    checkpoint_markers_enabled = property(fget=_get_checkpoint_markers_enabled,
+    verbose = property(fget=_get_verbose,
+                       fset=_set_verbose,
+                       doc="Controls, if Instrumenter is running in verbose mode")
+    checkpoint_markers_enabled: bool = property(fget=_get_checkpoint_markers_enabled,
                                           fset=_set_checkpoint_markers_enabled,
                                           doc="Controls the creation of checkpoint markers")
-    evaluation_markers_enabled = property(fget=_get_evaluation_markers_enabled,
+    evaluation_markers_enabled: bool = property(fget=_get_evaluation_markers_enabled,
                                           fset=_set_evaluation_markers_enabled,
                                           doc="Controls the creation of evaluation markers")
-    source_files = property(fget=_get_source_files,
+    source_files: List[SourceFile] = property(fget=_get_source_files,
                             fset=_set_source_files,
                             doc="List of all source files that should be instrumented")
-    compiler_exec = property(fget=_get_compiler_exec,
+    compiler_exec: str = property(fget=_get_compiler_exec,
                              fset=_set_compiler_exec,
                              doc="Path to compiler executable")
-    compiler_args = property(fget=_get_compiler_args,
+    compiler_args: str = property(fget=_get_compiler_args,
                              fset=_set_compiler_args,
                              doc="String of compiler arguments")
-    clang_args = property(fget=_get_clang_args,
+    clang_args: str = property(fget=_get_clang_args,
                           fset=_set_clang_args,
                           doc="String of clang analysis arguments")                        
     # !SECTION
@@ -151,5 +168,12 @@ class Configuration:
     # !SECTION
 
     # SECTION   Configuration public functions
+    def print_config(self):
+        print("Checkpoint markers enabled: " + str(self.checkpoint_markers_enabled))
+        print("Evaluation markers enabled: " + str(self.evaluation_markers_enabled))
+        print("Compile exec: " + self.compiler_exec)
+        print("Compiler pass thru arguments: " + self.compiler_args)
+        print("Clang arguments: " + self.clang_args)
+        print("Compile source files: " + ' '.join(source_file.input_filename for source_file in self.source_files))
     # !SECTION
 # !SECTION

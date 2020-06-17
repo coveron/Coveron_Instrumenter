@@ -11,12 +11,10 @@
    Coordinates all the modules responsible for parsing the source code.
 """
 
-from DataTypes import SourceCode, SourceStream
+from DataTypes import SourceCode
 
 from Configuration import Configuration
 from CIDManager import CIDManager
-
-from ParserStateMachine import ParserStateMachine
 
 
 class Parser:

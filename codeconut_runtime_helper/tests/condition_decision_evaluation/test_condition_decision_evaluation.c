@@ -4,12 +4,11 @@
 //
 // The Codeconut project is licensed under the LGPL-3.0 license
 
-// TEST FILE CONDITION AND DECISION EVALUATION
+// TEST FILE DECISION AND CONDITION EVALUATION
 
 #include "codeconut_helper.h"
-#include "unity.h"
-
 #include "mock_fake_stdio.h"
+#include "unity.h"
 
 /*
  * SECTION   STRINGIFY FOR COMMENT PARSING
@@ -103,13 +102,13 @@ void test_evaluation_simple_true(void) {
 
     // simulate the evaluation
     int a = 5;
-    ___CODECONUT_SET_DECISION_MARKER(
+    ___CODECONUT_SET_EVALUATION_MARKER(
         0x51,
         0x52,
         0x53,
         0x54,
         &testInputData,
-        ___CODECONUT_SET_CONDITION_MARKER(
+        ___CODECONUT_SET_EVALUATION_MARKER(
             0x61, 0x62, 0x63, 0x64, &testInputData, (a == 5)));
 }
 
@@ -130,15 +129,15 @@ void test_evaluation_and_true(void) {
     // simulate the evaluation
     int a = 5;
     int b = 2;
-    ___CODECONUT_SET_DECISION_MARKER(
+    ___CODECONUT_SET_EVALUATION_MARKER(
         0x51,
         0x52,
         0x53,
         0x54,
         &testInputData,
-        ___CODECONUT_SET_CONDITION_MARKER(
+        ___CODECONUT_SET_EVALUATION_MARKER(
             0x61, 0x62, 0x63, 0x64, &testInputData, (a == 5)) &&
-            ___CODECONUT_SET_CONDITION_MARKER(
+            ___CODECONUT_SET_EVALUATION_MARKER(
                 0x71, 0x72, 0x73, 0x74, &testInputData, (b == 2)));
 }
 
@@ -158,15 +157,15 @@ void test_evaluation_and_false_short_circuit(void) {
     // simulate the evaluation
     int a = 5;
     int b = 2;
-    ___CODECONUT_SET_DECISION_MARKER(
+    ___CODECONUT_SET_EVALUATION_MARKER(
         0x51,
         0x52,
         0x53,
         0x54,
         &testInputData,
-        ___CODECONUT_SET_CONDITION_MARKER(
+        ___CODECONUT_SET_EVALUATION_MARKER(
             0x61, 0x62, 0x63, 0x64, &testInputData, (a == 4)) &&
-            ___CODECONUT_SET_CONDITION_MARKER(
+            ___CODECONUT_SET_EVALUATION_MARKER(
                 0x71, 0x72, 0x73, 0x74, &testInputData, (b == 2)));
 }
 
@@ -187,15 +186,15 @@ void test_evaluation_and_false(void) {
     // simulate the evaluation
     int a = 5;
     int b = 2;
-    ___CODECONUT_SET_DECISION_MARKER(
+    ___CODECONUT_SET_EVALUATION_MARKER(
         0x51,
         0x52,
         0x53,
         0x54,
         &testInputData,
-        ___CODECONUT_SET_CONDITION_MARKER(
+        ___CODECONUT_SET_EVALUATION_MARKER(
             0x61, 0x62, 0x63, 0x64, &testInputData, (a == 5)) &&
-            ___CODECONUT_SET_CONDITION_MARKER(
+            ___CODECONUT_SET_EVALUATION_MARKER(
                 0x71, 0x72, 0x73, 0x74, &testInputData, (b == 1)));
 }
 
@@ -215,15 +214,15 @@ void test_evaluation_or_true_short_circuit(void) {
     // simulate the evaluation
     int a = 5;
     int b = 2;
-    ___CODECONUT_SET_DECISION_MARKER(
+    ___CODECONUT_SET_EVALUATION_MARKER(
         0x51,
         0x52,
         0x53,
         0x54,
         &testInputData,
-        ___CODECONUT_SET_CONDITION_MARKER(
+        ___CODECONUT_SET_EVALUATION_MARKER(
             0x61, 0x62, 0x63, 0x64, &testInputData, (a == 5)) ||
-            ___CODECONUT_SET_CONDITION_MARKER(
+            ___CODECONUT_SET_EVALUATION_MARKER(
                 0x71, 0x72, 0x73, 0x74, &testInputData, (b == 2)));
 }
 
@@ -244,15 +243,15 @@ void test_evaluation_or_true(void) {
     // simulate the evaluation
     int a = 5;
     int b = 2;
-    ___CODECONUT_SET_DECISION_MARKER(
+    ___CODECONUT_SET_EVALUATION_MARKER(
         0x51,
         0x52,
         0x53,
         0x54,
         &testInputData,
-        ___CODECONUT_SET_CONDITION_MARKER(
+        ___CODECONUT_SET_EVALUATION_MARKER(
             0x61, 0x62, 0x63, 0x64, &testInputData, (a == 4)) ||
-            ___CODECONUT_SET_CONDITION_MARKER(
+            ___CODECONUT_SET_EVALUATION_MARKER(
                 0x71, 0x72, 0x73, 0x74, &testInputData, (b == 2)));
 }
 
@@ -273,15 +272,15 @@ void test_evaluation_or_false(void) {
     // simulate the evaluation
     int a = 5;
     int b = 2;
-    ___CODECONUT_SET_DECISION_MARKER(
+    ___CODECONUT_SET_EVALUATION_MARKER(
         0x51,
         0x52,
         0x53,
         0x54,
         &testInputData,
-        ___CODECONUT_SET_CONDITION_MARKER(
+        ___CODECONUT_SET_EVALUATION_MARKER(
             0x61, 0x62, 0x63, 0x64, &testInputData, (a == 4)) ||
-            ___CODECONUT_SET_CONDITION_MARKER(
+            ___CODECONUT_SET_EVALUATION_MARKER(
                 0x71, 0x72, 0x73, 0x74, &testInputData, (b == 1)));
 }
 
@@ -306,17 +305,17 @@ void test_evaluation_complex1_true(void) {
     int a = 5;
     int b = 2;
     int c = 10;
-    ___CODECONUT_SET_DECISION_MARKER(
+    ___CODECONUT_SET_EVALUATION_MARKER(
         0x51,
         0x52,
         0x53,
         0x54,
         &testInputData,
-        ___CODECONUT_SET_CONDITION_MARKER(
+        ___CODECONUT_SET_EVALUATION_MARKER(
             0x61, 0x62, 0x63, 0x64, &testInputData, (a == 5)) &&
-            (___CODECONUT_SET_CONDITION_MARKER(
+            (___CODECONUT_SET_EVALUATION_MARKER(
                  0x71, 0x72, 0x73, 0x74, &testInputData, (b == 1)) ||
-             ___CODECONUT_SET_CONDITION_MARKER(
+             ___CODECONUT_SET_EVALUATION_MARKER(
                  0x81, 0x82, 0x83, 0x84, &testInputData, (c == 10))));
 }
 

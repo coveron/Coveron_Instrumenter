@@ -4,12 +4,11 @@
 //
 // The Codeconut project is licensed under the LGPL-3.0 license
 
-// TEST FILE FOR CONDITION MARKERS
+// TEST FILE FOR EVALUATION MARKERS
 
 #include "codeconut_helper.h"
-#include "unity.h"
-
 #include "mock_fake_stdio.h"
+#include "unity.h"
 
 /*
  * SECTION   STRINGIFY FOR COMMENT PARSING
@@ -76,11 +75,11 @@ void tearDown() {}
 /*
  * SECTION   TEST FUNCTIONS
  */
-// Test the creation of a condition marker with true evaluation
-void test_create_condition_marker_true(void) {
-    // expect the creation of a condition marker
-    uint8_t comparisonConditionMarkerArray[5] = {0x51, 0x52, 0x53, 0x54, 0xA6};
-    FWRITE_ExpectWithArrayAndReturn(comparisonConditionMarkerArray,
+// Test the creation of a evaluation marker with true evaluation
+void test_create_evaluation_marker_true(void) {
+    // expect the creation of a evaluation marker
+    uint8_t comparisonDecisionMarkerArray[5] = {0x51, 0x52, 0x53, 0x54, 0xA6};
+    FWRITE_ExpectWithArrayAndReturn(comparisonDecisionMarkerArray,
                                     5,
                                     1,
                                     5,  // 5 bytes marker length
@@ -88,16 +87,16 @@ void test_create_condition_marker_true(void) {
                                     sizeof(dummyFilePointer),
                                     5);
 
-    // simulate the writing of a condition marker
+    // simulate the writing of a evaluation marker
     int a = 5;
-    ___CODECONUT_SET_CONDITION_MARKER(0x51, 0x52, 0x53, 0x54, &testInputData, (a == 5));
+    ___CODECONUT_SET_EVALUATION_MARKER(0x51, 0x52, 0x53, 0x54, &testInputData, (a == 5));
 }
 
-// Test the creation of a condition marker with false evaluation
-void test_create_condition_marker_false(void) {
-    // expect the creation of a condition marker
-    uint8_t comparisonConditionMarkerArray[5] = {0x51, 0x52, 0x53, 0x54, 0x59};
-    FWRITE_ExpectWithArrayAndReturn(comparisonConditionMarkerArray,
+// Test the creation of a evaluation marker with false evaluation
+void test_create_evaluation_marker_false(void) {
+    // expect the creation of a evaluation marker
+    uint8_t comparisonDecisionMarkerArray[5] = {0x51, 0x52, 0x53, 0x54, 0x59};
+    FWRITE_ExpectWithArrayAndReturn(comparisonDecisionMarkerArray,
                                     5,
                                     1,
                                     5,  // 5 bytes marker length
@@ -105,8 +104,8 @@ void test_create_condition_marker_false(void) {
                                     sizeof(dummyFilePointer),
                                     5);
 
-    // simulate the writing of a condition marker
+    // simulate the writing of a evaluation marker
     int a = 2;
-    ___CODECONUT_SET_CONDITION_MARKER(0x51, 0x52, 0x53, 0x54, &testInputData, (a == 5));
+    ___CODECONUT_SET_EVALUATION_MARKER(0x51, 0x52, 0x53, 0x54, &testInputData, (a == 5));
 }
 // !SECTION

@@ -85,22 +85,84 @@ To define and validate the JSON object of the CID-File, the following JSON schem
             "properties": {
                 "checkpoint_markers": {
                     "type": "array",
-                    "description": "List of all Checkpoint marker IDs used during the instrumentation process",
+                    "description": "List of all Checkpoint markers used during the instrumentation process",
                     "minItems": 0,
                     "items": {
-                        "type": "integer",
-                        "description": "Checkpoint Marker ID",
-                        "minimum": 0
+                        "type": "object",
+                        "description": "Checkpoint marker info",
+                        "required": ["checkpoint_marker_id", "code_position"],
+                        "properties": {
+                            "checkpoint_marker_id": {
+                                "type": "integer",
+                                "description": "Checkpoint Marker ID",
+                                "minimum": 0
+                            },
+                            "code_position": {
+                                "type": "object",
+                                "description": "Checkpoint code position",
+                                "required": ["line", "column"],
+                                "properties": {
+                                    "line": {
+                                        "type": "integer",
+                                        "description": "line position in code",
+                                        "minimum": 1
+                                    },
+                                    "column": {
+                                        "type": "integer",
+                                        "description": "column position in code",
+                                        "minimum": 1
+                                    }
+                                }
+                            }
+                        }
                     }
                 },
                 "evaluation_markers": {
                     "type": "array",
-                    "description": "List of all Evaluation marker IDs used during the instrumentation process",
+                    "description": "List of all Evaluation markers used during the instrumentation process",
                     "minItems": 0,
                     "items": {
-                        "type": "integer",
-                        "description": "Checkpoint Marker ID",
-                        "minimum": 0
+                        "type": "object",
+                        "description": "Evaluation marker description",
+                        "required": ["evaluation_marker_id", "evaluation_type", "code_section"],
+                        "properties": {
+                            "evaluation_marker_id": {
+                                "type": "integer",
+                                "description": "Checkpoint Marker ID",
+                                "minimum": 0
+                            },
+                            "evaluation_type": {
+                                "type": "integer",
+                                "description": "Checkpoint marker type (1=decision, 2=condition)"
+                            },
+                            "code_section": {
+                                "type": "object",
+                                "description": "Code section of the evaluation marker",
+                                "required": ["start_line", "start_column", "end_line", "end_column"],
+                                "properties": {
+                                    "start_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "start_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -108,7 +170,7 @@ To define and validate the JSON object of the CID-File, the following JSON schem
         "code_data": {
             "type": "object",
             "description": "Code data dictionary",
-            "required": ["classes", "functions", "statements", "if_branches", "switch_branches", "for_loops", "while_loops", "do_while_loops"],
+            "required": ["classes", "functions", "statements", "if_branches", "switch_branches", "loops"],
             "properties": {
                 "classes": {
                     "type": "array",
@@ -446,112 +508,191 @@ To define and validate the JSON object of the CID-File, the following JSON schem
                                     "description": "Switch case description",
                                     "required": ["execution_marker_id", "case_type", "evaluation_code_section", "body_code_section"],
                                     "properties": {
-                                        
+                                        "execution_marker_id": {
+                                            "type": "integer",
+                                            "description": "ID of the according execution marker"
+                                        },
+                                        "case_type": {
+                                            "type": "integer",
+                                            "description": "case type (1=normal case, 2=default case)",
+                                            "enum": [1, 2]
+                                        },
+                                        "evaluation_code_section": {
+                                            "type": "object",
+                                            "description": "Code section of the switch expression",
+                                            "required": ["start_line", "start_column", "end_line", "end_column"],
+                                            "properties": {
+                                                "start_line": {
+                                                    "type": "integer",
+                                                    "description": "Line number (starting from 1) for the start of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "start_column": {
+                                                    "type": "integer",
+                                                    "description": "Column number (starting from 1) for the start of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "end_line": {
+                                                    "type": "integer",
+                                                    "description": "Line number (starting from 1) for the end of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "end_column": {
+                                                    "type": "integer",
+                                                    "description": "Column number (starting from 1) for the end of the code section",
+                                                    "minimum": 1
+                                                }
+                                            }
+                                        },
+                                        "body_code_section": {
+                                            "type": "object",
+                                            "description": "Code section of the switch expression",
+                                            "required": ["start_line", "start_column", "end_line", "end_column"],
+                                            "properties": {
+                                                "start_line": {
+                                                    "type": "integer",
+                                                    "description": "Line number (starting from 1) for the start of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "start_column": {
+                                                    "type": "integer",
+                                                    "description": "Column number (starting from 1) for the start of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "end_line": {
+                                                    "type": "integer",
+                                                    "description": "Line number (starting from 1) for the end of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "end_column": {
+                                                    "type": "integer",
+                                                    "description": "Column number (starting from 1) for the end of the code section",
+                                                    "minimum": 1
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 },
-                "for_loops": {
-
-                },
-                "while_loops": {
-
-                },
-                "do_while_loops": {
-
-                }
-            }
-        }
-    }
-}
-```
-
-```json
-{
-    "$schema": "http://json-schema.org/draft/2019-09/schema",
-    "title": "Codeconut Instrumentation Data",
-    "type": "object",
-    "required": ["source_code_filename", "source_code_hash", "instrumentation_random", "statement_markers_enabled", "decision_markers_enabled", "condition_markers_enabled", "marker_data"],
-    "properties": {
-        "source_code_filename": {
-            "type": "string",
-            "description": "Filename and relative path to the source code file (path is relative to the execution path of the instrumenter)",
-            "pattern": "^[\\\/]*([A-z0-9-_+.]+\\\/)*([A-z0-9]+\\.([a-zA-Z+]+))$"
-        },
-        "source_code_hash": {
-            "type": "string",
-            "description": "SHA-256 hash of the data inside the source code file",
-            "pattern": "^[0-9a-fA-F]{64}$"
-        },
-        "instrumentation_random": {
-            "type": "string",
-            "description": "Random 8 char string generated during instrumentation time (link to CRI file)",
-            "pattern": "^[0-9a-fA-F]{8}$"
-        },
-        "statement_markers_enabled": {
-            "type": "boolean",
-            "description": "Defines, if the instrumentation includes statement markers"
-        },
-        "decision_markers_enabled": {
-            "type": "boolean",
-            "description": "Defines, if the instrumentation includes decision markers"
-        },
-        "condition_markers_enabled": {
-            "type": "boolean",
-            "description": "Defines, if the instrumentation includes condition markers"
-        },
-        "marker_data": {
-            "type": "array",
-            "description": "Array of definitions for markers",
-            "minItems": 0,
-            "items": {
-                "type": "object",
-                "required": ["marker_id", "marker_type", "code_section_data"],
-                "properties": {
-                    "marker_id": {
-                        "type": "integer",
-                        "description": "Unique id for the marker",
-                        "minimum": 0
-                    },
-                    "marker_type": {
-                        "type": "integer",
-                        "description": "Type of marker",
-                        "enum": [1, 2, 3]
-                    },
-                    "parent_id": {
-                        "type": "integer",
-                        "description": "marker id of a parent element (i.e. necessary for condition markers)",
-                        "minimum": 0
-                    },
-                    "code_section_data": {
-                        "type": "array",
-                        "description": "Array of definitions for code sections that refer to the marker",
-                        "minItems": 1,
-                        "items": {
-                            "type": "object",
-                            "required": ["start_line", "start_column", "end_line", "end_column"],
-                            "properties": {
-                                "start_line": {
-                                    "type": "integer",
-                                    "description": "Line number (starting from 1) for the start of the code section",
-                                    "minimum": 1
-                                },
-                                "start_column": {
-                                    "type": "integer",
-                                    "description": "Column number (starting from 1) for the start of the code section",
-                                    "minimum": 1
-                                },
-                                "end_line": {
-                                    "type": "integer",
-                                    "description": "Line number (starting from 1) for the end of the code section",
-                                    "minimum": 1
-                                },
-                                "end_column": {
-                                    "type": "integer",
-                                    "description": "Column number (starting from 1) for the end of the code section",
-                                    "minimum": 1
+                "loops": {
+                    "type": "array",
+                    "description": "List of all loops",
+                    "minItems": 0,
+                    "items": {
+                        "type": "object",
+                        "description": "Loop description",
+                        "required": ["loop_id", "loop_type", "evaluation_marker_id", "evaluation_code_section", "body_code_section", "conditions"],
+                        "properties": {
+                            "for_loop_id": {
+                                "type": "integer",
+                                "description": "Unique ID for the loop"
+                            },
+                            "loop_type": {
+                                "type": "integer",
+                                "description": "Type of the loop (1=for, 2=while, 3=do-while)",
+                                "enum": [1, 2, 3]
+                            },
+                            "evaluation_marker_id": {
+                                "type": "integer",
+                                "description": "ID of the according evaluation marker",
+                            },
+                            "evaluation_code_section": {
+                                "type": "object",
+                                "description": "Code section of the loop evaluation",
+                                "required": ["start_line", "start_column", "end_line", "end_column"],
+                                "properties": {
+                                    "start_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "start_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    }
+                                }
+                            },
+                            "body_code_section": {
+                                "type": "object",
+                                "description": "Code section of the loop body",
+                                "required": ["start_line", "start_column", "end_line", "end_column"],
+                                "properties": {
+                                    "start_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "start_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the start of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_line": {
+                                        "type": "integer",
+                                        "description": "Line number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    },
+                                    "end_column": {
+                                        "type": "integer",
+                                        "description": "Column number (starting from 1) for the end of the code section",
+                                        "minimum": 1
+                                    }
+                                }
+                            },
+                            "conditions": {
+                                "type": "array",
+                                "description": "List of loop evaluation conditions",
+                                "minItems": 0,
+                                "items": {
+                                    "type": "object",
+                                    "description": "For loop evaluation condition description",
+                                    "required": ["evaluation_marker_id", "code_section"],
+                                    "properties": {
+                                        "evaluation_marker_id": {
+                                            "type": "integer",
+                                            "description": "ID of the according evaluation marker",
+                                        },
+                                        "code_section": {
+                                        "type": "object",
+                                        "description": "Code section of the condition",
+                                        "required": ["start_line", "start_column", "end_line", "end_column"],
+                                        "properties": {
+                                            "start_line": {
+                                                "type": "integer",
+                                                "description": "Line number (starting from 1) for the start of the code section",
+                                                "minimum": 1
+                                            },
+                                            "start_column": {
+                                                "type": "integer",
+                                                "description": "Column number (starting from 1) for the start of the code section",
+                                                "minimum": 1
+                                            },
+                                            "end_line": {
+                                                "type": "integer",
+                                                "description": "Line number (starting from 1) for the end of the code section",
+                                                "minimum": 1
+                                            },
+                                            "end_column": {
+                                                "type": "integer",
+                                                "description": "Column number (starting from 1) for the end of the code section",
+                                                "minimum": 1
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -560,37 +701,6 @@ To define and validate the JSON object of the CID-File, the following JSON schem
             }
         }
     }
-}
-```
-
-
-### Explanatory example for the JSON object format
-
-The JSON object has the following structure:
-
-```json
-{
-    "source_code_filename": string,
-    "source_code_hash": string,
-    "instrumentation_random": string,
-    "statement_markers_enabled": boolean,
-    "decision_markers_enabled": boolean,
-    "condition_markers_enabled": boolean,
-    "marker_data": [
-        {
-            "marker_id": integer,
-            "marker_type": integer,
-            "parent_id": integer,
-            "code_section_data": [
-                {
-                    "start_line": integer,
-                    "start_column": integer,
-                    "end_line": integer,
-                    "end_column": integer
-                }
-            ]
-        }
-    ]
 }
 ```
 
@@ -599,23 +709,128 @@ Detailed info on the elements inside the JSON object:
 - **source_code_filename**: Filename and relative path to the source code file (path is relative to the execution path of the instrumenter)
 - **source_code_hash**: SHA-256 hash of the data inside the source code file
 - **instrumentation_random**: Random 8 char string to link CID and CRI files
-- **statement_markers_enabled**: Defines, if the instrumentation includes statement markers
-- **decision_markers_enabled**: Defines, if the instrumentation includes decision markers
-- **condition_markers_enabled**: Defines, if the instrumentation includes condition markers
-- **marker_data**: Array of 0-* definitions for markers
-  - **marker_id**: Unique id for the marker
-  - **marker_type**: Type of marker (enum is defined in a later section)
-  - **parent_id**: *(optional)* marker id of a parent element (i.e. necessary for condition markers)
-  - **code_section_data**: Array of 1-* definitions for code sections that refer to this marker
-    - **start_line**: Line number (starting from 1) for the start of the code section
-    - **start_column**: Column number (starting from 1) for the start of the code section
-    - **end_line**: Line number (starting from 1) for the end of the code section
-    - **end_column**: Column number (starting from 1) for the end of the code section
+- **checkpoint_markers_enabled**: Defines, if the instrumentation includes checkpoint markers
+- **evaluation_markers_enabled**: Defines, if the instrumentation includes evaluation markers
+- **marker_data**: Object with definitions for markers
+  - **checkpoint_markers**: Array with definition for checkpoint markers
+    - **checkpoint_marker_id**: Unique ID for checkpoint markers
+    - **code_position**: Position of the marker in code
+      - **line**: Line of code position
+      - **column**: Column of code position
+  - **evaluation_markers**: Array with definition for evaluation markers
+    - **evaluation_marker_id**: Unique ID for evaluation markers
+    - **evaluation_type**: Type of the evaluation (enum, 1=decision, 2=condition)
+    - **code_section**: Code section for the evaluation
+      - **start_line**: Line number (starting from 1) for the start of the code section
+      - **start_column**: Column number (starting from 1) for the start of the code section
+      - **end_line**: Line number (starting from 1) for the end of the code section
+      - **end_column**: Column number (starting from 1) for the end of the code section
+  - **code_data**: Object with data for code components
+    - **classes**: Array with all classes inside of the parsed code
+      - **class_id**: Unique ID for the class
+      - **class_name**: Name of the class
+    - **functions**: Array with all functions inside of the parsed code
+      - **function_id**: Unique ID for the function
+      - **function_name**: Name of the function
+      - **function_type**: Type of the function (enum, definition below)
+      - **parent_function_id**: ID of the parent function (-1 if no parent function)
+      - **checkpoint_marker_id**: ID of the according checkpoint marker for execution evaluation
+      - **header_code_section**: Code section for the function header (_type name(args)_)
+        - **start_line**: Line number (starting from 1) for the start of the code section
+        - **start_column**: Column number (starting from 1) for the start of the code section
+        - **end_line**: Line number (starting from 1) for the end of the code section
+        - **end_column**: Column number (starting from 1) for the end of the code section
+      - **inner_code_section"**: Code section for the function body
+        - **start_line**: Line number (starting from 1) for the start of the code section
+        - **start_column**: Column number (starting from 1) for the start of the code section
+        - **end_line**: Line number (starting from 1) for the end of the code section
+        - **end_column**: Column number (starting from 1) for the end of the code section
+    - **statements**: Array with all statements inside of the parsed code
+      - **statement_id**: Unique ID for the statement
+      - **statement_type**: Type of the statement (enums, defined below)
+      - **function_id**: ID of the parent function
+      - **checkpoint_marker_id**: ID of the according checkpoint marker for execution evaluation
+      - **code_section**: Code section of the statement
+        - **start_line**: Line number (starting from 1) for the start of the code section
+        - **start_column**: Column number (starting from 1) for the start of the code section
+        - **end_line**: Line number (starting from 1) for the end of the code section
+        - **end_column**: Column number (starting from 1) for the end of the code section
+    - **if_branches**: Array with all if branches inside of the parsed code
+      - **if_branch_id**: Unique ID for the branch
+      - **function_id**: ID of the parent function
+      - **branch_results**: Array with list of all possible branch results
+        - **evaluation_marker_id**: Unique ID for the evaluation marker
+        - **conditions**: Array of conditions inside the decision
+          - **evaluation_marker_id**: ID of the according evaluation marker
+          - **code_section**: Code section for the condition
+            - **start_line**: Line number (starting from 1) for the start of the code section
+            - **start_column**: Column number (starting from 1) for the start of the code section
+            - **end_line**: Line number (starting from 1) for the end of the code section
+            - **end_column**: Column number (starting from 1) for the end of the code section
+        - **result_evaluation_code_section**: Code section of evaluation
+          - **start_line**: Line number (starting from 1) for the start of the code section
+          - **start_column**: Column number (starting from 1) for the start of the code section
+          - **end_line**: Line number (starting from 1) for the end of the code section
+          - **end_column**: Column number (starting from 1) for the end of the code section
+        - **result_body_code_section**: Code section of result code body
+          - **start_line**: Line number (starting from 1) for the start of the code section
+          - **start_column**: Column number (starting from 1) for the start of the code section
+          - **end_line**: Line number (starting from 1) for the end of the code section
+          - **end_column**: Column number (starting from 1) for the end of the code section
+    - **switch_branches**: Array with all switch branches inside of the parsed code
+      - **switch_branch_id**: Unique ID for the switch branch
+      - **expression_code_section**: Code section of the evaluated switch expression
+        - **start_line**: Line number (starting from 1) for the start of the code section
+        - **start_column**: Column number (starting from 1) for the start of the code section
+        - **end_line**: Line number (starting from 1) for the end of the code section
+        - **end_column**: Column number (starting from 1) for the end of the code section
+      - **cases**: Array of cases inside the switch branch
+        - **execution_marker_id**: Unique ID for the according execution marker
+        - **case_type**: Type of the case (enum, 1=normal case, 2=default case)
+        - **evaluation_code_section**: Code section of the evaluation
+          - **start_line**: Line number (starting from 1) for the start of the code section
+          - **start_column**: Column number (starting from 1) for the start of the code section
+          - **end_line**: Line number (starting from 1) for the end of the code section
+          - **end_column**: Column number (starting from 1) for the end of the code section
+        - **body_code_section**: Code section of the code body
+          - **start_line**: Line number (starting from 1) for the start of the code section
+          - **start_column**: Column number (starting from 1) for the start of the code section
+          - **end_line**: Line number (starting from 1) for the end of the code section
+          - **end_column**: Column number (starting from 1) for the end of the code section
+    - **loops**: Array with all loops inside of the parsed code
+      - **loop_id**: Unique ID for the loop
+      - **loop_type**: Loop type (enum, 1=for, 2=while, 3=do-while)
+      - **evaluation_marker_id**: ID of the according evaluation marker
+      - **evaluation_code_section**: Code section of the evaluation
+        - **start_line**: Line number (starting from 1) for the start of the code section
+        - **start_column**: Column number (starting from 1) for the start of the code section
+        - **end_line**: Line number (starting from 1) for the end of the code section
+        - **end_column**: Column number (starting from 1) for the end of the code section
+      - **body_code_section**: Code section of the loop body
+        - **start_line**: Line number (starting from 1) for the start of the code section
+        - **start_column**: Column number (starting from 1) for the start of the code section
+        - **end_line**: Line number (starting from 1) for the end of the code section
+        - **end_column**: Column number (starting from 1) for the end of the code section
+      - **conditions**: Array of conditions inside the decision
+        - **evaluation_marker_id**: ID of the according evaluation marker
+        - **code_section**: Code section for the condition
+          - **start_line**: Line number (starting from 1) for the start of the code section
+          - **start_column**: Column number (starting from 1) for the start of the code section
+          - **end_line**: Line number (starting from 1) for the end of the code section
+          - **end_column**: Column number (starting from 1) for the end of the code section
 
 
-### Marker type enum
+### Function type enum
 
-The enum for the marker type can have the following values:
+The enum for the function type
+
+1. NORMAL
+2. CONSTRUCTOR
+3. DESTRUCTOR
+
+### Statement type enum
+
+The enum for the statement type can have the following values:
 
 1. STATEMENT
 2. DECISION

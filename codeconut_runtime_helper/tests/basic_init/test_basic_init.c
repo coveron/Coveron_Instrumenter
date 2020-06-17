@@ -7,9 +7,8 @@
 // TEST FILE FOR RUNTIME HELPER INITIALIZATION
 
 #include "codeconut_helper.h"
-#include "unity.h"
-
 #include "mock_fake_stdio.h"
+#include "unity.h"
 
 /*
  * SECTION   STRINGIFY FOR COMMENT PARSING
@@ -111,8 +110,8 @@ void test_basic_null_ptr_criFile(void) {
     // ignore further write commands for marker execution
     FWRITE_IgnoreAndReturn(0);
 
-    // simulate the writing of a statement marker
-    ___CODECONUT_SET_STATEMENT_MARKER(0, 0, 0, 0, &testInputData);
+    // simulate the writing of a checkpoint marker
+    ___CODECONUT_SET_CHECKPOINT_MARKER(0, 0, 0, 0, &testInputData);
 
     // check, if the given codeconutFile object is set to initialized
     TEST_ASSERT_EQUAL_INT(___CODECONUT_BOOL_TRUE, testInputData.helperInitialized);
@@ -128,8 +127,8 @@ void test_basic_fail_file_creation(void) {
     FREOPEN_ExpectAndReturn(
         testInputData_default.outputFilename, "wb+", (void *)NULL, (void *)NULL);
 
-    // simulate the writing of a statement marker
-    ___CODECONUT_SET_STATEMENT_MARKER(0, 0, 0, 0, &testInputData);
+    // simulate the writing of checkpoint marker
+    ___CODECONUT_SET_CHECKPOINT_MARKER(0, 0, 0, 0, &testInputData);
 
     // check, if the given codeconutFile object is set to not initialized
     TEST_ASSERT_EQUAL_INT(___CODECONUT_BOOL_FALSE, testInputData.helperInitialized);
@@ -158,8 +157,8 @@ void test_basic_corrupted_criFile(void) {
     FREOPEN_IgnoreAndReturn(dummyFilePointer);
     FWRITE_IgnoreAndReturn(0);
 
-    // simulate the writing of a statement marker
-    ___CODECONUT_SET_STATEMENT_MARKER(0, 0, 0, 0, &testInputData);
+    // simulate the writing of a checkpoint marker
+    ___CODECONUT_SET_CHECKPOINT_MARKER(0, 0, 0, 0, &testInputData);
 
     // check, if the given codeconutFile object is set to not initialized
     TEST_ASSERT_EQUAL_INT(___CODECONUT_BOOL_TRUE, testInputData.helperInitialized);
@@ -201,11 +200,11 @@ void test_basic_correct_criFile(void) {
         sizeof(dummyFilePointer),
         10 + sizeof(CMD_STRING(CODECONUT_EXECUTION_COMMENT)));
 
-    // expect one write for statement
+    // expect one write for checkpoint
     FWRITE_ExpectAnyArgsAndReturn(0);
 
-    // simulate the writing of a statement marker
-    ___CODECONUT_SET_STATEMENT_MARKER(0, 0, 0, 0, &testInputData);
+    // simulate the writing of a checkpoint marker
+    ___CODECONUT_SET_CHECKPOINT_MARKER(0, 0, 0, 0, &testInputData);
 
     // check, if the given codeconutFile object is set to not initialized
     TEST_ASSERT_EQUAL_INT(___CODECONUT_BOOL_TRUE, testInputData.helperInitialized);

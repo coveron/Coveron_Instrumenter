@@ -4,12 +4,11 @@
 //
 // The Codeconut project is licensed under the LGPL-3.0 license
 
-// TEST FILE FOR DECISION MARKERS
+// TEST FILE FOR CHECKPOINT MARKERS
 
 #include "codeconut_helper.h"
-#include "unity.h"
-
 #include "mock_fake_stdio.h"
+#include "unity.h"
 
 /*
  * SECTION   STRINGIFY FOR COMMENT PARSING
@@ -76,11 +75,11 @@ void tearDown() {}
 /*
  * SECTION   TEST FUNCTIONS
  */
-// Test the creation of a decision marker with true evaluation
-void test_create_decision_marker_true(void) {
-    // expect the creation of a decision marker
-    uint8_t comparisonDecisionMarkerArray[5] = {0x51, 0x52, 0x53, 0x54, 0xA6};
-    FWRITE_ExpectWithArrayAndReturn(comparisonDecisionMarkerArray,
+// Test the creation of a checkpoint marker
+void test_create_checkpoint_marker(void) {
+    // expect the creation of a checkpoint marker
+    uint8_t comparisonStatementMarkerArray[5] = {0xA1, 0xA2, 0xA3, 0xA4, 0x00};
+    FWRITE_ExpectWithArrayAndReturn(comparisonStatementMarkerArray,
                                     5,
                                     1,
                                     5,  // 5 bytes marker length
@@ -88,25 +87,7 @@ void test_create_decision_marker_true(void) {
                                     sizeof(dummyFilePointer),
                                     5);
 
-    // simulate the writing of a decision marker
-    int a = 5;
-    ___CODECONUT_SET_DECISION_MARKER(0x51, 0x52, 0x53, 0x54, &testInputData, (a == 5));
-}
-
-// Test the creation of a decision marker with false evaluation
-void test_create_decision_marker_false(void) {
-    // expect the creation of a decision marker
-    uint8_t comparisonDecisionMarkerArray[5] = {0x51, 0x52, 0x53, 0x54, 0x59};
-    FWRITE_ExpectWithArrayAndReturn(comparisonDecisionMarkerArray,
-                                    5,
-                                    1,
-                                    5,  // 5 bytes marker length
-                                    dummyFilePointer,
-                                    sizeof(dummyFilePointer),
-                                    5);
-
-    // simulate the writing of a decision marker
-    int a = 2;
-    ___CODECONUT_SET_DECISION_MARKER(0x51, 0x52, 0x53, 0x54, &testInputData, (a == 5));
+    // simulate the writing of a checkpoint marker
+    ___CODECONUT_SET_CHECKPOINT_MARKER(0xA1, 0xA2, 0xA3, 0xA4, &testInputData);
 }
 // !SECTION

@@ -52,7 +52,7 @@ class ClangBridge:
         """Invoke libclang to parse the given source file"""
         clang_index = clang.cindex.Index.create()
         tu = clang_index.parse(file, args=parse_args).cursor
-        return tu.cursor
+        return tu
     # !SECTION
 # !SECTION
 

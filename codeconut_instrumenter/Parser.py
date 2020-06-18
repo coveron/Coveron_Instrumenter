@@ -11,90 +11,120 @@
    Coordinates all the modules responsible for parsing the source code.
 """
 
-from DataTypes import SourceCode
+import clang.cindex
+
+from DataTypes import *
 
 from Configuration import Configuration
 from CIDManager import CIDManager
 
 
+# SECTION   ClangBridge class
+class ClangBridge:
+    """ClangBridge class.
+       Connects libclang to Codeconut Instrumenter by
+       returning the Clang AST of a input file
+    """
+    
+    # SECTION   ClangBridge private attribute definitions
+    # !SECTION
+    
+    # SECTION   ClangBridge public attribute definitions
+    # !SECTION
+    
+    # SECTION   ClangBridge initialization
+    def __init__(self):
+        clang.cindex.Config.set_library_path("C:\\Program Files\\LLVM\\bin")
+        return
+    # !SECTION
+    
+    # SECTION   ClangBridge getter functions
+    # !SECTION
+    
+    # SECTION   ClangBridge setter functions
+    # !SECTION
+
+    # SECTION   ClangBridge property definitions
+    # !SECTION
+    
+    # SECTION   ClangBridge private functions
+    # !SECTION
+    
+    # SECTION   ClangBridge public functions
+    def clang_parse(self, file, parse_args) -> clang.cindex.Cursor:
+        """Invoke libclang to parse the given source file"""
+        clang_index = clang.cindex.Index.create()
+        tu = clang_index.parse(file, args=parse_args).cursor
+        return tu
+    # !SECTION
+# !SECTION
+
+
+# SECTION   Parser class
 class Parser:
     """Parser class.
-       Coordinates all parsers for the source code.
+       Parses the source code by using the passed Clang AST
     """
+    
     # SECTION   Parser private attribute definitions
-    __slots__ = ['_config', '_cid_manager', '_input_code']
+    __slots__ = ['_config', '_cid_manager', 'clang_ast']
 
     _config: Configuration
     _cid_manager: CIDManager
-    _input_code: SourceCode
+    clang_ast: clang.cindex.Cursor
     # !SECTION
-
+    
+    # SECTION   Parser public attribute definitions
+    # !SECTION
+    
     # SECTION   Parser initialization
-    def __init__(self, config: Configuration, cid_manager: CIDManager, input_code: SourceCode):
-        """Initializes the new Parser"""
+    def __init__(self, config: Configuration, cid_manager: CIDManager, clang_ast: clang.cindex.Cursor):
         self.config = config
         self.cid_manager = cid_manager
-        self.input_code = input_code
+        self.clang_ast = clang_ast
         return
     # !SECTION
-
+    
     # SECTION   Parser getter functions
     def _get_config(self) -> Configuration:
         return self._config
-
+    
     def _get_cid_manager(self) -> CIDManager:
         return self._cid_manager
-
-    def _get_input_code(self) -> SourceCode:
-        return self._input_code
     # !SECTION
-
+    
     # SECTION   Parser setter functions
-    def _set_config(self, config):
+    def _set_config(self, config:Configuration):
         if config is None:
-            raise ValueError("config not defined!")
+            raise ValueError("config can't be none")
         elif not isinstance(config, Configuration):
-            raise TypeError("config shall be of type Configuration!")
+            raise TypeError("config shall be of type Configuration")
         else:
             self._config = config
 
-    def _set_cid_manager(self, cid_manager):
+    def _set_cid_manager(self, cid_manager:CIDManager):
         if cid_manager is None:
-            raise ValueError("cid_manager not defined!")
+            raise ValueError("cid_manager can't be none")
         elif not isinstance(cid_manager, CIDManager):
-            raise TypeError("cid_manager shall be of type CIDManager!")
+            raise TypeError("cid_manager shall be of type CIDManager")
         else:
             self._cid_manager = cid_manager
-
-    def _set_input_code(self, input_code):
-        if input_code is None:
-            raise ValueError("input_code not defined!")
-        elif not isinstance(input_code, SourceCode):
-            raise TypeError("input_code shall be of type SourceCode!")
-        else:
-            self._input_code = input_code
     # !SECTION
-
+    
     # SECTION   Parser property definitions
-    config = property(_get_config, _set_config)
-    cid_manager = property(_get_cid_manager, _set_cid_manager)
-    input_code = property(_get_input_code, _set_input_code)
+    config = property(fget=_get_config,
+                  fset=_set_config,
+                  doc="Stores the config of the Codeconut Instrumenter instance")
+    cid_manager = property(fget=_get_cid_manager,
+                  fset=_set_cid_manager,
+                  doc="Stores the CID manager for the source file")
     # !SECTION
-
-    # SECTION   Parser public function definitions
+    
+    # SECTION   Parser private functions
+    # !SECTION
+    
+    # SECTION   Parser public functions
     def start_parser(self):
-        """Starts the parsing of the input source code"""
-
-        # Create SourceStream from input_code
-        input_stream = SourceStream(self.input_code)
-
-        # Instantiate and initialize ParserStateMachine
-        state_machine = ParserStateMachine()
-        state_machine.init(self.cid_manager, input_stream)
-
-        # Run state_machine while we haven't achieved the End of File...
-        while not input_stream.eof:
-            state_machine.run()
-
         return
     # !SECTION
+# !SECTION

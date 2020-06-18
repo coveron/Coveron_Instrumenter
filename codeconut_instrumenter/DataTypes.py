@@ -463,6 +463,8 @@ class MarkerData:
     
     # SECTION   MarkerData initialization
     def __init__(self):
+        self.checkpoint_markers = list()
+        self.evaluation_markers = list()
         return
     # !SECTION
     
@@ -478,16 +480,16 @@ class MarkerData:
     def _set_checkpoint_markers(self, checkpoint_markers:List[CheckpointMarkerData]):
         if checkpoint_markers is None:
             raise ValueError("checkpoint_markers can't be none")
-        elif not isinstance(checkpoint_markers, List[CheckpointMarkerData]):
-            raise TypeError("checkpoint_markers shall be of type List[CheckpointMarkerData]")
+        elif not isinstance(checkpoint_markers, list):
+            raise TypeError("checkpoint_markers shall be of type list")
         else:
             self._checkpoint_markers = checkpoint_markers
 
     def _set_evaluation_markers(self, evaluation_markers:List[EvaluationMarkerData]):
         if evaluation_markers is None:
             raise ValueError("evaluation_markers can't be none")
-        elif not isinstance(evaluation_markers, List[EvaluationMarkerData]):
-            raise TypeError("evaluation_markers shall be of type List[EvaluationMarkerData]")
+        elif not isinstance(evaluation_markers, list):
+            raise TypeError("evaluation_markers shall be of type list")
         else:
             self._evaluation_markers = evaluation_markers
     # !SECTION
@@ -864,7 +866,13 @@ class FunctionData:
             function_type: FunctionType, parent_function_id: int,
             checkpoint_marker_id: int, header_code_section: CodeSectionData,
             inner_code_section: CodeSectionData):
-        
+        self.function_id = function_id
+        self.function_name = function_name
+        self.function_type = function_type
+        self.parent_function_id = parent_function_id
+        self.checkpoint_marker_id = checkpoint_marker_id
+        self.header_code_section = header_code_section
+        self.inner_code_section = inner_code_section
         return
     # !SECTION
     
@@ -1003,7 +1011,11 @@ class StatementData:
     # SECTION   StatementData initialization
     def __init__(self, statement_id: int, statement_type: StatementType,
             function_id: int, checkpoint_marker_id: int, code_section: CodeSectionData):
-        
+        self.statement_id = statement_id
+        self.statement_type = statement_type
+        self.function_id = function_id
+        self.checkpoint_marker_id = checkpoint_marker_id
+        self.code_section = code_section
         return
     # !SECTION
     
@@ -1098,23 +1110,71 @@ class IfBranchData:
     """
     
     # SECTION   IfBranchData private attribute definitions
+    __slots__ = ["_if_branch_id", "_function_id", "_branch_results"]
+
+    _if_branch_id: int
+    _function_id: int
+    _branch_results: List[BranchResultData]
     # !SECTION
     
     # SECTION   IfBranchData public attribute definitions
     # !SECTION
     
     # SECTION   IfBranchData initialization
-    def __init__(self):
+    def __init__(self, if_branch_id: int, function_id: int, branch_results: List[BranchResultData]):
+        self.if_branch_id = if_branch_id
+        self.function_id = function_id
+        self.branch_results = branch_results
         return
     # !SECTION
     
     # SECTION   IfBranchData getter functions
+    def _get_if_branch_id(self) -> int:
+        return self._if_branch_id
+
+    def _get_function_id(self) -> int:
+        return self._function_id
+
+    def _get_branch_results(self) -> List[BranchResultData]:
+        return self._branch_results
     # !SECTION
     
     # SECTION   IfBranchData setter functions
+    def _set_if_branch_id(self, if_branch_id:int):
+        if if_branch_id is None:
+            raise ValueError("if_branch_id can't be none")
+        elif not isinstance(if_branch_id, int):
+            raise TypeError("if_branch_id shall be of type int")
+        else:
+            self._if_branch_id = if_branch_id
+
+    def _set_function_id(self, function_id:int):
+        if function_id is None:
+            raise ValueError("function_id can't be none")
+        elif not isinstance(function_id, int):
+            raise TypeError("function_id shall be of type int")
+        else:
+            self._function_id = function_id
+
+    def _set_branch_results(self, branch_results:List[BranchResultData]):
+        if branch_results is None:
+            raise ValueError("branch_results can't be none")
+        elif not isinstance(branch_results, List[BranchResultData]):
+            raise TypeError("branch_results shall be of type List[BranchResultData]")
+        else:
+            self._branch_results = branch_results
     # !SECTION
     
     # SECTION   IfBranchData property definitions
+    if_branch_id: int = property(fget=_get_if_branch_id,
+                  fset=_set_if_branch_id,
+                  doc="Stores a unique ID of the if branch")
+    function_id: int = property(fget=_get_function_id,
+                  fset=_set_function_id,
+                  doc="Stores the Id of the parent function")
+    branch_results: List[BranchResultData] = property(fget=_get_branch_results,
+                  fset=_set_branch_results,
+                  doc="Stores the branch results of the if branch")
     # !SECTION
     
     # SECTION   IfBranchData private functions
@@ -1131,23 +1191,88 @@ class SwitchBranchData:
     """
     
     # SECTION   SwitchBranchData private attribute definitions
+    __slots__ = ["_switch_branch_id", "_function_id", "_expression_code_section", "_cases"]
+
+    _switch_branch_id: int
+    _function_id: int
+    _expression_code_section: CodeSectionData
+    _cases: List[CaseData]
     # !SECTION
     
     # SECTION   SwitchBranchData public attribute definitions
     # !SECTION
     
     # SECTION   SwitchBranchData initialization
-    def __init__(self):
+    def __init__(self, switch_branch_id: int, function_id: int,
+            expression_code_section: CodeSectionData, cases: List[CaseData]):
+        self.switch_branch_id = switch_branch_id
+        self.function_id = function_id
+        self.expression_code_section = expression_code_section
+        self.cases = cases
         return
     # !SECTION
     
     # SECTION   SwitchBranchData getter functions
+    def _get_switch_branch_id(self) -> int:
+        return self._switch_branch_id
+
+    def _get_function_id(self) -> int:
+        return self._function_id
+
+    def _get_expression_code_section(self) -> CodeSectionData:
+        return self._expression_code_section
+
+    def _get_cases(self) -> List[CaseData]:
+        return self._cases
     # !SECTION
     
     # SECTION   SwitchBranchData setter functions
+    def _set_switch_branch_id(self, switch_branch_id:int):
+        if switch_branch_id is None:
+            raise ValueError("switch_branch_id can't be none")
+        elif not isinstance(switch_branch_id, int):
+            raise TypeError("switch_branch_id shall be of type int")
+        else:
+            self._switch_branch_id = switch_branch_id
+
+    def _set_function_id(self, function_id:int):
+        if function_id is None:
+            raise ValueError("function_id can't be none")
+        elif not isinstance(function_id, int):
+            raise TypeError("function_id shall be of type int")
+        else:
+            self._function_id = function_id
+
+    def _set_expression_code_section(self, expression_code_section:CodeSectionData):
+        if expression_code_section is None:
+            raise ValueError("expression_code_section can't be none")
+        elif not isinstance(expression_code_section, CodeSectionData):
+            raise TypeError("expression_code_section shall be of type CodeSectionData")
+        else:
+            self._expression_code_section = expression_code_section
+
+    def _set_cases(self, cases:List[CaseData]):
+        if cases is None:
+            raise ValueError("cases can't be none")
+        elif not isinstance(cases, List[CaseData]):
+            raise TypeError("cases shall be of type List[CaseData]")
+        else:
+            self._cases = cases
     # !SECTION
     
     # SECTION   SwitchBranchData property definitions
+    switch_branch_id: int = property(fget=_get_switch_branch_id,
+                  fset=_set_switch_branch_id,
+                  doc="Stores a unique ID for the switch branch")
+    function_id: int = property(fget=_get_function_id,
+                  fset=_set_function_id,
+                  doc="Stores the id of the parent function")
+    expression_code_section: CodeSectionData = property(fget=_get_expression_code_section,
+                  fset=_set_expression_code_section,
+                  doc="Stores the code section of the switch evaluation")
+    cases: List[CaseData] = property(fget=_get_cases,
+                  fset=_set_cases,
+                  doc="Stores all cases belonging to the switch branch")
     # !SECTION
     
     # SECTION   SwitchBranchData private functions
@@ -1164,23 +1289,139 @@ class LoopData:
     """
     
     # SECTION   LoopData private attribute definitions
+    __slots__ = ["_loop_id", "_loop_type", "_function_id",
+                 "_evaluation_marker_id", "_evaluation_code_section", "_body_code_section",
+                 "_conditions"]
+
+    _loop_id: int
+    _loop_type: LoopType
+    _function_id: int
+    _evaluation_marker_id: int
+    _evaluation_code_section: CodeSectionData
+    _body_code_section: CodeSectionData
+    _conditions: List[ConditionData]
     # !SECTION
     
     # SECTION   LoopData public attribute definitions
     # !SECTION
     
     # SECTION   LoopData initialization
-    def __init__(self):
+    def __init__(self, loop_id: int, loop_type: LoopType, function_id: int,
+            evaluation_marker_id: int, evaluation_code_section: CodeSectionData,
+            body_code_section: CodeSectionData, conditions: List[ConditionData]):
+        self.loop_id = loop_id
+        self.loop_type = loop_type
+        self.function_id = function_id
+        self.evaluation_marker_id = evaluation_marker_id
+        self.evaluation_code_section = evaluation_code_section
+        self.body_code_section = body_code_section
+        self.conditions = conditions
         return
     # !SECTION
     
     # SECTION   LoopData getter functions
+    def _get_loop_id(self) -> int:
+        return self._loop_id
+
+    def _get_loop_type(self) -> LoopType:
+        return self._loop_type
+
+    def _get_function_id(self) -> int:
+        return self._function_id
+
+    def _get_evaluation_marker_id(self) -> int:
+        return self._evaluation_marker_id
+
+    def _get_evaluation_code_section(self) -> CodeSectionData:
+        return self._evaluation_code_section
+
+    def _get_body_code_section(self) -> CodeSectionData:
+        return self._body_code_section
+
+    def _get_conditions(self) -> List[ConditionData]:
+        return self._conditions
     # !SECTION
     
     # SECTION   LoopData setter functions
+    def _set_loop_id(self, loop_id:int):
+        if loop_id is None:
+            raise ValueError("loop_id can't be none")
+        elif not isinstance(loop_id, int):
+            raise TypeError("loop_id shall be of type int")
+        else:
+            self._loop_id = loop_id
+
+    def _set_loop_type(self, loop_type:LoopType):
+        if loop_type is None:
+            raise ValueError("loop_type can't be none")
+        elif not isinstance(loop_type, LoopType):
+            raise TypeError("loop_type shall be of type LoopType")
+        else:
+            self._loop_type = loop_type
+
+    def _set_function_id(self, function_id:int):
+        if function_id is None:
+            raise ValueError("function_id can't be none")
+        elif not isinstance(function_id, int):
+            raise TypeError("function_id shall be of type int")
+        else:
+            self._function_id = function_id
+
+    def _set_evaluation_marker_id(self, evaluation_marker_id:int):
+        if evaluation_marker_id is None:
+            raise ValueError("evaluation_marker_id can't be none")
+        elif not isinstance(evaluation_marker_id, int):
+            raise TypeError("evaluation_marker_id shall be of type int")
+        else:
+            self._evaluation_marker_id = evaluation_marker_id
+
+    def _set_evaluation_code_section(self, evaluation_code_section:CodeSectionData):
+        if evaluation_code_section is None:
+            raise ValueError("evaluation_code_section can't be none")
+        elif not isinstance(evaluation_code_section, CodeSectionData):
+            raise TypeError("evaluation_code_section shall be of type CodeSectionData")
+        else:
+            self._evaluation_code_section = evaluation_code_section
+
+    def _set_body_code_section(self, body_code_section:CodeSectionData):
+        if body_code_section is None:
+            raise ValueError("body_code_section can't be none")
+        elif not isinstance(body_code_section, CodeSectionData):
+            raise TypeError("body_code_section shall be of type CodeSectionData")
+        else:
+            self._body_code_section = body_code_section
+        
+    def _set_conditions(self, conditions:List[ConditionData]):
+        if conditions is None:
+            raise ValueError("conditions can't be none")
+        elif not isinstance(conditions, List[ConditionData]):
+            raise TypeError("conditions shall be of type List[ConditionData]")
+        else:
+            self._conditions = conditions
     # !SECTION
     
     # SECTION   LoopData property definitions
+    loop_id: int = property(fget=_get_loop_id,
+                  fset=_set_loop_id,
+                  doc="Stores a unique id for the loop")
+    loop_type: LoopType = property(fget=_get_loop_type,
+                  fset=_set_loop_type,
+                  doc="Stores the type of the loop")
+    function_id: int = property(fget=_get_function_id,
+                  fset=_set_function_id,
+                  doc="Stoes the id of the parent function")
+    evaluation_marker_id: int = property(fget=_get_evaluation_marker_id,
+                  fset=_set_evaluation_marker_id,
+                  doc="Stores the id of the according evaluation marker")
+    evaluation_code_section: CodeSectionData = property(fget=_get_evaluation_code_section,
+                  fset=_set_evaluation_code_section,
+                  doc="Stoes the code section of the loop evaluation")
+    body_code_section: CodeSectionData = property(fget=_get_body_code_section,
+                  fset=_set_body_code_section,
+                  doc="Stores the code section of the loop body")
+    conditions: List[ConditionData] = property(fget=_get_conditions,
+                  fset=_set_conditions,
+                  doc="Stores the conditions of the loop evaluation")
     # !SECTION
     
     # SECTION   LoopData private functions
@@ -1197,6 +1438,15 @@ class CodeData:
     """
     
     # SECTION   CodeData private attribute definitions
+    __slots__ = ["_classes", "_functions", "_statements", "_if_branches",
+                 "_switch_branches", "_loops"]
+
+    _classes: List[ClassData]
+    _functions: List[FunctionData]
+    _statements: List[StatementData]
+    _if_branches: List[IfBranchData]
+    _switch_branches: List[SwitchBranchData]
+    _loops: List[LoopData]
     # !SECTION
     
     # SECTION   CodeData public attribute definitions
@@ -1204,16 +1454,104 @@ class CodeData:
     
     # SECTION   CodeData initialization
     def __init__(self):
+        self.classes = list()
+        self.functions = list()
+        self.statements = list()
+        self.if_branches = list()
+        self.switch_branches = list()
+        self.loops = list()
         return
     # !SECTION
     
     # SECTION   CodeData getter functions
+    def _get_classes(self) -> List[ClassData]:
+        return self._classes
+
+    def _get_functions(self) -> List[FunctionData]:
+        return self._functions
+
+    def _get_statements(self) -> List[StatementData]:
+        return self._statements
+
+    def _get_if_branches(self) -> List[IfBranchData]:
+        return self._if_branches
+
+    def _get_switch_branches(self) -> List[SwitchBranchData]:
+        return self._switch_branches
+
+    def _get_loops(self) -> List[LoopData]:
+        return self._loops
     # !SECTION
     
     # SECTION   CodeData setter functions
+    def _set_classes(self, classes:List[ClassData]):
+        if classes is None:
+            raise ValueError("classes can't be none")
+        elif not isinstance(classes, list):
+            raise TypeError("classes shall be of type list")
+        else:
+            self._classes = classes
+
+    def _set_functions(self, functions:List[FunctionData]):
+        if functions is None:
+            raise ValueError("functions can't be none")
+        elif not isinstance(functions, list):
+            raise TypeError("functions shall be of type list")
+        else:
+            self._functions = functions
+
+    def _set_statements(self, statements:List[StatementData]):
+        if statements is None:
+            raise ValueError("statements can't be none")
+        elif not isinstance(statements, list):
+            raise TypeError("statements shall be of type list")
+        else:
+            self._statements = statements
+
+    def _set_if_branches(self, if_branches:List[IfBranchData]):
+        if if_branches is None:
+            raise ValueError("if_branches can't be none")
+        elif not isinstance(if_branches, list):
+            raise TypeError("if_branches shall be of type list")
+        else:
+            self._if_branches = if_branches
+
+    def _set_switch_branches(self, switch_branches:List[SwitchBranchData]):
+        if switch_branches is None:
+            raise ValueError("switch_branches can't be none")
+        elif not isinstance(switch_branches, list):
+            raise TypeError("switch_branches shall be of type list")
+        else:
+            self._switch_branches = switch_branches
+
+    def _set_loops(self, loops:List[LoopData]):
+        if loops is None:
+            raise ValueError("loops can't be none")
+        elif not isinstance(loops, list):
+            raise TypeError("loops shall be of type list")
+        else:
+            self._loops = loops
     # !SECTION
     
     # SECTION   CodeData property definitions
+    classes = property(fget=_get_classes,
+                  fset=_set_classes,
+                  doc="Stores information about the classes of the instrumented code")
+    functions = property(fget=_get_functions,
+                  fset=_set_functions,
+                  doc="Stores information about the functions of the instrumented code")
+    statements = property(fget=_get_statements,
+                  fset=_set_statements,
+                  doc="Stores information about the statements of the instrumented code")
+    if_branches = property(fget=_get_if_branches,
+                  fset=_set_if_branches,
+                  doc="Stores information about the if branches of the instrumented code")
+    switch_branches = property(fget=_get_switch_branches,
+                  fset=_set_switch_branches,
+                  doc="Stores information about the switch branches of the instrumented code")
+    loops = property(fget=_get_loops,
+                  fset=_set_loops,
+                  doc="Stores information about the loops of the instrumented code")
     # !SECTION
     
     # SECTION   CodeData private functions
@@ -1230,68 +1568,40 @@ class CIDData:
     """
     
     # SECTION   CIDData private attribute definitions
-    # !SECTION
-    
-    # SECTION   CIDData public attribute definitions
-    # !SECTION
-    
-    # SECTION   CIDData initialization
-    def __init__(self):
-        return
-    # !SECTION
-    
-    # SECTION   CIDData getter functions
-    # !SECTION
-    
-    # SECTION   CIDData setter functions
-    # !SECTION
-    
-    # SECTION   CIDData property definitions
-    # !SECTION
-    
-    # SECTION   CIDData private functions
-    # !SECTION
-    
-    # SECTION   CIDData public functions
-    # !SECTION
-# !SECTION
-
-
-#class CIDData:
-    """Stores the instrumentation data for a input file"""
-
-    # SECTION   CIDData private attribute definitions
     __slots__ = ['_source_code_filename', '_source_code_hash',
-                 '_instrumentation_random', '_statement_markers_enabled',
-                 '_decision_markers_enabled', '_condition_markers_enabled',
-                 '_marker_data']
+                 '_instrumentation_random', '_checkpoint_markers_enabled',
+                 '_evaluation_markers_enabled',
+                 '_marker_data', '_code_data']
 
     _source_code_filename: str
     _source_code_hash: str
     _instrumentation_random: str
     _checkpoint_markers_enabled: bool
     _evaluation_markers_enabled: bool
-    _marker_data: list
-    _code_data: list
+    _marker_data: List[MarkerData]
+    _code_data: List[CodeData]
     # !SECTION
-
+    
+    # SECTION   CIDData public attribute definitions
+    # !SECTION
+    
     # SECTION   CIDData initialization
     def __init__(self,
-                 source_code_filename=None,
-                 source_code_hash=None,
-                 instrumentation_random=None,
-                 statement_markers_enabled=None,
-                 decision_markers_enabled=None,
-                 condition_markers_enabled=None):
+                 source_code_filename: str,
+                 source_code_hash: str,
+                 instrumentation_random: str,
+                 checkpoint_markers_enabled: bool,
+                 evaluation_markers_enabled: bool):
         self.source_code_filename = source_code_filename
         self.source_code_hash = source_code_hash
         self.instrumentation_random = instrumentation_random
-        self.statement_markers_enabled = statement_markers_enabled
-        self.decision_markers_enabled = decision_markers_enabled
-        self.condition_markers_enabled = condition_markers_enabled
-        self._marker_data = list()
+        self.checkpoint_markers_enabled = checkpoint_markers_enabled
+        self.evaluation_markers_enabled = evaluation_markers_enabled
+        self._marker_data = MarkerData()
+        self._code_data = CodeData()
+        return
     # !SECTION
-
+    
     # SECTION   CIDData getter functions
     def _get_source_code_filename(self) -> str:
         return self._source_code_filename
@@ -1302,112 +1612,86 @@ class CIDData:
     def _get_instrumentation_random(self) -> str:
         return self._instrumentation_random
 
-    def _get_statement_markers_enabled(self) -> bool:
-        return self._statement_markers_enabled
+    def _get_checkpoint_markers_enabled(self) -> bool:
+        return self._checkpoint_markers_enabled
 
-    def _get_decision_markers_enabled(self) -> bool:
-        return self._decision_markers_enabled
+    def _get_evaluation_markers_enabled(self) -> bool:
+        return self._evaluation_markers_enabled
 
-    def _get_condition_markers_enabled(self) -> bool:
-        return self._condition_markers_enabled
-
-    def _get_marker_data(self) -> List[MarkerData]:
+    def _get_marker_data(self) -> MarkerData:
         return self._marker_data
-    # !SECTION
 
+    def _get_code_data(self) -> CodeData:
+        return self._code_data
+    # !SECTION
+    
     # SECTION   CIDData setter functions
-    def _set_source_code_filename(self, source_code_filename):
+    def _set_source_code_filename(self, source_code_filename:str):
         if source_code_filename is None:
-            raise ValueError("source_code_filename not defined!")
+            raise ValueError("source_code_filename can't be none")
         elif not isinstance(source_code_filename, str):
-            raise TypeError("source_code_filename shall be of type str!")
+            raise TypeError("source_code_filename shall be of type str")
         else:
             self._source_code_filename = source_code_filename
 
-    def _set_source_code_hash(self, source_code_hash):
+    def _set_source_code_hash(self, source_code_hash:str):
         if source_code_hash is None:
-            raise ValueError("source_code_hash not defined!")
+            raise ValueError("source_code_hash can't be none")
         elif not isinstance(source_code_hash, str):
-            raise TypeError("source_code_hash shall be of type str!")
-        elif len(source_code_hash) != 64:
-            raise ValueError("source_code_hash has bad length!")
-        elif re.match("^[0-9a-f]+$", source_code_hash) is None:
-            raise ValueError("source_code_hash has bad characters!")
+            raise TypeError("source_code_hash shall be of type str")
         else:
             self._source_code_hash = source_code_hash
 
-    def _set_instrumentation_random(self, instrumentation_random):
+    def _set_instrumentation_random(self, instrumentation_random:str):
         if instrumentation_random is None:
-            raise ValueError("instrumentation_random not defined!")
+            raise ValueError("instrumentation_random can't be none")
         elif not isinstance(instrumentation_random, str):
-            raise TypeError("instrumentation_random shall be of type str!")
-        elif len(instrumentation_random) != 16:
-            raise ValueError("instrumentation_random has bad length!")
-        elif re.match("^[0-9a-zA-Z]+$", instrumentation_random) is None:
-            raise ValueError("instrumentation_random has bad characters!")
+            raise TypeError("instrumentation_random shall be of type str")
         else:
             self._instrumentation_random = instrumentation_random
 
-    def _set_statement_markers_enabled(self, statement_markers_enabled):
-        if statement_markers_enabled is None:
-            raise ValueError("statement_markers_enabled not defined!")
-        elif not isinstance(statement_markers_enabled, bool):
-            raise TypeError("statement_markers_enabled shall be of type bool!")
+    def _set_checkpoint_markers_enabled(self, checkpoint_markers_enabled:bool):
+        if checkpoint_markers_enabled is None:
+            raise ValueError("checkpoint_markers_enabled can't be none")
+        elif not isinstance(checkpoint_markers_enabled, bool):
+            raise TypeError("checkpoint_markers_enabled shall be of type bool")
         else:
-            self._statement_markers_enabled = statement_markers_enabled
+            self._checkpoint_markers_enabled = checkpoint_markers_enabled
 
-    def _set_decision_markers_enabled(self, decision_markers_enabled):
-        if decision_markers_enabled is None:
-            raise ValueError("decision_markers_enabled not defined!")
-        elif not isinstance(decision_markers_enabled, bool):
-            raise TypeError("decision_markers_enabled shall be of type bool!")
+    def _set_evaluation_markers_enabled(self, evaluation_markers_enabled:bool):
+        if evaluation_markers_enabled is None:
+            raise ValueError("evaluation_markers_enabled can't be none")
+        elif not isinstance(evaluation_markers_enabled, bool):
+            raise TypeError("evaluation_markers_enabled shall be of type bool")
         else:
-            self._decision_markers_enabled = decision_markers_enabled
-
-    def _set_condition_markers_enabled(self, condition_markers_enabled):
-        if condition_markers_enabled is None:
-            raise ValueError("condition_markers_enabled not defined!")
-        elif not isinstance(condition_markers_enabled, bool):
-            raise TypeError("condition_markers_enabled shall be of type bool!")
-        else:
-            self._condition_markers_enabled = condition_markers_enabled
-
-    def add_marker_data(self, new_marker: MarkerData):
-        if new_marker is None:
-            raise ValueError("new marker not defined!")
-        elif not isinstance(new_marker, MarkerData):
-            raise TypeError("new marker shall be of type MarkerData!")
-        elif new_marker in self._marker_data:
-            raise ValueError("marker already exists in marker data!")
-        else:
-            self._marker_data.append(new_marker)
-
-    def update_marker_data(self, marker: MarkerData, new_marker: MarkerData):
-        if new_marker is None:
-            raise ValueError("new marker not defined!")
-        elif not isinstance(new_marker, MarkerData):
-            raise TypeError("new marker shall be of type MarkerData!")
-        elif marker not in self._marker_data:
-            raise ValueError("old marker not found!")
-        else:
-            self._marker_data[self._marker_data.index(marker)] = new_marker
-
-    def delete_marker_data(self, marker: MarkerData):
-        self._marker_data.remove(marker)
+            self._evaluation_markers_enabled = evaluation_markers_enabled
     # !SECTION
-
+    
     # SECTION   CIDData property definitions
-    source_code_filename = property(
-        _get_source_code_filename, _set_source_code_filename)
-    source_code_hash = property(
-        _get_source_code_hash, _set_source_code_hash)
-    instrumentation_random = property(
-        _get_instrumentation_random, _set_instrumentation_random)
-    statement_markers_enabled = property(
-        _get_statement_markers_enabled, _set_statement_markers_enabled)
-    decision_markers_enabled = property(
-        _get_decision_markers_enabled, _set_decision_markers_enabled)
-    condition_markers_enabled = property(
-        _get_condition_markers_enabled, _set_condition_markers_enabled)
-    marker_data = property(_get_marker_data)  # read-only
+    source_code_filename: str = property(fget=_get_source_code_filename,
+                  fset=_set_source_code_filename,
+                  doc="Stores the filename of the source code file")
+    source_code_hash: str = property(fget=_get_source_code_hash,
+                  fset=_set_source_code_hash,
+                  doc="Stores a hash of the source code file")
+    instrumentation_random: str = property(fget=_get_instrumentation_random,
+                  fset=_set_instrumentation_random,
+                  doc="Stores a random string for this instrumentation process")
+    checkpoint_markers_enabled: bool = property(fget=_get_checkpoint_markers_enabled,
+                  fset=_set_checkpoint_markers_enabled,
+                  doc="Stores, if checkpoint markers are enabled")
+    evaluation_markers_enabled: bool = property(fget=_get_evaluation_markers_enabled,
+                  fset=_set_evaluation_markers_enabled,
+                  doc="Stoes, if evaluation markers are enabled")
+    marker_data: MarkerData = property(fget=_get_marker_data,
+                  doc="Stores the marker data of the instrumentation")
+    code_data: CodeData = property(fget=_get_code_data,
+                  doc="Stores the code information data of the instrumentation")
     # !SECTION
+    
+    # SECTION   CIDData private functions
+    # !SECTION
+    
+    # SECTION   CIDData public functions
+    # !SECTION
+# !SECTION

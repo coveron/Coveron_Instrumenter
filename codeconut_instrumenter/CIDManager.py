@@ -11,14 +11,15 @@
    Contains all instrumentation data during runtime.
 """
 
+import hashlib
+import string
+import random
+import os
+
 from typing import List
 from DataTypes import *
 
 from Configuration import Configuration
-
-import hashlib
-import string
-import random
 
 
 # SECTION   CIDManager class
@@ -28,10 +29,11 @@ class CIDManager:
     """
     
     # SECTION   CIDManager private attribute definitions
-    __slots__ = ['_config', '_cid_data', '_current_id']
+    __slots__ = ['_config', '_cid_data', '_source_file', '_current_id']
 
     _config: Configuration
     _cid_data: CIDData
+    _source_file: SourceFile
     _current_id: int
     # !SECTION
     
@@ -39,31 +41,59 @@ class CIDManager:
     # !SECTION
     
     # SECTION   CIDManager initialization
-    def __init__(self, config: Configuration, source_file: SourceFile, sourcecode: SourceCode):
+    def __init__(self, config: Configuration, source_file: SourceFile, source_code: SourceCode):
+        self.config = config
+        self.source_file = source_file
+        
+        # get SHA256 hash
+        source_code_sha256 = hashlib.sha256(source_code.encode('utf-8')).hexdigest()
 
-        # Load configuration
-        self._config = config
-
-        # Set filename and hash for the source code file
-        self._cid_data = CIDData(source_code_filename=source_file.input_filename,
-                                 source_code_hash=hashlib.sha256(
-                                     sourcecode.encode('utf-8')).hexdigest(),
+        # Initialize CIDData object
+        self._cid_data = CIDData(source_code_filename=self.source_file.input_filename,
+                                 source_code_hash=source_code_sha256,
                                  instrumentation_random=''.join(random.choice(
                                      string.digits +
                                      string.ascii_lowercase +
                                      string.ascii_uppercase) for i in range(16)),
-                                 checkpoint_markers_enabled=self._config.checkpoint_markers_enabled,
-                                 evaluation_markers_enabled=self._config.evaluation_markers_enabled)
+                                 checkpoint_markers_enabled=self.config.checkpoint_markers_enabled,
+                                 evaluation_markers_enabled=self.config.evaluation_markers_enabled)
         return
     # !SECTION
     
     # SECTION   CIDManager getter functions
+    def _get_config(self) -> Configuration:
+        return self._config
+
+    def _get_source_file(self) -> SourceFile:
+        return self._source_file
     # !SECTION
     
     # SECTION   CIDManager setter functions
+    def _set_config(self, config:Configuration):
+        if config is None:
+            raise ValueError("config can't be none")
+        elif not isinstance(config, Configuration):
+            raise TypeError("config shall be of type Configuration")
+        else:
+            self._config = config
+
+    def _set_source_file(self, source_file:SourceFile):
+        if source_file is None:
+            raise ValueError("source_file can't be none")
+        elif not isinstance(source_file, SourceFile):
+            raise TypeError("source_file shall be of type SourceFile")
+        else:
+            self._source_file = source_file
     # !SECTION
     
     # SECTION   CIDManager property definitions
+    config = property(fget=_get_config,
+                  fset=_set_config,
+                  doc="Stores the config of the Codeconut Instrumenter")
+
+    source_file = property(fget=_get_source_file,
+                  fset=_set_source_file,
+                  doc="Stores information about the according souce file")
     # !SECTION
     
     # SECTION   CIDManager private functions
@@ -143,8 +173,8 @@ class CIDManager:
         loop_id = self._get_new_id()
         return loop_id
 
-    def write_cid_file(self, cid_filename: str):
+    def write_cid_file(self):
         '''Writes a CID file from the curretly stored information to the specified filepath'''
-
+        cid_filename = self.source_file.cid_filename
     # !SECTION
 # !SECTION

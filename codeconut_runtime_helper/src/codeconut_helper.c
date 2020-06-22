@@ -248,7 +248,7 @@ void ___CODECONUT_GENERATE_EXECUTION_MARKER(___CODECONUT_FILE_T *codeconutFile) 
 /*
  * SECTION   PUBLIC FUNCTION DEFINITIONS
  */
-#ifdef CODECONUT_CHECKPOINT_ANALYSIS_ENABLED
+#ifdef ___CODECONUT_CHECKPOINT_ANALYSIS_ENABLED
 inline void ___CODECONUT_SET_CHECKPOINT_MARKER(uint8_t markerId_B0,
                                                uint8_t markerId_B1,
                                                uint8_t markerId_B2,
@@ -265,7 +265,7 @@ inline void ___CODECONUT_SET_CHECKPOINT_MARKER(uint8_t markerId_B0,
 }
 #endif
 
-#ifdef CODECONUT_EVALUATION_ANALYSIS_ENABLED
+#ifdef ___CODECONUT_EVALUATION_ANALYSIS_ENABLED
 inline ___CODECONUT_BOOL_T ___CODECONUT_SET_EVALUATION_MARKER(
     uint8_t markerId_B0,
     uint8_t markerId_B1,

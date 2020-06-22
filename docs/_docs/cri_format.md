@@ -87,16 +87,10 @@ A new execution is marked by a specific execution header. The header contains th
 - 5 bytes start padding (0x00 0x00 0x00 0x00 0x00)
 - Magic number for new execution (0x52 0x55 0x4E 0x21)
   - The magic number can be interpreted in UTF-8 to get: *RUN!*
-- The comment in UTF-8 encoded format (NULL-Terminated string)
-- Comment string terminator NULL (0x00)
 - A line break character (0x0A)
 
 The execution header does not feature a specific length. Instead, the line break is the symbol used to define the end of the header. This allows later file revisions to add more information if that should ever be necessary.
 
-
-### Execution-specific note
-
-It is possible to add a note for each execution run by setting the value of the CODECONUT_EXECUTION_COMMENT define to a specific string during compilation time (passing a argument to the compiler).
 
 ### Footer after execution
 

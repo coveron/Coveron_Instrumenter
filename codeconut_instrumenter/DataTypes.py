@@ -62,11 +62,12 @@ class SourceFile:
     """
     
     # SECTION   SourceFile private attribute definitions
-    __slots__ = ['_input_filename', '_output_filename', '_cid_filename']
+    __slots__ = ['_input_filename', '_output_filename', '_cid_filename', '_cri_filename']
 
     _input_filename: str
     _output_filename: str
     _cid_filename: str
+    _cri_filename: str
     # !SECTION
     
     # SECTION   SourceFile public attribute definitions
@@ -83,8 +84,12 @@ class SourceFile:
                 '.')+1:]
 
         # determine cid filename
-        self._cid_filename = self.output_filename[0:self.output_filename.rindex(
+        self._cid_filename = self.input_filename[0:self.input_filename.rindex(
             '.')+1] + "cid"
+
+        # determine cri filename
+        self._cri_filename = self.input_filename[0:self.input_filename.rindex(
+            '.')+1] + "cri"
         return
     # !SECTION
     
@@ -97,6 +102,9 @@ class SourceFile:
 
     def _get_cid_filename(self) -> str:
         return self._cid_filename
+
+    def _get_cri_filename(self) -> str:
+        return self._cri_filename
     # !SECTION
     
     # SECTION   SourceFile setter functions
@@ -116,7 +124,9 @@ class SourceFile:
     output_filename: str = property(fget=_get_output_filename,
                   doc="Stores the output filename of the instrumented source file")
     cid_filename: str = property(fget=_get_cid_filename,
-                  doc="Stores the output filename of the cid file")
+                  doc="Stores the output filename of the CID file")
+    cri_filename: str = property(fget=_get_cri_filename,
+                  doc="Stores the output filename of the CRI file")
     # !SECTION
     
     # SECTION   SourceFile private functions

@@ -24,7 +24,7 @@ setup(name='codeconut',
       ],
       package_data={
           'codeconut_analyzer': ['codeconut_analyzer/data/*.css', 'codeconut_analyzer/data/*.html'],
-          'codeconut_instrumenter': ['codeconut_instrumenter/clang']
+          'codeconut_instrumenter': ['codeconut_instrumenter/clang', 'codeconut_runtime_helper']
       },
       include_package_data=True,
       entry_points={

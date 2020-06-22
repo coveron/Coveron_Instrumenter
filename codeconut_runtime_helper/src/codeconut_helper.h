@@ -57,7 +57,7 @@ typedef struct ___CODECONUT_FILE_S {
 /*
  * SECTION   PUBLIC FUNCTION DECLARATIONS
  */
-#ifdef CODECONUT_CHECKPOINT_ANALYSIS_ENABLED
+#ifdef ___CODECONUT_CHECKPOINT_ANALYSIS_ENABLED
 void ___CODECONUT_SET_CHECKPOINT_MARKER(uint8_t markerId_B0,
                                         uint8_t markerId_B1,
                                         uint8_t markerId_B2,
@@ -65,7 +65,7 @@ void ___CODECONUT_SET_CHECKPOINT_MARKER(uint8_t markerId_B0,
                                         ___CODECONUT_FILE_T *codeconutFile);
 #endif
 
-#ifdef CODECONUT_EVALUATION_ANALYSIS_ENABLED
+#ifdef ___CODECONUT_EVALUATION_ANALYSIS_ENABLED
 ___CODECONUT_BOOL_T ___CODECONUT_SET_EVALUATION_MARKER(uint8_t markerId_B0,
                                                        uint8_t markerId_B1,
                                                        uint8_t markerId_B2,

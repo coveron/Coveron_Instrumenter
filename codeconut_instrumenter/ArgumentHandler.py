@@ -86,7 +86,12 @@ class ArgumentHandler:
         self._argparser.add_argument('--CCN_VERBOSE',
                                      dest='verbose', action='store_const',
                                      const=True, default=False,
-                                     help='Let Codeconut Instrumenter run in verbose mode')                         
+                                     help='Let Codeconut Instrumenter run in verbose mode')        
+
+        self._argparser.add_argument('--CCN_FORCE',
+                                     dest='force', action='store_const',
+                                     const=False, default=True,
+                                     help='Don\'t use cached files but always create new instrumentation')                        
         
         # parse and save known args to _args. Everything else to _other_args
         self._args, self._other_args = self._argparser.parse_known_args()
@@ -95,6 +100,9 @@ class ArgumentHandler:
     def _parse_args(self):
         # set verbose mode
         self._config.verbose = self._args.verbose
+
+        # set force flag
+        self._config.force = self._args.force
 
         # set compiler executable
         self._config.compiler_exec = self._args.compiler_exec

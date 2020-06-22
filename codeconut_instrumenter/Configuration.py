@@ -25,20 +25,24 @@ class Configuration:
 
     # SECTION   Configuration private attribute definitions
     __slots__ = ["_verbose",
+                 "_force",
                  "_checkpoint_markers_enabled",
                  "_evaluation_markers_enabled",
                  "_source_files",
                  "_compiler_exec",
                  "_compiler_args",
-                 "_clang_args"]
+                 "_clang_args",
+                 "_runtime_helper_header_path"]
 
     _verbose: bool
+    _force: bool
     _checkpoint_markers_enabled: bool
     _evaluation_markers_enabled: bool
     _source_files: list
     _compiler_exec: str
     _compiler_args: str
     _clang_args: str
+    _runtime_helper_header_path: str
     # !SECTION
 
     # SECTION   Configuration public attribute definitions
@@ -48,12 +52,14 @@ class Configuration:
     def __init__(self):
         # set default values
         self.verbose = False
+        self.force = False
         self.checkpoint_markers_enabled = True
         self.evaluation_markers_enabled = False
         self.source_files = list()
         self.compiler_exec = ""
         self.compiler_args = ""
         self.clang_args = ""
+        self.runtime_helper_header_path = ""
 
         return
     # !SECTION
@@ -61,6 +67,9 @@ class Configuration:
     # SECTION   Configuration getter functions
     def _get_verbose(self) -> bool:
         return self._verbose
+
+    def _get_force(self) -> bool:
+        return self._force
 
     def _get_checkpoint_markers_enabled(self) -> bool:
         return self._checkpoint_markers_enabled
@@ -79,6 +88,9 @@ class Configuration:
 
     def _get_clang_args(self) -> str:
         return self._clang_args
+
+    def _get_runtime_helper_header_path(self) -> str:
+        return self._runtime_helper_header_path
     # !SECTION
 
     # SECTION   Configuration setter functions
@@ -89,6 +101,14 @@ class Configuration:
             raise TypeError("verbose shall be of type bool")
         else:
             self._verbose = verbose
+
+    def _set_force(self, force:bool):
+        if force is None:
+            raise ValueError("force can't be none")
+        elif not isinstance(force, bool):
+            raise TypeError("force shall be of type bool")
+        else:
+            self._force = force
 
     def _set_checkpoint_markers_enabled(self, checkpoint_markers_enabled:bool):
         if checkpoint_markers_enabled is None:
@@ -131,6 +151,10 @@ class Configuration:
             raise TypeError("compiler_args shall be of type str")
         else:
             self._compiler_args = compiler_args
+            if self.checkpoint_markers_enabled:
+                self._compiler_args += " -D___CODECONUT_CHECKPOINT_ANALYSIS_ENABLED"
+            if self.evaluation_markers_enabled:
+                self._compiler_args += " -D___CODECONUT_EVALUATION_ANALYSIS_ENABLED"
 
     def _set_clang_args(self, clang_args:str):
         if clang_args is None:
@@ -139,12 +163,23 @@ class Configuration:
             raise TypeError("clang_args shall be of type str")
         else:
             self._clang_args = clang_args
+
+    def _set_runtime_helper_header_path(self, runtime_helper_header_path:str):
+        if runtime_helper_header_path is None:
+            raise ValueError("runtime_helper_header_path can't be none")
+        elif not isinstance(runtime_helper_header_path, str):
+            raise TypeError("runtime_helper_header_path shall be of type str")
+        else:
+            self._runtime_helper_header_path = runtime_helper_header_path
     # !SECTION
 
     # SECTION   Configuration property definitions
     verbose = property(fget=_get_verbose,
                        fset=_set_verbose,
                        doc="Controls, if Instrumenter is running in verbose mode")
+    force = property(fget=_get_force,
+                  fset=_set_force,
+                  doc="Controls, if Instrumenter can skip already instrumented files")
     checkpoint_markers_enabled: bool = property(fget=_get_checkpoint_markers_enabled,
                                           fset=_set_checkpoint_markers_enabled,
                                           doc="Controls the creation of checkpoint markers")
@@ -162,7 +197,10 @@ class Configuration:
                              doc="String of compiler arguments")
     clang_args: str = property(fget=_get_clang_args,
                           fset=_set_clang_args,
-                          doc="String of clang analysis arguments")                        
+                          doc="String of clang analysis arguments")  
+    runtime_helper_header_path = property(fget=_get_runtime_helper_header_path,
+                  fset=_set_runtime_helper_header_path,
+                  doc="String of path to runtime helper")                      
     # !SECTION
 
     # SECTION   Configuration private functions

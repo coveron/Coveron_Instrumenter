@@ -54,7 +54,7 @@ class ClangBridge:
     def clang_parse(self, file, parse_args) -> clang.cindex.Cursor:
         """Invoke libclang to parse the given source file"""
         clang_index = clang.cindex.Index.create()
-        tu = clang_index.parse(file, args=parse_args).cursor
+        tu = clang_index.parse(file, [parse_args]).cursor
         return tu
     # !SECTION
 # !SECTION

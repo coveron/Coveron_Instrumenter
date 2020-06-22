@@ -15,6 +15,7 @@ import hashlib
 import string
 import random
 import os
+import copy
 
 from typing import List
 from DataTypes import *
@@ -44,17 +45,20 @@ class CIDManager:
     def __init__(self, config: Configuration, source_file: SourceFile, source_code: SourceCode):
         self.config = config
         self.source_file = source_file
+        self._current_id = 1 # starting with ID 1
         
         # get SHA256 hash
         source_code_sha256 = hashlib.sha256(source_code.encode('utf-8')).hexdigest()
 
+        # create instrumentation random
+        random_string = ''.join(random.choice(string.digits +string.ascii_lowercase + string.ascii_uppercase)
+                        for i in range(32))
+        instrumentation_random = hashlib.sha256(random_string.encode('utf-8')).hexdigest()[:32]
+
         # Initialize CIDData object
         self._cid_data = CIDData(source_code_filename=self.source_file.input_filename,
                                  source_code_hash=source_code_sha256,
-                                 instrumentation_random=''.join(random.choice(
-                                     string.digits +
-                                     string.ascii_lowercase +
-                                     string.ascii_uppercase) for i in range(16)),
+                                 instrumentation_random=instrumentation_random,
                                  checkpoint_markers_enabled=self.config.checkpoint_markers_enabled,
                                  evaluation_markers_enabled=self.config.evaluation_markers_enabled)
         return
@@ -90,7 +94,6 @@ class CIDManager:
     config = property(fget=_get_config,
                   fset=_set_config,
                   doc="Stores the config of the Codeconut Instrumenter")
-
     source_file = property(fget=_get_source_file,
                   fset=_set_source_file,
                   doc="Stores information about the according souce file")
@@ -105,16 +108,35 @@ class CIDManager:
     # !SECTION
     
     # SECTION   CIDManager public functions
+    def get_instrumentation_random(self) -> str:
+        return self._cid_data.instrumentation_random
+
+    def get_source_code_hash(self) -> str:
+        return self._cid_data.source_code_hash
+
+    def get_checkpoint_markers(self) -> list:
+        # reutrn deepcopy to prevent accidental changes
+        return copy.deepcopy(self._cid_data.marker_data.checkpoint_markers)
+
+    def get_evaluation_markers(self) -> list:
+        return copy.deepcopy(self._cid_data.marker_data.evaluation_markers)
+
     def add_checkpoint_marker(self, code_position: CodePositionData) -> int:
         '''Create new checkpoint marker. Returns new checkpoint_marker_id'''
         # get new checkpoint_marker_id
         checkpoint_marker_id = self._get_new_id()
+
+        self._cid_data.marker_data.checkpoint_markers.append(
+                CheckpointMarkerData(checkpoint_marker_id, code_position))
         return checkpoint_marker_id
 
-    def add_evaluation_marker(self, code_position: CodeSectionData) -> int:
+    def add_evaluation_marker(self, code_section: CodeSectionData, evaluation_type: EvaluationType) -> int:
         '''Create new evaluation marker. Returns new evaluation_marker_id'''
         # get new evaluation_marker_id
         evaluation_marker_id = self._get_new_id()
+
+        self._cid_data.marker_data.evaluation_markers.append(
+                EvaluationMarkerData(evaluation_marker_id, evaluation_type, code_section))
         return evaluation_marker_id
 
     def add_class_data(self, class_name: str) -> int:

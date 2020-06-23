@@ -43,34 +43,13 @@ matrix:
       script:
         - python3 -m flake8 --ignore=E501 --exclude tests
 
-    - language: python
-      name: "Unit Tests Analyzer"
-      python: 3.7
-      install:
-        - pip install --upgrade pytest pytest-cov lxml jinja2
-      before_script:
-        - pip install -e .
-        - cd codeconut_analyzer/tests/unit_tests
-      script:
-        - python3 -m pytest --cov=./ --exclude tests
-
-    - language: python
-      name: "Style check Analyzer"
-      python: 3.7
-      install:
-        - pip install --upgrade flake8
-      before_script:
-        - cd codeconut_analyzer
-      script:
-        - python3 -m flake8 --ignore=E501
-
     - language: ruby
       name: "Unit Tests Runtime Helper"
       rvm: 2.6
       install:
         - gem install ceedling
       before_script:
-        - cd codeconut_runtime_helper
+        - cd codeconut_instrumenter/codeconut_runtime_helper
       script:
         - ceedling clobber gcov:all
 
@@ -80,7 +59,7 @@ matrix:
       install:
         - pip install --upgrade cpplint
       before_script:
-        - cd codeconut_runtime_helper/src
+        - cd codeconut_instrumenter/codeconut_runtime_helper/src
       script:
         - cpplint codeconut_helper.c codeconut_helper.h
     

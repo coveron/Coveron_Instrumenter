@@ -1,4 +1,2 @@
 include versioneer.py
 include _version.py
-include codeconut_analyzer/data/*.css
-include codeconut_analyzer/data/*.html

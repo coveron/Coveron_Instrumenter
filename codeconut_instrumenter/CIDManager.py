@@ -160,6 +160,20 @@ class CIDManager:
                 expression_code_section, cases))
         return switch_branch_id
 
+    def add_ternary_expression_data(self,
+                                    ternary_expression_id: int,
+                                    function_id: int,
+                                    evaluation_marker_id: int,
+                                    evaluation_code_section: CodeSectionData,
+                                    conditions: List[ConditionData],
+                                    true_code_section: CodeSectionData,
+                                    false_code_section: CodeSectionData
+                                    ):
+        '''Create new ternary expression in code data. Return new ternary_expression_id'''
+        self._cid_data.code_data.ternary_expressions.append(TernaryExpressionData(ternary_expression_id,
+                function_id, evaluation_marker_id, evaluation_code_section, conditions, true_code_section,
+                false_code_section))
+
     def add_loop_data(self,
                       loop_id: int,
                       loop_type: LoopType,

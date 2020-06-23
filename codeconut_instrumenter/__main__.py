@@ -106,39 +106,20 @@ def main():
         parser = Parser(config, cid_manager, clang_tree)
         parser.start_parser()
 
-        # debugging: write some markers for dummy.c
-        cid_manager.add_checkpoint_marker(1, CodePositionData(5, 23))
-        cid_manager.add_checkpoint_marker(2, CodePositionData(6, 18))
-        cid_manager.add_checkpoint_marker(3, CodePositionData(8, 13))
-        cid_manager.add_evaluation_marker(4,
-            CodeSectionData(CodePositionData(6, 9), CodePositionData(6, 15)), EvaluationType.DECISION)
-        cid_manager.add_evaluation_marker(5,
-            CodeSectionData(CodePositionData(6, 9), CodePositionData(6, 15)), EvaluationType.CONDITION)
-        cid_manager.add_checkpoint_marker(6, CodePositionData(15, 30))
-        cid_manager.add_checkpoint_marker(7, CodePositionData(18, 28))
-        cid_manager.add_checkpoint_marker(8, CodePositionData(20, 13))
-        cid_manager.add_evaluation_marker(9,
-            CodeSectionData(CodePositionData(18, 9), CodePositionData(18, 25)), EvaluationType.DECISION)
-        cid_manager.add_evaluation_marker(10,
-            CodeSectionData(CodePositionData(18, 9), CodePositionData(18, 15)), EvaluationType.CONDITION)
-        cid_manager.add_evaluation_marker(11,
-            CodeSectionData(CodePositionData(18, 19), CodePositionData(18, 25)), EvaluationType.CONDITION)
-        cid_manager.add_checkpoint_marker(12, CodePositionData(25, 13))
-
         # write cid data
         cid_manager.write_cid_file()
 
         # create a instrumenter instance
-        instrumenter = Instrumenter(config, cid_manager, source_file, source_code)
+        #instrumenter = Instrumenter(config, cid_manager, source_file, source_code)
 
         # create the instrumented source code and write the instrumened source file
-        instrumenter.start_instrumentation()
-        instrumenter.write_output_file()
+        #instrumenter.start_instrumentation()
+        #instrumenter.write_output_file()
 
         # delete cid_manager, parser and instrumenter instances
         del cid_manager
-        del parser
-        del instrumenter
+        #del parser
+        #del instrumenter
         continue
 
     # delete clang bridge after running through every file
@@ -149,8 +130,8 @@ def main():
                                config.compiler_args,
                                ' '.join(source_file.output_filename for source_file in config.source_files),
                                runtime_helper_source_path])
-    print(command_string)
-    compiler_returncode = subprocess.call(command_string, shell=True)
+    #print(command_string)
+    #compiler_returncode = subprocess.call(command_string, shell=True)
 
     #if config.verbose:
         #if compiler_returncode is not 0:

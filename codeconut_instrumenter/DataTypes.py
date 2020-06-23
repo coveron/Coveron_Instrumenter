@@ -78,6 +78,10 @@ class FunctionType(int, Enum):
 class StatementType(int, Enum):
     '''Enum for the type of a function'''
     NORMAL = 1
+    RETURN = 2
+    BREAK = 3
+    CONTINUE = 4
+    GOTO = 5
 # !SECTION
 
 # SECTION   CaseType
@@ -802,7 +806,7 @@ class IfBranchData:
     def asJSON(self):
         # JSON encoding helper
         return dict(
-            switch_branch_id = self.switch_branch_id,
+            if_branch_id = self.if_branch_id,
             function_id = self.function_id,
             branch_results = self.branch_results
         )

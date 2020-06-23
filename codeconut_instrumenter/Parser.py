@@ -67,10 +67,10 @@ class Parser:
     """
     
     # SECTION   Parser private attribute definitions
-    __slots__ = ['_config', '_cid_manager', 'clang_ast']
+    __slots__ = ['config', 'cid_manager', 'clang_ast']
 
-    _config: Configuration
-    _cid_manager: CIDManager
+    config: Configuration
+    cid_manager: CIDManager
     clang_ast: clang.cindex.Cursor
     # !SECTION
     
@@ -86,38 +86,12 @@ class Parser:
     # !SECTION
     
     # SECTION   Parser getter functions
-    def _get_config(self) -> Configuration:
-        return self._config
-    
-    def _get_cid_manager(self) -> CIDManager:
-        return self._cid_manager
     # !SECTION
     
     # SECTION   Parser setter functions
-    def _set_config(self, config:Configuration):
-        if config is None:
-            raise ValueError("config can't be none")
-        elif not isinstance(config, Configuration):
-            raise TypeError("config shall be of type Configuration")
-        else:
-            self._config = config
-
-    def _set_cid_manager(self, cid_manager:CIDManager):
-        if cid_manager is None:
-            raise ValueError("cid_manager can't be none")
-        elif not isinstance(cid_manager, CIDManager):
-            raise TypeError("cid_manager shall be of type CIDManager")
-        else:
-            self._cid_manager = cid_manager
     # !SECTION
     
     # SECTION   Parser property definitions
-    config = property(fget=_get_config,
-                  fset=_set_config,
-                  doc="Stores the config of the Codeconut Instrumenter instance")
-    cid_manager = property(fget=_get_cid_manager,
-                  fset=_set_cid_manager,
-                  doc="Stores the CID manager for the source file")
     # !SECTION
     
     # SECTION   Parser private functions
@@ -125,6 +99,40 @@ class Parser:
     
     # SECTION   Parser public functions
     def start_parser(self):
+        self.traverse_root(self.clang_ast)
         return
+
+    def traverse_root(self, ast_pointer):
+        """Searches for functions inside the code of the active source file."""
+
+        # Travel through the first layer of the AST.
+        # Goal: Find functions with a source file name equal to the file name of the instrumented code.
+        #       (ignore headers etc.)
+        return
+
+    def traverse_function(self, ast_cursor: clang.cindex.Cursor, args: object):
+        """Parses a function passed to it"""
+        function_id = self.cid_manager.get_new_id()
+        function_name = ast_cursor.displayname
+        function_type = FunctionType.NORMAL
+        parent_function_id = args["parent_function_id"]
+
+        inner_traverse_args = {
+            "isCase": False,
+            "parent_function_id": function_id
+        }
+        checkpoint_marker_id = traverse_compound_statement(ast_cursor.get_children()[-1], args)
+        # First: Get start position of element to start position of compound_statement to store the header
+        #header_code_section = 
+
+        #inner_code_section = 
+
+        #self.cid_manager.add_function_data(function_name, function_type, parent_function_id,
+                #checkpoint_marker_id, header_code_section, inner_code_section)
+        return
+
+    def traverse_compound_statement(self, ast_cursor: clang.cindex.Cursor, args: object):
+        """Parses a compound statement given to it"""
+
     # !SECTION
 # !SECTION

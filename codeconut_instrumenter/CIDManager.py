@@ -16,6 +16,8 @@ import string
 import random
 import os
 import copy
+import json
+import gzip
 
 from typing import List
 from DataTypes import *
@@ -30,11 +32,11 @@ class CIDManager:
     """
     
     # SECTION   CIDManager private attribute definitions
-    __slots__ = ['_config', '_cid_data', '_source_file', '_current_id']
+    __slots__ = ['config', '_cid_data', 'source_file', '_current_id']
 
-    _config: Configuration
+    config: Configuration
     _cid_data: CIDData
-    _source_file: SourceFile
+    source_file: SourceFile
     _current_id: int
     # !SECTION
     
@@ -65,49 +67,24 @@ class CIDManager:
     # !SECTION
     
     # SECTION   CIDManager getter functions
-    def _get_config(self) -> Configuration:
-        return self._config
-
-    def _get_source_file(self) -> SourceFile:
-        return self._source_file
     # !SECTION
     
     # SECTION   CIDManager setter functions
-    def _set_config(self, config:Configuration):
-        if config is None:
-            raise ValueError("config can't be none")
-        elif not isinstance(config, Configuration):
-            raise TypeError("config shall be of type Configuration")
-        else:
-            self._config = config
-
-    def _set_source_file(self, source_file:SourceFile):
-        if source_file is None:
-            raise ValueError("source_file can't be none")
-        elif not isinstance(source_file, SourceFile):
-            raise TypeError("source_file shall be of type SourceFile")
-        else:
-            self._source_file = source_file
     # !SECTION
     
     # SECTION   CIDManager property definitions
-    config = property(fget=_get_config,
-                  fset=_set_config,
-                  doc="Stores the config of the Codeconut Instrumenter")
-    source_file = property(fget=_get_source_file,
-                  fset=_set_source_file,
-                  doc="Stores information about the according souce file")
     # !SECTION
     
     # SECTION   CIDManager private functions
-    def _get_new_id(self) -> int:
+    # !SECTION
+    
+    # SECTION   CIDManager public functions
+    def get_new_id(self) -> int:
         '''Returns a unique id for the new marker/data'''
         current_id = self._current_id
         self._current_id += 1 # increase id counter by one
         return current_id
-    # !SECTION
-    
-    # SECTION   CIDManager public functions
+
     def get_instrumentation_random(self) -> str:
         return self._cid_data.instrumentation_random
 
@@ -121,31 +98,28 @@ class CIDManager:
     def get_evaluation_markers(self) -> list:
         return copy.deepcopy(self._cid_data.marker_data.evaluation_markers)
 
-    def add_checkpoint_marker(self, code_position: CodePositionData) -> int:
+    def add_checkpoint_marker(self, checkpoint_marker_id: int,
+            code_position: CodePositionData) -> int:
         '''Create new checkpoint marker. Returns new checkpoint_marker_id'''
-        # get new checkpoint_marker_id
-        checkpoint_marker_id = self._get_new_id()
 
         self._cid_data.marker_data.checkpoint_markers.append(
                 CheckpointMarkerData(checkpoint_marker_id, code_position))
         return checkpoint_marker_id
 
-    def add_evaluation_marker(self, code_section: CodeSectionData, evaluation_type: EvaluationType) -> int:
+    def add_evaluation_marker(self, evaluation_marker_id: int,
+            code_section: CodeSectionData, evaluation_type: EvaluationType) -> int:
         '''Create new evaluation marker. Returns new evaluation_marker_id'''
-        # get new evaluation_marker_id
-        evaluation_marker_id = self._get_new_id()
-
         self._cid_data.marker_data.evaluation_markers.append(
                 EvaluationMarkerData(evaluation_marker_id, evaluation_type, code_section))
         return evaluation_marker_id
 
-    def add_class_data(self, class_name: str) -> int:
+    def add_class_data(self, class_id: int, class_name: str) -> int:
         '''Create new class in code data. Returns new class_id'''
-        # get new class_id
-        class_id = self._get_new_id()
+        self._cid_data.code_data.classes.append(ClassData(class_id, class_name))
         return class_id
     
     def add_function_data(self,
+                          function_id: int,
                           function_name: str,
                           function_type: FunctionType,
                           parent_function_id: int,
@@ -153,38 +127,41 @@ class CIDManager:
                           header_code_section: CodeSectionData,
                           inner_code_section: CodeSectionData) -> int:
         '''Create new function in code data. Returns new function_id'''
-        # get new function_id
-        function_id = self._get_new_id()
+        self._cid_data.code_data.functions.append(FunctionData(function_id, function_name,
+                function_type, parent_function_id, checkpoint_marker_id, header_code_section, inner_code_section))
         return function_id
 
     def add_statement_data(self,
+                           statement_id: int,
                            statement_type: StatementType,
                            function_id: int,
                            checkpoint_marker_id: int,
                            code_section: CodeSectionData) -> int:
         '''Create new statement in code data. Returns new statement_id'''
-        # get new statement_id
-        statement_id = self._get_new_id()
+        self._cid_data.code_data.statements.append(StatementData(statement_id, statement_type, function_id,
+                checkpoint_marker_id, code_section))
         return statement_id
 
     def add_if_branch_data(self,
+                           if_branch_id: int,
                            function_id: int,
                            branch_results: List[BranchResultData]) -> int:
         '''Create new if branch in code data. Returns new if_branch_id'''
-        # get new if_branch_id
-        if_branch_id = self._get_new_id()
+        self._cid_data.code_data.if_branches.append(IfBranchData(if_branch_id, function_id, branch_results))
         return if_branch_id
 
     def add_switch_branch_data(self,
+                               switch_branch_id: int,
                                function_id: int,
                                expression_code_section: CodeSectionData,
                                cases: List[CaseData]) -> int:
         '''Create new switch branch in code data. Returns new switch_branch_id'''
-        # get new switch_branch_id
-        switch_branch_id = self._get_new_id()
+        self._cid_data.code_data.switch_branches.append(SwitchBranchData(switch_branch_id, function_id,
+                expression_code_section, cases))
         return switch_branch_id
 
     def add_loop_data(self,
+                      loop_id: int,
                       loop_type: LoopType,
                       function_id: int,
                       evaluation_marker_id: int,
@@ -192,11 +169,33 @@ class CIDManager:
                       body_code_section: CodeSectionData,
                       conditions: List[ConditionData]) -> int:
         '''Create new loop in code data. Returns new loop_id'''
-        loop_id = self._get_new_id()
+        self._cid_data.code_data.loops.append(LoopData(loop_id, loop_type, function_id, evaluation_marker_id,
+                evaluation_code_section, body_code_section, conditions))
         return loop_id
 
     def write_cid_file(self):
         '''Writes a CID file from the curretly stored information to the specified filepath'''
         cid_filename = self.source_file.cid_filename
+
+        cid_string = json.dumps(self._cid_data.asJSON(), cls=CustomJSONEncoder, indent=4)
+
+        with open(self.source_file.cid_filename, 'w') as output_file_ptr:
+            try:
+                output_file_ptr.write(cid_string)
+            except:
+                raise(RuntimeError(self.source_file.cid_filename + " can't be written!"))
+        return
+
+        # Routine for saving gzip compressed data (not needed during first development)
+        #cid_bytes = cid_string.encode('utf-8')
+
+        # with gzip.GzipFile(self.source_file.cid_filename, 'w') as output_file_ptr:
+        #     try:
+        #         output_file_ptr.write(cid_bytes)
+        #     except:
+        #         raise(RuntimeError(self.source_file.cid_filename + " can't be written!"))
+
+
+        return
     # !SECTION
 # !SECTION

@@ -581,6 +581,117 @@ To define and validate the JSON object of the CID-File, the following JSON schem
                         }
                     }
                 },
+                "ternary_expressions": {
+                    "type": "array",
+                    "description": "List of all ternary expressions",
+                    "minItems": 0,
+                    "items": {
+                        "type": "object",
+                        "description": "Ternary expression description",
+                        "required": ["ternary_expression_id", "function_id", "evaluation_marker_id", "evaluation_code_section", "conditions", "true_code_section", "false_code_section"],
+                        "properties": {
+                            "ternary_expression_id": {
+                                "type": "integer",
+                                "description": "Unique ID for the ternary expression",
+                            },
+                            "function_id": {
+                                "type": "integer",
+                                "description": "ID of the parent function"
+                            },
+                            "evaluation_marker_id": {
+                                "type": "integer",
+                                "description": "ID of the according evaluation marker"
+                            },
+                            "conditions": {
+                                "type": "array",
+                                "description": "List of loop evaluation conditions",
+                                "minItems": 0,
+                                "items": {
+                                    "type": "object",
+                                    "description": "For loop evaluation condition description",
+                                    "required": ["evaluation_marker_id", "code_section"],
+                                    "properties": {
+                                        "evaluation_marker_id": {
+                                            "type": "integer",
+                                            "description": "ID of the according evaluation marker",
+                                        },
+                                        "code_section": {
+                                            "type": "object",
+                                            "description": "Code section of the condition",
+                                            "required": ["start_line", "start_column", "end_line", "end_column"],
+                                            "properties": {
+                                                "start_line": {
+                                                    "type": "integer",
+                                                    "description": "Line number (starting from 1) for the start of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "start_column": {
+                                                    "type": "integer",
+                                                    "description": "Column number (starting from 1) for the start of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "end_line": {
+                                                    "type": "integer",
+                                                    "description": "Line number (starting from 1) for the end of the code section",
+                                                    "minimum": 1
+                                                },
+                                                "end_column": {
+                                                    "type": "integer",
+                                                    "description": "Column number (starting from 1) for the end of the code section",
+                                                    "minimum": 1
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            },
+                            "true_code_section": {
+                                "start_line": {
+                                    "type": "integer",
+                                    "description": "Line number (starting from 1) for the start of the code section",
+                                    "minimum": 1
+                                },
+                                "start_column": {
+                                    "type": "integer",
+                                    "description": "Column number (starting from 1) for the start of the code section",
+                                    "minimum": 1
+                                },
+                                "end_line": {
+                                    "type": "integer",
+                                    "description": "Line number (starting from 1) for the end of the code section",
+                                    "minimum": 1
+                                },
+                                "end_column": {
+                                    "type": "integer",
+                                    "description": "Column number (starting from 1) for the end of the code section",
+                                    "minimum": 1
+                                }
+                            },
+                            "false_code_section": {
+                                "start_line": {
+                                    "type": "integer",
+                                    "description": "Line number (starting from 1) for the start of the code section",
+                                    "minimum": 1
+                                },
+                                "start_column": {
+                                    "type": "integer",
+                                    "description": "Column number (starting from 1) for the start of the code section",
+                                    "minimum": 1
+                                },
+                                "end_line": {
+                                    "type": "integer",
+                                    "description": "Line number (starting from 1) for the end of the code section",
+                                    "minimum": 1
+                                },
+                                "end_column": {
+                                    "type": "integer",
+                                    "description": "Column number (starting from 1) for the end of the code section",
+                                    "minimum": 1
+                                }
+                            }
+                        }
+                    }
+                },
                 "loops": {
                     "type": "array",
                     "description": "List of all loops",
@@ -806,6 +917,32 @@ Detailed info on the elements inside the JSON object:
           - **start_column**: Column number (starting from 1) for the start of the code section
           - **end_line**: Line number (starting from 1) for the end of the code section
           - **end_column**: Column number (starting from 1) for the end of the code section
+    - **ternary_expressions**: Array with all ternary expressions inside of the parsed code
+      - **ternary_expression_id**: Unique ID for the ternary expression
+      - **function_id**: ID of the parent function
+      - **evaluation_marker_id**: ID of the according evaluation marker
+      - **evaluation_code_section**: Code section of the evaluation
+        - **start_line**: Line number (starting from 1) for the start of the code section
+        - **start_column**: Column number (starting from 1) for the start of the code section
+        - **end_line**: Line number (starting from 1) for the end of the code section
+        - **end_column**: Column number (starting from 1) for the end of the code section
+      - **conditions**: Array of conditions inside the decision
+        - **evaluation_marker_id**: ID of the according evaluation marker
+        - **code_section**: Code section for the condition
+          - **start_line**: Line number (starting from 1) for the start of the code section
+          - **start_column**: Column number (starting from 1) for the start of the code section
+          - **end_line**: Line number (starting from 1) for the end of the code section
+          - **end_column**: Column number (starting from 1) for the end of the code section
+      - **true_code_section**:
+        - **start_line**: Line number (starting from 1) for the start of the code section
+        - **start_column**: Column number (starting from 1) for the start of the code section
+        - **end_line**: Line number (starting from 1) for the end of the code section
+        - **end_column**: Column number (starting from 1) for the end of the code section
+      - **false_code_section**:
+        - **start_line**: Line number (starting from 1) for the start of the code section
+        - **start_column**: Column number (starting from 1) for the start of the code section
+        - **end_line**: Line number (starting from 1) for the end of the code section
+        - **end_column**: Column number (starting from 1) for the end of the code section
     - **loops**: Array with all loops inside of the parsed code
       - **loop_id**: Unique ID for the loop
       - **loop_type**: Loop type (enum, 1=for, 2=while, 3=do-while)

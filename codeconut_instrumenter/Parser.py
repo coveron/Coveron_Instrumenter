@@ -34,7 +34,7 @@ class ClangBridge:
     
     # SECTION   ClangBridge initialization
     def __init__(self):
-        clang.cindex.Config.set_library_path("C:\\Program Files\\LLVM\\bin")
+        clang.cindex.Config.set_library_path("D:\\Arbeit\\Codeconut_Instrumenter\\codeconut_instrumenter\\clang\\bin")
         return
     # !SECTION
     
@@ -305,7 +305,7 @@ class Parser:
         # Traverse a evaluation and return a list of conditions with evaluation_marker_ids and code_sections
         
         # Check, if we are in a compound condition
-        print(ast_cursor.)
+        print(ast_cursor.binary_operator)
         if ast_cursor.kind == clang.cindex.CursorKind.BINARY_OPERATOR:
             print("For now, I do nothing")
 

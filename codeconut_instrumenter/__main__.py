@@ -44,11 +44,9 @@ def main():
 
     # check for existence of Codeconut runtime helper
     runtime_helper_source_path = os.path.join(codeconut_path,
-                                                "..",
                                                 "codeconut_runtime_helper", "src",
                                                 "codeconut_helper.c")
     runtime_helper_header_path = os.path.join(codeconut_path,
-                                                "..",
                                                 "codeconut_runtime_helper", "src",
                                                 "codeconut_helper.h")
     print(runtime_helper_source_path)

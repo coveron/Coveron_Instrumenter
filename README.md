@@ -1,26 +1,26 @@
-Codeconut
-=========
+Codeconut Instrumenter
+======================
 
 Code coverage tool for c and C++ code. Featuring statement, decision and
 MC/DC coverage.
 
-[website](https://glenntws.github.io/Codeconut/) •
-[documentation](https://glenntws.github.io/Codeconut/documentation.html)
-• [bugtracker](https://github.com/glenntws/Codeconut/issues) •
-[GitHub](https://github.com/glenntws/Codeconut/)
+[website](https://codeconut-project.github.io/) •
+[documentation](https://codeconut-project.github.io/documentation.html)
+• [bugtracker](https://github.com/codeconut-project/Codeconut_Instrumenter/issues) •
+[GitHub](https://github.com/codeconut-project/)
 
 [![Travis CI build
-status](https://travis-ci.org/glenntws/Codeconut.svg?branch=master)](https://travis-ci.org/glenntws/Codeconut)
+status](https://travis-ci.org/codeconut-project/Codeconut_Instrumenter.svg?branch=master)](https://travis-ci.org/codeconut-project/Codeconut_Instrumenter)
 [![Codecov code coverage
-status](https://codecov.io/gh/glenntws/Codeconut/branch/master/graph/badge.svg)](https://codecov.io/gh/glenntws/Codeconut)
+status](https://codecov.io/gh/codeconut-project/Codeconut_Instrumenter/branch/master/graph/badge.svg)](https://codecov.io/gh/codeconut-project/Codeconut_Instrumenter)
 
-Codeconut is a invasive code coverage utility used for C or C++ code.
+Codeconut Instrumenter is a invasive code coverage utility used for C or C++ code.
 The provided metrics adhere to the standards and requirements of the
 automotive and aviation industry (i.e. ISO 26262).
 
 The goal is to create a free to use code coverage tool that supports
-metrics which are more helpful and easier to unserstand than the ones
-from existing tools (i.e. gcov). This means, that Codeconut is a
+metrics which are more helpful and easier to understand than the ones
+from existing tools (i.e. gcov). Codeconut is a
 invasive code coverage tool that instruments your source code prior to
 the compilation process. Using this method, Codeconut is able to
 generate the execution tables necessary for MC/DC coverage analysis.

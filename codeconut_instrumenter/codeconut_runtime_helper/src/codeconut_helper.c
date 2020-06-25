@@ -91,7 +91,7 @@ ___CODECONUT_BOOL_T ___CODECONUT_SETUP_INSTRUMENTATION(
     // load file as read and append
     codeconutFile->criFile = fopen(codeconutFile->outputFilename, "ab+");
 
-    // check if file was successfully opened
+    // check if file wasn't successfully opened
     if (codeconutFile->criFile == NULL) {
         // try to create a new file
         return ___CODECONUT_CREATE_NEW_OUTPUT_FILE(codeconutFile);

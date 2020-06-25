@@ -15,6 +15,7 @@ from enum import Enum
 from json import JSONEncoder
 
 import re
+import os
 
 # SECTION   Custom JSON Encoder for classes
 
@@ -108,12 +109,12 @@ class SourceFile:
     """
     
     # SECTION   SourceFile private attribute definitions
-    __slots__ = ['_input_filename', '_output_filename', '_cid_filename', '_cri_filename']
+    __slots__ = ['_input_file', '_output_file', '_cid_file', '_cri_file']
 
-    _input_filename: str
-    _output_filename: str
-    _cid_filename: str
-    _cri_filename: str
+    _input_file: str
+    _output_file: str
+    _cid_file: str
+    _cri_file: str
     # !SECTION
     
     # SECTION   SourceFile public attribute definitions
@@ -121,58 +122,50 @@ class SourceFile:
     
     # SECTION   SourceFile initialization
     def __init__(self, source_file: str):
-        # set input_filename
-        self.input_filename = source_file
+        # set input_file
+        self._input_file = os.path.abspath(source_file).replace("\\\\", "\\")
 
         # determine instrumented source name and cid name
-        self._output_filename = source_file[0:source_file.rindex(
-            '.')+1] + "instr." + source_file[source_file.rindex(
+        self._output_file = self._input_file[0:self._input_file.rindex(
+            '.')+1] + "instr." + self._input_file[self._input_file.rindex(
                 '.')+1:]
 
-        # determine cid filename
-        self._cid_filename = self.input_filename[0:self.input_filename.rindex(
-            '.')+1] + "cid"
+        # determine cid file, this is only the relative path!
+        self._cid_file = (
+                os.path.basename(self._input_file)[0:os.path.basename(self._input_file).rindex('.')+1] + "cid")
 
-        # determine cri filename
-        self._cri_filename = self.input_filename[0:self.input_filename.rindex(
-            '.')+1] + "cri"
+        # determine cri file, this is only the relative path!
+        self._cri_file = (
+                os.path.basename(self._input_file)[0:os.path.basename(self._input_file).rindex('.')+1] + "cri")
         return
     # !SECTION
     
     # SECTION   SourceFile getter functions
-    def _get_input_filename(self) -> str:
-        return self._input_filename
+    def _get_input_file(self) -> str:
+        return self._input_file
 
-    def _get_output_filename(self) -> str:
-        return self._output_filename
+    def _get_output_file(self) -> str:
+        return self._output_file
 
-    def _get_cid_filename(self) -> str:
-        return self._cid_filename
+    def _get_cid_file(self) -> str:
+        return self._cid_file
 
-    def _get_cri_filename(self) -> str:
-        return self._cri_filename
+    def _get_cri_file(self) -> str:
+        return self._cri_file
     # !SECTION
     
     # SECTION   SourceFile setter functions
-    def _set_input_filename(self, input_filename:str):
-        if input_filename is None:
-            raise ValueError("input_filename can't be none")
-        elif not isinstance(input_filename, str):
-            raise TypeError("input_filename shall be of type str")
-        else:
-            self._input_filename = input_filename
     # !SECTION
     
     # SECTION   SourceFile property definitions
-    input_filename: str = property(fget=_get_input_filename,
-                  fset=_set_input_filename,
-                  doc="Stores the input filename of the source file")
-    output_filename: str = property(fget=_get_output_filename,
-                  doc="Stores the output filename of the instrumented source file")
-    cid_filename: str = property(fget=_get_cid_filename,
-                  doc="Stores the output filename of the CID file")
-    cri_filename: str = property(fget=_get_cri_filename,
-                  doc="Stores the output filename of the CRI file")
+    input_file: str = property(fget=_get_input_file,
+                  doc="Stores the input file path of the source file")
+    output_file: str = property(fget=_get_output_file,
+                  doc="Stores the output file path of the instrumented source file")
+    cid_file: str = property(fget=_get_cid_file,
+                  doc="Stores the output file path of the CID file")
+    cri_file: str = property(fget=_get_cri_file,
+                  doc="Stores the output file path of the CRI file")
     # !SECTION
     
     # SECTION   SourceFile private functions
@@ -1060,13 +1053,14 @@ class CIDData:
     """
     
     # SECTION   CIDData private attribute definitions
-    __slots__ = ['source_code_filename', 'source_code_hash',
+    __slots__ = ['source_code_path', 'source_code_hash', 'source_code_base64',
                  'instrumentation_random', 'checkpoint_markers_enabled',
                  'evaluation_markers_enabled',
                  'marker_data', 'code_data']
 
-    source_code_filename: str
+    source_code_path: str
     source_code_hash: str
+    source_code_base64: str
     instrumentation_random: str
     checkpoint_markers_enabled: bool
     evaluation_markers_enabled: bool
@@ -1079,13 +1073,15 @@ class CIDData:
     
     # SECTION   CIDData initialization
     def __init__(self,
-                 source_code_filename: str,
+                 source_code_path: str,
                  source_code_hash: str,
+                 source_code_base64: str,
                  instrumentation_random: str,
                  checkpoint_markers_enabled: bool,
                  evaluation_markers_enabled: bool):
-        self.source_code_filename = source_code_filename
+        self.source_code_path = source_code_path
         self.source_code_hash = source_code_hash
+        self.source_code_base64 = source_code_base64
         self.instrumentation_random = instrumentation_random
         self.checkpoint_markers_enabled = checkpoint_markers_enabled
         self.evaluation_markers_enabled = evaluation_markers_enabled
@@ -1110,8 +1106,9 @@ class CIDData:
     def asJSON(self):
         # JSON encoding helper
         return dict(
-            source_code_filename = self.source_code_filename,
+            source_code_path = self.source_code_path,
             source_code_hash = self.source_code_hash,
+            source_code_base64 = self.source_code_base64,
             instrumentation_random = self.instrumentation_random,
             checkpoint_markers_enabled = self.checkpoint_markers_enabled,
             evaluation_markers_enabled = self.evaluation_markers_enabled,

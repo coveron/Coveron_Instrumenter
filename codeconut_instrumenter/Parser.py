@@ -34,7 +34,7 @@ class ClangBridge:
     
     # SECTION   ClangBridge initialization
     def __init__(self):
-        clang.cindex.Config.set_library_path("D:\\Arbeit\\Codeconut_Instrumenter\\codeconut_instrumenter\\clang\\bin")
+        clang.cindex.Config.set_library_path(os.path.join(os.path.dirname(os.path.realpath(__file__)), "clang", "bin" ))
         return
     # !SECTION
     
@@ -105,7 +105,7 @@ class Parser:
             location_file: str = location.file.name
             location_file = location_file.replace('\\\\', '/').replace('\\', '/').split('/')[-1]
 
-            if location_file != self.cid_manager.source_file.input_filename.split('/')[-1]:
+            if location_file != os.path.basename(self.cid_manager.source_file.input_file):
                 # Child is not in the correct file, so we can ignore it
                 continue
 
@@ -136,7 +136,7 @@ class Parser:
             parent_function_id = function_id
         )
 
-        return_data = dict()
+        inner_return_data = dict()
 
         for function_child in ast_cursor.get_children():
             if function_child.kind == clang.cindex.CursorKind.COMPOUND_STMT:
@@ -155,7 +155,7 @@ class Parser:
                 )
 
                 # call analysis of function internals
-                self._traverse_compound_statement(function_child, inner_traverse_args, return_data)
+                self._traverse_compound_statement(function_child, inner_traverse_args, inner_return_data)
 
                 
 
@@ -170,7 +170,7 @@ class Parser:
         print("Inner end column: " + str(inner_code_section.end_position.column))
 
         self.cid_manager.add_function_data(function_id, function_name, function_type, parent_function_id,
-                return_data.get('first_checkpoint_marker_id'), header_code_section, inner_code_section)
+                inner_return_data['first_checkpoint_marker_id'], header_code_section, inner_code_section)
         return
 
     def _traverse_compound_statement(self, ast_cursor: clang.cindex.Cursor, args: dict, return_data: dict):
@@ -224,7 +224,7 @@ class Parser:
                 
                 # add the statement to the code data
                 self.cid_manager.add_statement_data(self.cid_manager.get_new_id(),
-                        StatementType.RETURN, args.get('parent_function_id'), active_checkpoint_marker_id,
+                        StatementType.RETURN, args['parent_function_id'], active_checkpoint_marker_id,
                         CodeSectionData(
                             CodePositionData(child_element.extent.start.line, child_element.extent.start.column),
                             CodePositionData(child_element.extent.end.line, child_element.extent.end.column))
@@ -236,7 +236,7 @@ class Parser:
 
                 # add the statement to the code data
                 self.cid_manager.add_statement_data(self.cid_manager.get_new_id(),
-                        StatementType.BREAK, args.get('parent_function_id'), active_checkpoint_marker_id,
+                        StatementType.BREAK, args['parent_function_id'], active_checkpoint_marker_id,
                         CodeSectionData(
                             CodePositionData(child_element.extent.start.line, child_element.extent.start.column),
                             CodePositionData(child_element.extent.end.line, child_element.extent.end.column))
@@ -248,7 +248,7 @@ class Parser:
 
                 # add the statement to the code data
                 self.cid_manager.add_statement_data(self.cid_manager.get_new_id(),
-                        StatementType.CONTINUE, args.get('parent_function_id'), active_checkpoint_marker_id,
+                        StatementType.CONTINUE, args['parent_function_id'], active_checkpoint_marker_id,
                         CodeSectionData(
                             CodePositionData(child_element.extent.start.line, child_element.extent.start.column),
                             CodePositionData(child_element.extent.end.line, child_element.extent.end.column))
@@ -261,7 +261,7 @@ class Parser:
 
                 # add the statement to the code data
                 self.cid_manager.add_statement_data(self.cid_manager.get_new_id(),
-                        StatementType.GOTO, args.get('parent_function_id'), active_checkpoint_marker_id,
+                        StatementType.GOTO, args['parent_function_id'], active_checkpoint_marker_id,
                         CodeSectionData(
                             CodePositionData(child_element.extent.start.line, child_element.extent.start.column),
                             CodePositionData(child_element.extent.end.line, child_element.extent.end.column))
@@ -270,7 +270,7 @@ class Parser:
                 # found a compound statement, so do a recursive call
                 inner_traverse_args = dict(
                     is_case = False,
-                    parent_function_id = args.get('parent_function_id'),
+                    parent_function_id = args['parent_function_id'],
                     start_checkpoint_marker_id = active_checkpoint_marker_id
                 )
                 inner_return_data = dict()
@@ -283,7 +283,7 @@ class Parser:
 
             elif child_kind == clang.cindex.CursorKind.IF_STMT:
                 # found a if_branch, so open the if statement handler
-                inner_traverse_args = dict(parent_function_id = args.get('parent_function_id'))
+                inner_traverse_args = dict(parent_function_id = args['parent_function_id'])
                 inner_return_data = dict()
                 self._traverse_if_statement(child_element, inner_traverse_args, inner_return_data)
 
@@ -294,7 +294,7 @@ class Parser:
             else:
                 # add the statement to the code data
                 self.cid_manager.add_statement_data(self.cid_manager.get_new_id(),
-                        StatementType.NORMAL, args.get('parent_function_id'), active_checkpoint_marker_id,
+                        StatementType.NORMAL, args['parent_function_id'], active_checkpoint_marker_id,
                         CodeSectionData(
                             CodePositionData(child_element.extent.start.line, child_element.extent.start.column),
                             CodePositionData(child_element.extent.end.line, child_element.extent.end.column))
@@ -303,24 +303,74 @@ class Parser:
 
     def _traverse_evaluation(self, ast_cursor: clang.cindex.Cursor, args: dict, return_data: dict):
         # Traverse a evaluation and return a list of conditions with evaluation_marker_ids and code_sections
-        
-        # Check, if we are in a compound condition
-        print(ast_cursor.binary_operator)
-        if ast_cursor.kind == clang.cindex.CursorKind.BINARY_OPERATOR:
-            print("For now, I do nothing")
+
+        # Create conditions var to store all child conditions for this function call
+        conditions = list()
+
+        if not args.get('is_condition', False):
+            # This is a decision
+
+            # Pass current cursor to _traverse_evaluation again, but as condition
+            inner_traverse_args = dict(is_condition = True)
+            inner_return_data = dict(conditions = list())
+            self._traverse_evaluation(ast_cursor, inner_traverse_args, inner_return_data)
+            # append conditions
+            conditions.extend(inner_return_data['conditions'])
+
+            # Create evaluation_code_section and EvaluationMarker for the whole decision
+            # and pass back all the information
+            evaluation_marker_id = self.cid_manager.get_new_id()
+            evaluation_code_section = CodeSectionData(
+                    CodePositionData(ast_cursor.extent.start.line, ast_cursor.extent.start.column),
+                    CodePositionData(ast_cursor.extent.end.line, ast_cursor.extent.end.column))
+            self.cid_manager.add_evaluation_marker(evaluation_marker_id, evaluation_code_section,
+                    EvaluationType.DECISION)
+            return_data['evaluation_marker_id'] = evaluation_marker_id
+            return_data['evaluation_code_section'] = evaluation_code_section
+            return_data['conditions'] = conditions
+
+        else:
+            # This is a (compound) condition
+
+            # Check, if it's a ParenExpr or a BinaryOperator for Compounding.
+            # If yes, recursively jump into children of the active cursor
+            if (ast_cursor.kind == clang.cindex.CursorKind.PAREN_EXPR or 
+                    (ast_cursor.kind == clang.cindex.CursorKind.BINARY_OPERATOR and
+                    (ast_cursor.binary_operator == clang.cindex.BinaryOperator.LAnd or
+                    ast_cursor.binary_operator == clang.cindex.BinaryOperator.LOr))):
+                print("Compound condition")
+                for child_element in ast_cursor.get_children():
+                    # create the necessary pass thru variables
+                    inner_traverse_args = dict(is_condition = True)
+                    inner_return_data = dict(conditions = list())
+                    self._traverse_evaluation(child_element, inner_traverse_args, inner_return_data)
+                    # append conditions
+                    conditions.extend(inner_return_data['conditions'])
+                    return_data['conditions'] = conditions
+            else:
+                # This is a atomic condition. Create a EvaluationMarker and create new ConditionData
+                evaluation_marker_id = self.cid_manager.get_new_id()
+                evaluation_code_section = CodeSectionData(
+                    CodePositionData(ast_cursor.extent.start.line, ast_cursor.extent.start.column),
+                    CodePositionData(ast_cursor.extent.end.line, ast_cursor.extent.end.column))
+                self.cid_manager.add_evaluation_marker(evaluation_marker_id,evaluation_code_section,
+                    	EvaluationType.CONDITION)
+                condition = ConditionData(evaluation_marker_id, evaluation_code_section)
+                return_data['conditions'] = [condition]
+
 
     def _traverse_if_statement(self, ast_cursor: clang.cindex.Cursor, args: dict, return_data: dict):
         # Starting analysis of if statement
 
         # Get branch results
-        inner_traverse_args = dict()
+        inner_traverse_args = dict(parent_function_id = args['parent_function_id'])
         inner_return_data = dict(branch_results = list())
 
         self._traverse_if_branch_result(ast_cursor, inner_traverse_args, inner_return_data)
 
         # Create correct code data info
-        self.cid_manager.add_if_branch_data(self.cid_manager.get_new_id(), args.get('parent_function_id'),
-                inner_return_data.get('branch_results'))
+        self.cid_manager.add_if_branch_data(self.cid_manager.get_new_id(), args['parent_function_id'],
+                inner_return_data['branch_results'])
         
         # Check, if parent blocks should create new checkpoint marker id's
         if inner_return_data.get('new_parent_checkpoint_required', False):
@@ -330,26 +380,83 @@ class Parser:
         # Traverse If Branch
         child_elements = ast_cursor.get_children()
 
+        # Variables for storing information on the active branch_result
+        evaluation_marker_id: int
+        conditions: List[ConditionData]
+        result_evaluation_code_section: CodeSectionData
+        result_body_code_section: CodeSectionData
+
+        # variable that checks, if a new checkpoint marker id is required for the parent
+        return_data['new_parent_checkpoint_required'] = False # status variable to check,
+                                               # if a new checkpoint request shall be passed to the parent
+        return_data['branch_results'] = list() # initialize with empty list
+
         for i, child_element in enumerate(child_elements):
             # Check first element. This is the evaluation statement
             if i == 0 and self.config.evaluation_markers_enabled:
-                evaluation_traverse_args = dict()
-                evaluation_return_data = dict(conditions = list())
+                evaluation_traverse_args = dict(is_condition = False)
+                evaluation_return_data = dict()
                 self._traverse_evaluation(child_element, evaluation_traverse_args, evaluation_return_data)
+                evaluation_marker_id = evaluation_return_data['evaluation_marker_id']
+                conditions = evaluation_return_data['conditions']
+                result_evaluation_code_section = evaluation_return_data['evaluation_code_section']
 
             # Check second element. This is the compound statement of the if-branch
+            if i == 1:
+                inner_traverse_args = dict(parent_function_id = args['parent_function_id'])
+                inner_return_data = dict()
 
-            # Create the IfBRanchResult Data. Add id to list passed via args.
+                self._traverse_compound_statement(child_element, inner_traverse_args, inner_return_data)
+
+                if inner_return_data['new_parent_checkpoint_required']:
+                    return_data['new_parent_checkpoint_required'] = True
+
+                result_body_code_section = CodeSectionData(
+                    CodePositionData(child_element.extent.start.line, child_element.extent.start.column),
+                    CodePositionData(child_element.extent.end.line, child_element.extent.end.column))
+
+                # Create the IfBranchResult Data. Add id to list passed via args.
+                return_data['branch_results'].append(BranchResultData(evaluation_marker_id, conditions,
+                        result_evaluation_code_section, result_body_code_section))
 
             # Check the existence of a third element.
+            if i == 2:
 
                 # Check the type of the third element.
 
                     # If this is a IF_STMT, it's a if else branch. Check recursively
+                    if child_element.kind == clang.cindex.CursorKind.IF_STMT:
+                        inner_traverse_args = dict(parent_function_id = args['parent_function_id'])
+                        inner_return_data = dict()
+
+                        self._traverse_if_branch_result(child_element, inner_traverse_args, inner_return_data)
+
+                        if inner_return_data['new_parent_checkpoint_required']:
+                            return_data['new_parent_checkpoint_required'] = True
+
+                        return_data['branch_results'].extend(inner_return_data['branch_results'])
+
 
                     # If this is a COMPOUND_STMT, this is the else branch.
+                    elif child_element.kind == clang.cindex.CursorKind.COMPOUND_STMT:
+                        print("Else statement found.")
+                        # get code_section
+                        else_code_section = CodeSectionData(
+                            CodePositionData(child_element.extent.start.line, child_element.extent.start.column),
+                            CodePositionData(child_element.extent.end.line, child_element.extent.end.column))
 
+                        # create a branch result with evaluation_marker_id = -1
+                        # (else get's detected by Analyzer)
+                        return_data['branch_results'].append(BranchResultData(-1, list(),
+                                else_code_section,
+                                else_code_section))
 
+                        # go into compound statement
+                        inner_traverse_args = dict(parent_function_id = args['parent_function_id'])
+                        inner_return_data = dict()
+
+                        self._traverse_compound_statement(child_element,
+                                inner_traverse_args, inner_return_data)
     # !SECTION
     
     # SECTION   Parser public functions

@@ -200,12 +200,16 @@ class Instrumenter:
         instr_random_array = [instr_random_string[i:i+2] for i in range(0, len(instr_random_string), 2)]
         instr_random_array = [("0x"+hexbyte.upper()) for hexbyte in instr_random_array]
 
+        # build cri file string (with escaping for windows style paths)
+        cri_file_path = os.path.join(
+                self.config.output_abs_path, self.source_file.cri_file).replace("\\", "\\\\")
+
         # create file object string
         file_object_string = ("___CODECONUT_FILE_T " + self._get_file_struct_name() + " = {\n" +
                             "{" + ", ".join(source_hash_array) + "},\n" +
                             "{" + ", ".join(instr_random_array) + "},\n" +
                             "___CODECONUT_BOOL_FALSE,\nNULL,\n " + 
-                            "\"" + self.source_file.cri_filename + "\"};")
+                            "\"" + self.source_file.cri_file + "\"};")
 
         # create full wrapper string
         wrapper_string = (include_string + "\n" + file_object_string + "\n\n")
@@ -236,11 +240,11 @@ class Instrumenter:
 
     def write_output_file(self):
         """Create the instrumented source code and write it to a file"""
-        with open(self.source_file.output_filename, 'w') as output_file_ptr:
+        with open(self.source_file.output_file, 'w') as output_file_ptr:
             try:
                 output_file_ptr.write(self._instrumented_code)
             except:
-                raise(RuntimeError(self.source_file.output_filename + " can't be written!"))
+                raise(RuntimeError(self.source_file.output_file + " can't be written!"))
         return
 
     # !SECTION

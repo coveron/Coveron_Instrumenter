@@ -18,6 +18,7 @@ import os
 import copy
 import json
 import gzip
+import base64
 
 from typing import List
 from DataTypes import *
@@ -58,8 +59,10 @@ class CIDManager:
         instrumentation_random = hashlib.sha256(random_string.encode('utf-8')).hexdigest()[:32]
 
         # Initialize CIDData object
-        self._cid_data = CIDData(source_code_filename=self.source_file.input_filename,
+        self._cid_data = CIDData(source_code_path=self.source_file.input_file,
                                  source_code_hash=source_code_sha256,
+                                 source_code_base64=str(
+                                        base64.b64encode(source_code.encode("utf-8")), "utf-8"),
                                  instrumentation_random=instrumentation_random,
                                  checkpoint_markers_enabled=self.config.checkpoint_markers_enabled,
                                  evaluation_markers_enabled=self.config.evaluation_markers_enabled)
@@ -189,25 +192,25 @@ class CIDManager:
 
     def write_cid_file(self):
         '''Writes a CID file from the curretly stored information to the specified filepath'''
-        cid_filename = self.source_file.cid_filename
+        cid_file = self.source_file.cid_file
 
         cid_string = json.dumps(self._cid_data.asJSON(), cls=CustomJSONEncoder, indent=4)
 
-        with open(self.source_file.cid_filename, 'w') as output_file_ptr:
+        with open(os.path.join(self.config.output_abs_path, self.source_file.cid_file), 'w') as output_file_ptr:
             try:
                 output_file_ptr.write(cid_string)
             except:
-                raise(RuntimeError(self.source_file.cid_filename + " can't be written!"))
+                raise(RuntimeError(self.source_file.cid_file + " can't be written!"))
         return
 
         # Routine for saving gzip compressed data (not needed during first development)
         #cid_bytes = cid_string.encode('utf-8')
 
-        # with gzip.GzipFile(self.source_file.cid_filename, 'w') as output_file_ptr:
+        # with gzip.GzipFile(self.source_file.cid_file, 'w') as output_file_ptr:
         #     try:
         #         output_file_ptr.write(cid_bytes)
         #     except:
-        #         raise(RuntimeError(self.source_file.cid_filename + " can't be written!"))
+        #         raise(RuntimeError(self.source_file.cid_file + " can't be written!"))
 
 
         return

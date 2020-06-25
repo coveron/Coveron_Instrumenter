@@ -32,7 +32,8 @@ class Configuration:
                  "compiler_exec",
                  "_compiler_args",
                  "clang_args",
-                 "runtime_helper_header_path"]
+                 "runtime_helper_header_path",
+                 "output_abs_path"]
 
     verbose: bool
     force: bool
@@ -43,6 +44,7 @@ class Configuration:
     _compiler_args: str
     clang_args: str
     runtime_helper_header_path: str
+    output_abs_path: str
     # !SECTION
 
     # SECTION   Configuration public attribute definitions
@@ -60,7 +62,7 @@ class Configuration:
         self.compiler_args = ""
         self.clang_args = ""
         self.runtime_helper_header_path = ""
-
+        self.output_abs_path = os.getcwd() # default output path is the current working path
         return
     # !SECTION
 
@@ -89,11 +91,14 @@ class Configuration:
 
     # SECTION   Configuration public functions
     def print_config(self):
+        print("Verbose enabled: " + str(self.verbose))
+        print("New Instrumentation enforced: " + str(self.force))
+        print("Output absolute path: " + str(self.output_abs_path))
         print("Checkpoint markers enabled: " + str(self.checkpoint_markers_enabled))
         print("Evaluation markers enabled: " + str(self.evaluation_markers_enabled))
         print("Compile exec: " + self.compiler_exec)
         print("Compiler pass thru arguments: " + self.compiler_args)
         print("Clang arguments: " + self.clang_args)
-        print("Compile source files: " + ' '.join(source_file.input_filename for source_file in self.source_files))
+        print("Compile source files: " + ' '.join(source_file.input_file for source_file in self.source_files))
     # !SECTION
 # !SECTION

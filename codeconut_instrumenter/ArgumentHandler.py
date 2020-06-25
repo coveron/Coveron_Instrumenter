@@ -17,6 +17,8 @@ from DataTypes import SourceFile
 import argparse
 from itertools import islice
 
+import os
+
 # SECTION   ArgumentHandler class
 class ArgumentHandler:
     """ArgumentHandler class.
@@ -90,8 +92,13 @@ class ArgumentHandler:
 
         self._argparser.add_argument('--CCN_FORCE',
                                      dest='force', action='store_const',
-                                     const=False, default=True,
-                                     help='Don\'t use cached files but always create new instrumentation')                        
+                                     const=True, default=False,
+                                     help='Don\'t use cached files but always create new instrumentation')
+
+        self._argparser.add_argument('--CCN_POLL_PPD',
+                                     dest='poll_ppd', action='store_const',
+                                     const=True, default=False,
+                                     help='Poll the default preprocessor defines from the pass-thru compiler (only for compilers with gcc/clang style CLI)')                      
         
         # parse and save known args to _args. Everything else to _other_args
         self._args, self._other_args = self._argparser.parse_known_args()
@@ -103,6 +110,8 @@ class ArgumentHandler:
 
         # set force flag
         self._config.force = self._args.force
+
+        # set output path
 
         # set compiler executable
         self._config.compiler_exec = self._args.compiler_exec
@@ -132,58 +141,77 @@ class ArgumentHandler:
         arg_iterator = iter(enumerate(self._other_args))
         for index, arg in arg_iterator:
             arg:str # typedef for arg (just used for better programming)
+            argl:str = arg.lower() # lower variant for comparison
             # check, if it's a source file
-            if (not arg.startswith('-')) and (arg.endswith('.c') or arg.endswith('.cpp') or arg.endswith('.c++')):
+            if (not arg.startswith('-')) and (argl.endswith('.c') or
+                    argl.endswith('.cpp') or argl.endswith('.c++')):
                 self._config.source_files.append(SourceFile(arg))
                 continue
             else:
                 # this is not a source file, so automatically add it to compiler_args_list
                 # check, if it's a multi arg output argument. In this case just skip the next arg (improved pass thru compatibility)
-                if arg == "--output":
+                if (argl == "--output" or argl == "-o"):
                     compiler_args_list.append(' '.join([arg, self._other_args[index + 1]]))
                     next(islice(arg_iterator,1,1), None)
+
+                    # we can use this to set the new output directory
+                    # (single arg output args get checked below)
+                    self._config.output_abs_path = os.path.dirname(
+                            os.path.abspath(self._other_args[index + 1]))
+                elif (argl.startswith("-o")):
+                    self._config.output_abs_path = os.path.dirname(
+                            os.path.abspath(arg[2:]))
+                elif (argl.startswith("--output=")):
+                    self._config.output_abs_path = os.path.dirname(
+                            os.path.abspath(arg[9:]))
                 else:
                     compiler_args_list.append(arg)
 
+                # check, if it's a output argument. If yes, set the output path for CID and CRI files
+                # in config by getting directory.
+                
+
             # check, if it's some kind of include with single arg
-            if (arg.startswith('-I') or arg.startswith('--include-directory=') or
-                    arg.startswith('-I-') or arg.startswith('--include-barrier') or
-                    arg.startswith('--cuda-path-ignore-env') or arg.startswith('--cuda-path=') or
-                    arg.startswith('-cxx-isystem') or
-                    arg.startswith('-idirafter') or arg.startswith('--include-directory-after=') or
-                    arg.startswith('-iframework') or
-                    arg.startswith('-iframeworkwithsysroot') or
-                    arg.startswith('-imacros') or arg.startswith('--imacros') or arg.startswith('--imacros=') or
-                    arg.startswith('-include') or arg.startswith('--include') or arg.startswith('--include=') or
-                    arg.startswith('-iprefix') or arg.startswith('--include-prefix=') or
-                    arg.startswith('-iquote') or arg.startswith('-isysroot') or
-                    arg.startswith('-isystem') or arg.startswith('-isystem-after') or
-                    arg.startswith('--include-with-prefix=') or arg.startswith('--include-with-prefix-after=') or
-                    arg.startswith('--system-header-prefix=') or arg.startswith('--no-system-header-prefix=')):
+            if (argl.startswith('-I') or argl.startswith('--include-directory=') or
+                    argl.startswith('-I-') or argl.startswith('--include-barrier') or
+                    argl.startswith('--cuda-path-ignore-env') or argl.startswith('--cuda-path=') or
+                    argl.startswith('-cxx-isystem') or
+                    argl.startswith('-idirafter') or argl.startswith('--include-directory-after=') or
+                    argl.startswith('-iframework') or
+                    argl.startswith('-iframeworkwithsysroot') or
+                    argl.startswith('-imacros') or argl.startswith('--imacros') or argl.startswith('--imacros=') or
+                    argl.startswith('-include') or argl.startswith('--include') or argl.startswith('--include=') or
+                    argl.startswith('-iprefix') or argl.startswith('--include-prefix=') or
+                    argl.startswith('-iquote') or argl.startswith('-isysroot') or
+                    argl.startswith('-isystem') or argl.startswith('-isystem-after') or
+                    argl.startswith('--include-with-prefix=') or argl.startswith('--include-with-prefix-after=') or
+                    argl.startswith('--system-header-prefix=') or argl.startswith('--no-system-header-prefix=')):
                 clang_args_list.append(arg)
                 continue
 
             # check, if it's some kind of include with multi arg
-            if (arg == '--system-header-prefix' or arg == '--include-with-prefix-before' or
-                    arg == '--include-with-prefix' or arg == '--include-with-prefix-after' or
-                    arg == '--include-prefix' or arg == '--include-directory-after' or
-                    arg == '--include-directory'):
+            if (argl == '--system-header-prefix' or argl == '--include-with-prefix-before' or
+                    argl == '--include-with-prefix' or argl == '--include-with-prefix-after' or
+                    argl == '--include-prefix' or argl == '--include-directory-after' or
+                    argl == '--include-directory'):
                 clang_args_list.append(' '.join([arg, self._other_args[index + 1]]))
                 next(islice(arg_iterator,1,1), None) # skip next arg, since it's part of this arg
                 continue
 
             # check, if it's some kind of macro (un)definition with single arg
-            if (arg.startswith('-D') or arg.startswith('--define-macro=') or
-                    arg.startswith('-Wp,') or
-                    arg.startswith('-U') or arg.startswith('--undefine-macro')):
+            if (argl.startswith('-d') or argl.startswith('--define-macro=') or
+                    argl.startswith('-Wp,') or
+                    argl.startswith('-U') or argl.startswith('--undefine-macro')):
                 clang_args_list.append(arg)
                 continue
 
             # check, if it's some kind of macro (un)definition with multi arg
-            if (arg == '--define-macro' or arg == '--undefine-macro'):
+            if (argl == '--define-macro' or argl == '--undefine-macro'):
                 clang_args_list.append(' '.join([arg, self._other_args[index + 1]]))
                 next(islice(arg_iterator,1,1), None) # skip next arg, since it's part of this arg
                 continue
+
+            # check, if it's the output filename to
 
         # write clang args list to config
         self._config.clang_args = ' '.join(clang_args_list)

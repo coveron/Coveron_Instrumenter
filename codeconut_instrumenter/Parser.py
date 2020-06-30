@@ -34,7 +34,7 @@ class ClangBridge:
     
     # SECTION   ClangBridge initialization
     def __init__(self):
-        clang.cindex.Config.set_library_path(os.path.join(os.path.dirname(os.path.realpath(__file__)), "clang", "bin" ))
+        clang.cindex.Config.set_library_path(os.path.join(os.path.dirname(os.path.realpath(__file__)), "clang", "bin"))
         return
     # !SECTION
     
@@ -157,18 +157,6 @@ class Parser:
                 # call analysis of function internals
                 self._traverse_compound_statement(function_child, inner_traverse_args, inner_return_data)
 
-                
-
-        print("Header start line: " + str(header_code_section.start_position.line))
-        print("Header start column: " + str(header_code_section.start_position.column))
-        print("Header end line: " + str(header_code_section.end_position.line))
-        print("Header end column: " + str(header_code_section.end_position.column))
-
-        print("Inner start line: " + str(inner_code_section.start_position.line))
-        print("Inner start column: " + str(inner_code_section.start_position.column))
-        print("Inner end line: " + str(inner_code_section.end_position.line))
-        print("Inner end column: " + str(inner_code_section.end_position.column))
-
         self.cid_manager.add_function_data(function_id, function_name, function_type, parent_function_id,
                 inner_return_data['first_checkpoint_marker_id'], header_code_section, inner_code_section)
         return
@@ -196,8 +184,9 @@ class Parser:
             child_kind: clang.cindex.CursorKind = child_element.kind
 
             # check, if the active statement is a label statement.
-            # If yes, we should just skip it, since it's not useful for us.
+            # If yes, we should skip it and create a new checkpoint
             if child_kind == clang.cindex.CursorKind.LABEL_STMT:
+                new_checkpoint_required = True
                 continue
 
             # check, if the first checkpoint wasn't set. If no, set it up.
@@ -291,6 +280,16 @@ class Parser:
                 if inner_return_data.get('new_parent_checkpoint_required', True):
                     new_checkpoint_required = True
                     return_data['new_parent_checkpoint_required']= True
+            elif child_kind == clang.cindex.CursorKind.SWITCH_STMT:
+                # found a switch_branch, so open the switch statement handler
+                inner_traverse_args = dict(parent_function_id = args['parent_function_id'])
+                inner_return_data = dict()
+                self._traverse_switch_statement(child_element, inner_traverse_args, inner_return_data)
+
+                # check, if new checkpoint marker is neccessary
+                if inner_return_data.get('new_parent_checkpoint_required', True):
+                    new_checkpoint_required = True
+                    return_data['new_parent_checkpoint_required']= True
             else:
                 # add the statement to the code data
                 self.cid_manager.add_statement_data(self.cid_manager.get_new_id(),
@@ -299,7 +298,6 @@ class Parser:
                             CodePositionData(child_element.extent.start.line, child_element.extent.start.column),
                             CodePositionData(child_element.extent.end.line, child_element.extent.end.column))
                         )
-        print("Traversed compound statement")
 
     def _traverse_evaluation(self, ast_cursor: clang.cindex.Cursor, args: dict, return_data: dict):
         # Traverse a evaluation and return a list of conditions with evaluation_marker_ids and code_sections
@@ -312,7 +310,7 @@ class Parser:
 
             # Pass current cursor to _traverse_evaluation again, but as condition
             inner_traverse_args = dict(is_condition = True)
-            inner_return_data = dict(conditions = list())
+            inner_return_data = dict(conditions = list(), condition_possibilities = dict(true = [], false = []))
             self._traverse_evaluation(ast_cursor, inner_traverse_args, inner_return_data)
             # append conditions
             conditions.extend(inner_return_data['conditions'])
@@ -328,6 +326,7 @@ class Parser:
             return_data['evaluation_marker_id'] = evaluation_marker_id
             return_data['evaluation_code_section'] = evaluation_code_section
             return_data['conditions'] = conditions
+            return_data['condition_possibilities'] = (inner_return_data['condition_possibilities'])
 
         else:
             # This is a (compound) condition
@@ -338,15 +337,96 @@ class Parser:
                     (ast_cursor.kind == clang.cindex.CursorKind.BINARY_OPERATOR and
                     (ast_cursor.binary_operator == clang.cindex.BinaryOperator.LAnd or
                     ast_cursor.binary_operator == clang.cindex.BinaryOperator.LOr))):
-                print("Compound condition")
-                for child_element in ast_cursor.get_children():
+                
+                # store condition possibilities for both sides in order to generate table after traversing children
+                left_condition_possibilities: list()
+                right_condition_possibilities: list()
+
+                for i, child_element in enumerate(ast_cursor.get_children()):
                     # create the necessary pass thru variables
                     inner_traverse_args = dict(is_condition = True)
-                    inner_return_data = dict(conditions = list())
+                    inner_return_data = dict(conditions = list(), condition_possibilities = dict(true = [], false = []))
                     self._traverse_evaluation(child_element, inner_traverse_args, inner_return_data)
                     # append conditions
                     conditions.extend(inner_return_data['conditions'])
                     return_data['conditions'] = conditions
+
+                    # Create the table for condition possibilities
+                    if (ast_cursor.kind == clang.cindex.CursorKind.BINARY_OPERATOR):
+                        if i == 0:
+                            left_condition_possibilities = inner_return_data['condition_possibilities']
+                        elif i == 1:
+                            right_condition_possibilities = inner_return_data['condition_possibilities']
+                    elif (ast_cursor.kind == clang.cindex.CursorKind.PAREN_EXPR):
+                        return_data['condition_possibilities'] = inner_return_data['condition_possibilities']
+
+                # Create condition possibility table for MC/DC analysis
+                if (ast_cursor.kind == clang.cindex.CursorKind.BINARY_OPERATOR and
+                        ast_cursor.binary_operator == clang.cindex.BinaryOperator.LAnd):
+                    condition_possibilities = list()
+
+                    for left_condition_result in filter(lambda x: x['decision_result'] is "true", left_condition_possibilities):
+                        for right_condition_result in filter(lambda x: x['decision_result'] is "true", right_condition_possibilities):
+                            # both sides are true, so add this to the possible compound condition results for true
+                            condition_possibilities.append(dict(
+                                decision_result = "true",
+                                condition_combination = left_condition_result['condition_combination'] + right_condition_result['condition_combination']))
+
+                        for right_condition_result in filter(lambda x: x['decision_result'] is "false", right_condition_possibilities):
+                            # right side is false, so add this to the possible compound condition results for false 
+                            condition_possibilities.append(dict(
+                                decision_result = "false",
+                                condition_combination = left_condition_result['condition_combination'] + right_condition_result['condition_combination']))
+
+                    for left_condition_result in filter(lambda x: x['decision_result'] is "false", left_condition_possibilities):
+                        # left side is false, so add this to the possible compound condition results for false
+                        # fill right side with X (don't care)
+                        right_condition_results = list()
+                        for right_condition_result in (right_condition_possibilities[0]["condition_combination"]):
+                            right_condition_results.append(dict(
+                                    evaluation_marker_id = right_condition_result['evaluation_marker_id'],
+                                    result = "x"))
+                        condition_possibilities.append(dict(
+                            decision_result = "false",
+                            condition_combination = left_condition_result['condition_combination'] + right_condition_results
+                        ))
+                    
+                    return_data['condition_possibilities'] = condition_possibilities
+
+                elif (ast_cursor.kind == clang.cindex.CursorKind.BINARY_OPERATOR and
+                        ast_cursor.binary_operator == clang.cindex.BinaryOperator.LOr):
+                    condition_possibilities = list()
+
+                    for left_condition_result in filter(lambda x: x['decision_result'] is "true", left_condition_possibilities):
+                        # left side is true, so add this to the possible compound condition results for true
+                        # fill right side with X (don't care)
+                        right_condition_results = list()
+                        print (right_condition_possibilities)
+                        for right_condition_result in (right_condition_possibilities[0]["condition_combination"]):
+                            right_condition_results.append(dict(
+                                    evaluation_marker_id = right_condition_result['evaluation_marker_id'],
+                                    result = "x"))
+                        condition_possibilities.append(dict(
+                            decision_result = "true",
+                            condition_combination = left_condition_result['condition_combination'] + right_condition_results
+                        ))
+
+                    for left_condition_result in filter(lambda x: x['decision_result'] is "false", left_condition_possibilities):
+                        for right_condition_result in filter(lambda x: x['decision_result'] is "true", right_condition_possibilities):
+                            # right side is true, so add this to the possible compound condition results for true
+                            condition_possibilities.append(dict(
+                                decision_result = "true",
+                                condition_combination = left_condition_result['condition_combination'] + right_condition_result['condition_combination']))
+                        
+                        for right_condition_result in filter(lambda x: x['decision_result'] is "false", right_condition_possibilities):
+                            # both sides are false, so add this to the possible compound condition results for false
+                            condition_possibilities.append(dict(
+                                decision_result = "false",
+                                condition_combination = left_condition_result['condition_combination'] + right_condition_result['condition_combination']))
+
+                    return_data['condition_possibilities'] = condition_possibilities
+
+
             else:
                 # This is a atomic condition. Create a EvaluationMarker and create new ConditionData
                 evaluation_marker_id = self.cid_manager.get_new_id()
@@ -357,6 +437,16 @@ class Parser:
                     	EvaluationType.CONDITION)
                 condition = ConditionData(evaluation_marker_id, evaluation_code_section)
                 return_data['conditions'] = [condition]
+                # create condition possibilities for MC/DC analysis
+                return_data['condition_possibilities'] = [
+                        dict(
+                            decision_result = "true",
+                            condition_combination = [dict(evaluation_marker_id = evaluation_marker_id, result = 'true')]
+                        ),
+                        dict(
+                            decision_result = "false",
+                            condition_combination = [dict(evaluation_marker_id = evaluation_marker_id, result = 'false')]
+                        )]
 
 
     def _traverse_if_statement(self, ast_cursor: clang.cindex.Cursor, args: dict, return_data: dict):
@@ -382,6 +472,7 @@ class Parser:
 
         # Variables for storing information on the active branch_result
         evaluation_marker_id: int
+        condition_possibilities = None
         conditions: List[ConditionData]
         result_evaluation_code_section: CodeSectionData
         result_body_code_section: CodeSectionData
@@ -400,6 +491,7 @@ class Parser:
                 evaluation_marker_id = evaluation_return_data['evaluation_marker_id']
                 conditions = evaluation_return_data['conditions']
                 result_evaluation_code_section = evaluation_return_data['evaluation_code_section']
+                condition_possibilities = evaluation_return_data['condition_possibilities']
 
             # Check second element. This is the compound statement of the if-branch
             if i == 1:
@@ -416,8 +508,8 @@ class Parser:
                     CodePositionData(child_element.extent.end.line, child_element.extent.end.column))
 
                 # Create the IfBranchResult Data. Add id to list passed via args.
-                return_data['branch_results'].append(BranchResultData(evaluation_marker_id, conditions,
-                        result_evaluation_code_section, result_body_code_section))
+                return_data['branch_results'].append(BranchResultData(evaluation_marker_id, condition_possibilities,
+                        conditions, result_evaluation_code_section, result_body_code_section))
 
             # Check the existence of a third element.
             if i == 2:
@@ -439,7 +531,6 @@ class Parser:
 
                     # If this is a COMPOUND_STMT, this is the else branch.
                     elif child_element.kind == clang.cindex.CursorKind.COMPOUND_STMT:
-                        print("Else statement found.")
                         # get code_section
                         else_code_section = CodeSectionData(
                             CodePositionData(child_element.extent.start.line, child_element.extent.start.column),
@@ -447,7 +538,7 @@ class Parser:
 
                         # create a branch result with evaluation_marker_id = -1
                         # (else get's detected by Analyzer)
-                        return_data['branch_results'].append(BranchResultData(-1, list(),
+                        return_data['branch_results'].append(BranchResultData(-1, list(), dict(true = [], false = []),
                                 else_code_section,
                                 else_code_section))
 
@@ -457,6 +548,148 @@ class Parser:
 
                         self._traverse_compound_statement(child_element,
                                 inner_traverse_args, inner_return_data)
+
+    def _traverse_switch_statement(self, ast_cursor: clang.cindex.Cursor, args: dict, return_data: dict):
+        # Starting analysis of switch statement
+
+        # Get all child elements
+        child_elements = ast_cursor.get_children()
+
+        switch_branch_code_section = CodeSectionData(
+                CodePositionData(ast_cursor.extent.start.line, ast_cursor.extent.start.column),
+                CodePositionData(ast_cursor.extent.end.line, ast_cursor.extent.end.column))
+
+        # Get switch branch cases
+        inner_traverse_args = dict(parent_function_id = args['parent_function_id'])
+        inner_return_data = dict(switch_cases = list())
+
+        for i, child_element in enumerate(child_elements):
+            # Get expression code section
+            if i == 1:
+                self._traverse_switch_compound_statement(child_element, inner_traverse_args, inner_return_data)
+
+        # Create correct code data info
+        self.cid_manager.add_switch_branch_data(self.cid_manager.get_new_id(), args['parent_function_id'],
+                switch_branch_code_section, inner_return_data['switch_cases'])
+        
+        # Check, if parent blocks should create new checkpoint marker id's
+        if inner_return_data.get('new_parent_checkpoint_required', False):
+            return_data['new_parent_checkpoint_required'] = True
+        return
+
+    def _traverse_switch_compound_statement(self, ast_cursor: clang.cindex.Cursor, args: dict, return_data: dict):
+        # traverse the compound statement of a switch statement in order to prevent cluttering
+        # the normal compound statement traversing function.
+
+        for child_element in ast_cursor.get_children():
+            if child_element.kind == clang.cindex.CursorKind.CASE_STMT:
+                # this is a normal case. Check if it includes another case (2nd child is CASE_STMT or DEFAULT_STMT),
+                # so that we go into this case recursively
+                # until we have a clean compound statement for further traversing
+
+                case_evaluation_code_section: CodeSectionData
+                case_body_code_section: CodeSectionData
+
+                for i, case_child in enumerate(child_element.get_children()):
+                    if i == 0:
+                        case_evaluation_code_section = CodeSectionData(
+                                CodePositionData(child_element.extent.start.line, child_element.extent.start.column),
+                                CodePositionData(case_child.extent.end.line, case_child.extent.end.column))
+                    elif (i == 1 and case_child.kind == clang.cindex.CursorKind.CASE_STMT or
+                            i == 1 and case_child.kind == clang.cindex.CursorKind.DEFAULT_STMT):
+                        # this is a direct case concatenation, so call this function recursively
+                        inner_traverse_args = dict(parent_function_id = args['parent_function_id'])
+                        inner_return_data = dict(switch_cases = list())
+                        
+                        # traverse inner case statement
+                        self._traverse_switch_compound_statement(child_element, inner_traverse_args, inner_return_data)
+
+                        # append inner results to the cases in this function
+                        return_data['switch_cases'].extend(inner_return_data['switch_cases'])
+                        
+                        if inner_return_data.get('new_parent_checkpoint_required', False):
+                            return_data['new_parent_checkpoint_required'] = True
+
+                        # take inner code section from first item in return data, since it's the same for nested cases
+                        case = CaseData(inner_return_data['switch_cases'][0].checkpoint_marker_id, CaseType.CASE,
+                                case_evaluation_code_section, inner_return_data['switch_cases'][0].body_code_section)
+                        return_data['switch_cases'].append(case)
+                    elif (i == 1):
+                        # this is a atomic case, so traverse with compound statement handler
+                        inner_traverse_args = dict(
+                                is_case = True,
+                                parent_function_id = args['parent_function_id']
+                                )
+                        inner_return_data = dict()
+
+                        self._traverse_compound_statement(child_element, inner_traverse_args, inner_return_data)
+
+                        if inner_return_data.get('new_parent_checkpoint_required', False):
+                            return_data['new_parent_checkpoint_required'] = True
+
+                        # create code section for the case
+                        case_body_code_section = CodeSectionData(
+                                CodePositionData(case_child.extent.start.line, case_child.extent.start.column),
+                                CodePositionData(child_element.extent.end.line, child_element.extent.end.column))
+
+                        case = CaseData(inner_return_data['first_checkpoint_marker_id'], CaseType.CASE,
+                                case_evaluation_code_section, case_body_code_section)
+
+                        return_data['switch_cases'].append(case)
+
+
+            elif child_element.kind == clang.cindex.CursorKind.DEFAULT_STMT:
+                # this is a default case. Check if it includes another case (1st child is CASE_STMT or DEFAULT_STMT),
+                # so that we go into this case recursively
+                # until we have a clean compound statement for further traversing
+                case_body_code_section: CodeSectionData
+                case_evaluation_code_section = CodeSectionData(
+                        CodePositionData(child_element.extent.start.line, child_element.extent.start.column),
+                        CodePositionData(child_element.extent.start.line, child_element.extent.start.column + 7))
+
+                for i, case_child in enumerate(child_element.get_children()):
+                    if (i == 0 and case_child.kind == clang.cindex.CursorKind.CASE_STMT or
+                            i == 0 and case_child.kind == clang.cindex.CursorKind.DEFAULT_STMT):
+                        # this is a direct case concatenation, so call this function recursively
+                        inner_traverse_args = dict(parent_function_id = args['parent_function_id'])
+                        inner_return_data = dict(switch_cases = list())
+                        
+                        # traverse inner case statement
+                        self._traverse_switch_compound_statement(child_element, inner_traverse_args, inner_return_data)
+
+                        # append inner results to the cases in this function
+                        return_data['switch_cases'].extend(inner_return_data['switch_cases'])
+                        
+                        if inner_return_data.get('new_parent_checkpoint_required', False):
+                            return_data['new_parent_checkpoint_required'] = True
+
+                        # take inner code section from first item in return data, since it's the same for nested cases
+                        case = CaseData(inner_return_data['switch_cases'][0].checkpoint_marker_id, CaseType.DEFAULT,
+                                case_evaluation_code_section, inner_return_data['switch_cases'][0].body_code_section)
+                        return_data['switch_cases'].append(case)
+                    elif (i == 0):
+                        # this is a atomic case, so traverse with compound statement handler
+                        inner_traverse_args = dict(
+                                is_case = True,
+                                parent_function_id = args['parent_function_id']
+                                )
+                        inner_return_data = dict()
+
+                        self._traverse_compound_statement(child_element, inner_traverse_args, inner_return_data)
+
+                        if inner_return_data.get('new_parent_checkpoint_required', False):
+                            return_data['new_parent_checkpoint_required'] = True
+
+                        # create code section for the case
+                        case_body_code_section = CodeSectionData(
+                                CodePositionData(case_child.extent.start.line, case_child.extent.start.column),
+                                CodePositionData(child_element.extent.end.line, child_element.extent.end.column))
+
+                        case = CaseData(inner_return_data['first_checkpoint_marker_id'], CaseType.DEFAULT,
+                                case_evaluation_code_section, case_body_code_section)
+
+                        return_data['switch_cases'].append(case)                    
+        return
     # !SECTION
     
     # SECTION   Parser public functions

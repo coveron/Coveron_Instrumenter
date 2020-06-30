@@ -70,6 +70,9 @@ def main():
     # instantiate clang bridge
     clang_bridge = ClangBridge()
 
+    if config.verbose:
+        print("Starting Instrumentation ...")
+
     # create new instrumentation process for every source file detected by ArgumentHandler
     for source_file in config.source_files:
         source_file: SourceFile
@@ -132,12 +135,14 @@ def main():
     # delete clang bridge after running through every file
     del clang_bridge
 
+    if config.verbose:
+        print("Invoking compiler ...")
+
     # call the compiler with the pass thru arguments, the new instrumented files and the link to the runtime_helper (as absolute path)
     command_string = " ".join([config.compiler_exec,
                                config.compiler_args,
                                ' '.join(source_file.output_file for source_file in config.source_files),
                                runtime_helper_source_path])
-    print(command_string)
     compiler_returncode = subprocess.call(command_string, shell=True)
 
     if config.verbose:

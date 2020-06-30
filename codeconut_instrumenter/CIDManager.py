@@ -168,13 +168,14 @@ class CIDManager:
                                     function_id: int,
                                     evaluation_marker_id: int,
                                     evaluation_code_section: CodeSectionData,
+                                    condition_possibilities,
                                     conditions: List[ConditionData],
                                     true_code_section: CodeSectionData,
                                     false_code_section: CodeSectionData
                                     ):
         '''Create new ternary expression in code data. Return new ternary_expression_id'''
         self._cid_data.code_data.ternary_expressions.append(TernaryExpressionData(ternary_expression_id,
-                function_id, evaluation_marker_id, evaluation_code_section, conditions, true_code_section,
+                function_id, evaluation_marker_id, evaluation_code_section, condition_possibilities, conditions, true_code_section,
                 false_code_section))
 
     def add_loop_data(self,
@@ -206,13 +207,11 @@ class CIDManager:
         # Routine for saving gzip compressed data (not needed during first development)
         #cid_bytes = cid_string.encode('utf-8')
 
-        # with gzip.GzipFile(self.source_file.cid_file, 'w') as output_file_ptr:
-        #     try:
-        #         output_file_ptr.write(cid_bytes)
-        #     except:
-        #         raise(RuntimeError(self.source_file.cid_file + " can't be written!"))
-
-
-        return
+        #with gzip.GzipFile(os.path.join(self.config.output_abs_path, self.source_file.cid_file), 'w') as output_file_ptr:
+        #    try:
+        #        output_file_ptr.write(cid_bytes)
+        #    except:
+        #        raise(RuntimeError(self.source_file.cid_file + " can't be written!"))
+        #return
     # !SECTION
 # !SECTION

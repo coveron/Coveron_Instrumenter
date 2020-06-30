@@ -543,10 +543,11 @@ class BranchResultData:
     """
     
     # SECTION   BranchResultData private attribute definitions
-    __slots__ = ["evaluation_marker_id", "conditions", "result_evaluation_code_section",
-                 "result_body_code_section"]
+    __slots__ = ["evaluation_marker_id", "condition_possibilities", "conditions",
+                 "result_evaluation_code_section", "result_body_code_section"]
 
     evaluation_marker_id: int
+    condition_possibilities: List[List[str]]
     conditions: List[ConditionData]
     result_evaluation_code_section: CodeSectionData
     result_body_code_section: CodeSectionData
@@ -556,10 +557,13 @@ class BranchResultData:
     # !SECTION
     
     # SECTION   BranchResultData initialization
-    def __init__(self, evaluation_marker_id: int, conditions: List[ConditionData],
+    def __init__(self, evaluation_marker_id: int, 
+            condition_possibilities: List[List[str]],
+            conditions: List[ConditionData],
             result_evaluation_code_section: CodeSectionData,
             result_body_code_section: CodeSectionData):
         self.evaluation_marker_id = evaluation_marker_id
+        self.condition_possibilities = condition_possibilities
         self.conditions = conditions
         self.result_evaluation_code_section = result_evaluation_code_section
         self.result_body_code_section = result_body_code_section
@@ -580,6 +584,7 @@ class BranchResultData:
         # JSON encoding helper
         return dict(
             evaluation_marker_id = self.evaluation_marker_id,
+            condition_possibilities = self.condition_possibilities,
             conditions = self.conditions,
             result_evaluation_code_section = self.result_evaluation_code_section,
             result_body_code_section = self.result_body_code_section
@@ -626,13 +631,8 @@ class ClassData:
     def asJSON(self):
         # JSON encoding helper
         return dict(
-            function_id = self.function_id,
-            function_name = self.function_name,
-            function_type = self.function_type,
-            parent_function_id = self.parent_function_id,
-            checkpoint_marker_id = self.checkpoint_marker_id,
-            header_code_section = self.header_code_section,
-            inner_code_section = self.inner_code_section
+            class_id = self.class_id,
+            class_name = self.class_name
         )
     # !SECTION
 # !SECTION
@@ -813,11 +813,11 @@ class SwitchBranchData:
     """
     
     # SECTION   SwitchBranchData private attribute definitions
-    __slots__ = ["switch_branch_id", "function_id", "expression_code_section", "cases"]
+    __slots__ = ["switch_branch_id", "function_id", "switch_branch_code_section", "cases"]
 
     switch_branch_id: int
     function_id: int
-    expression_code_section: CodeSectionData
+    switch_branch_code_section: CodeSectionData
     cases: List[CaseData]
     # !SECTION
     
@@ -826,10 +826,10 @@ class SwitchBranchData:
     
     # SECTION   SwitchBranchData initialization
     def __init__(self, switch_branch_id: int, function_id: int,
-            expression_code_section: CodeSectionData, cases: List[CaseData]):
+            switch_branch_code_section: CodeSectionData, cases: List[CaseData]):
         self.switch_branch_id = switch_branch_id
         self.function_id = function_id
-        self.expression_code_section = expression_code_section
+        self.switch_branch_code_section = switch_branch_code_section
         self.cases = cases
         return
     # !SECTION
@@ -852,7 +852,7 @@ class SwitchBranchData:
         return dict(
             switch_branch_id = self.switch_branch_id,
             function_id = self.function_id,
-            expression_code_section = self.expression_code_section,
+            switch_branch_code_section = self.switch_branch_code_section,
             cases = self.cases
         )
     # !SECTION
@@ -866,12 +866,14 @@ class TernaryExpressionData:
     
     # SECTION   TernaryExpressionData private attribute definitions
     __slots__ = ["ternary_expression_id", "function_id", "evaluation_marker_id",
-    "evaluation_code_section", "conditions", "true_code_section", "false_code_section"]
+            "evaluation_code_section", "condition_possibilities", "conditions",
+            "true_code_section", "false_code_section"]
 
     ternary_expression_id: int
     function_id: int
     evaluation_marker_id: int
     evaluation_code_section: CodeSectionData
+    condition_possibilities: List[List[str]]
     conditions: ConditionData
     true_code_section: CodeSectionData
     false_code_section: CodeSectionData
@@ -882,12 +884,14 @@ class TernaryExpressionData:
     
     # SECTION   TernaryExpressionData initialization
     def __init__(self, ternary_expression_id: int, function_id:int, evaluation_marker_id: int,
-            evaluation_code_section: CodeSectionData, conditions: ConditionData,
+            evaluation_code_section: CodeSectionData, condition_possibilities: List[List[str]],
+            conditions: ConditionData,
             true_code_section: CodeSectionData, false_code_section: CodeSectionData):
         self.ternary_expression_id = ternary_expression_id
         self.function_id = function_id
         self.evaluation_marker_id = evaluation_marker_id
         self.evaluation_code_section = evaluation_code_section
+        self.condition_possibilities = condition_possibilities
         self.conditions = conditions
         self.true_code_section = true_code_section
         self.false_code_section = false_code_section
@@ -914,6 +918,7 @@ class TernaryExpressionData:
             function_id = self.function_id,
             evaluation_marker_id = self.evaluation_marker_id,
             evaluation_code_section = self.evaluation_code_section,
+            condition_possibilities = self.condition_possibilities,
             conditions = self.conditions,
             true_code_section = self.true_code_section,
             false_code_section = self.false_code_section
@@ -930,7 +935,7 @@ class LoopData:
     # SECTION   LoopData private attribute definitions
     __slots__ = ["loop_id", "loop_type", "function_id",
                  "evaluation_marker_id", "evaluation_code_section", "body_code_section",
-                 "conditions"]
+                 "condition_possibilities", "conditions"]
 
     loop_id: int
     loop_type: LoopType
@@ -938,6 +943,7 @@ class LoopData:
     evaluation_marker_id: int
     evaluation_code_section: CodeSectionData
     body_code_section: CodeSectionData
+    condition_possibilities: List[List[str]]
     conditions: List[ConditionData]
     # !SECTION
     
@@ -947,13 +953,15 @@ class LoopData:
     # SECTION   LoopData initialization
     def __init__(self, loop_id: int, loop_type: LoopType, function_id: int,
             evaluation_marker_id: int, evaluation_code_section: CodeSectionData,
-            body_code_section: CodeSectionData, conditions: List[ConditionData]):
+            body_code_section: CodeSectionData, condition_possibilities: List[List[str]],
+            conditions: List[ConditionData]):
         self.loop_id = loop_id
         self.loop_type = loop_type
         self.function_id = function_id
         self.evaluation_marker_id = evaluation_marker_id
         self.evaluation_code_section = evaluation_code_section
         self.body_code_section = body_code_section
+        self.condition_possibilities = condition_possibilities
         self.conditions = conditions
         return
     # !SECTION
@@ -980,6 +988,7 @@ class LoopData:
             evaluation_marker_id = self.evaluation_marker_id,
             evaluation_code_section = self.evaluation_code_section,
             body_code_section = self.body_code_section,
+            condition_possibilities = self.condition_possibilities,
             conditions = self.conditions
         )
     # !SECTION

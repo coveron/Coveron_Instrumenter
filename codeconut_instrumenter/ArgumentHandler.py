@@ -18,6 +18,8 @@ import argparse
 from itertools import islice
 
 import os
+import subprocess
+import copy
 
 # SECTION   ArgumentHandler class
 class ArgumentHandler:
@@ -98,7 +100,7 @@ class ArgumentHandler:
         self._argparser.add_argument('--CCN_POLL_PPD',
                                      dest='poll_ppd', action='store_const',
                                      const=True, default=False,
-                                     help='Poll the default preprocessor defines from the pass-thru compiler (only for compilers with gcc/clang style CLI)')                      
+                                     help='Poll all preprocessor defines from the given compiler (only for compilers with gcc/clang style CLI).')                      
         
         # parse and save known args to _args. Everything else to _other_args
         self._args, self._other_args = self._argparser.parse_known_args()
@@ -158,18 +160,24 @@ class ArgumentHandler:
                     # (single arg output args get checked below)
                     self._config.output_abs_path = os.path.dirname(
                             os.path.abspath(self._other_args[index + 1]))
+                    continue
                 elif (argl.startswith("-o")):
                     self._config.output_abs_path = os.path.dirname(
                             os.path.abspath(arg[2:]))
+                    continue
                 elif (argl.startswith("--output=")):
                     self._config.output_abs_path = os.path.dirname(
                             os.path.abspath(arg[9:]))
+                    continue
                 else:
                     compiler_args_list.append(arg)
 
                 # check, if it's a output argument. If yes, set the output path for CID and CRI files
                 # in config by getting directory.
-                
+            
+            if self._args.poll_ppd:
+                # jump over argument handling, if user decided to use poll_ppd
+                continue
 
             # check, if it's some kind of include with single arg
             if (argl.startswith('-I') or argl.startswith('--include-directory=') or
@@ -210,8 +218,41 @@ class ArgumentHandler:
                 clang_args_list.append(' '.join([arg, self._other_args[index + 1]]))
                 next(islice(arg_iterator,1,1), None) # skip next arg, since it's part of this arg
                 continue
+        
+        # if user checked poll_ppd, we should do that right now
+        if self._args.poll_ppd:
+            # user wants us to poll the compiler, so execute the compiler with additional "-dM -E" and use the outputs
+            poll_args = list()
+            # pass other args except output file arg, since we otherwise won't get the info we need
+            # check, if it's a multi arg output argument. In this case just skip the next arg (improved pass thru compatibility)
+            for arg in self._other_args:
+                argl = arg.lower()
 
-            # check, if it's the output filename to
+                if (argl == "--output" or argl == "-o"):
+                    next(islice(arg_iterator,1,1), None)
+
+                    # we can use this to set the new output directory
+                    # (single arg output args get checked below)
+                    self._config.output_abs_path = os.path.dirname(
+                            os.path.abspath(self._other_args[index + 1]))
+                    continue
+                elif (argl.startswith("-o")):
+                    continue
+                elif (argl.startswith("--output=")):
+                    continue
+                else:
+                    poll_args.append(arg)
+
+            poll_command_string = self._args.compiler_exec + " -dM -E " + " ".join(poll_args)
+            poll_process = subprocess.run(poll_command_string, stdout=subprocess.PIPE)
+            poll_output = poll_process.stdout.decode('utf-8')
+            
+            poll_ouput_lines = poll_output.splitlines()
+            for line in poll_ouput_lines:
+                if line[:8] == "#define ":
+                    print("-D"+line[8:])
+                    clang_args_list.append("-D" + line[8:])
+            
 
         # write clang args list to config
         self._config.clang_args = ' '.join(clang_args_list)

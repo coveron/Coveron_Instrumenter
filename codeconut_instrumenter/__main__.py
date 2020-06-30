@@ -144,7 +144,7 @@ def main():
                                ' '.join(source_file.output_file for source_file in config.source_files),
                                runtime_helper_source_path])
     compiler_returncode = subprocess.call(command_string, shell=True)
-
+    
     if config.verbose:
         if compiler_returncode is not 0:
             print(colorama.Fore.RED + "Compiler failed!" + colorama.Fore.RESET)

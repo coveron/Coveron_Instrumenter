@@ -185,10 +185,11 @@ class CIDManager:
                       evaluation_marker_id: int,
                       evaluation_code_section: CodeSectionData,
                       body_code_section: CodeSectionData,
+                      condition_possibilities,
                       conditions: List[ConditionData]) -> int:
         '''Create new loop in code data. Returns new loop_id'''
         self._cid_data.code_data.loops.append(LoopData(loop_id, loop_type, function_id, evaluation_marker_id,
-                evaluation_code_section, body_code_section, conditions))
+                evaluation_code_section, body_code_section, condition_possibilities, conditions))
         return loop_id
 
     def write_cid_file(self):

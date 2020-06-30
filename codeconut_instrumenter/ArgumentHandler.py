@@ -100,7 +100,12 @@ class ArgumentHandler:
         self._argparser.add_argument('--CCN_POLL_PPD',
                                      dest='poll_ppd', action='store_const',
                                      const=True, default=False,
-                                     help='Poll all preprocessor defines from the given compiler (only for compilers with gcc/clang style CLI).')                      
+                                     help='Poll all preprocessor defines from the given compiler (only for compilers with gcc/clang style CLI).')
+
+        self._argparser.add_argument('--CCN_NOCOMP_CID',
+                                     dest='nocomp_cid', action='store_const',
+                                     const=True, default=False,
+                                     help='Disable GZIP-compression of CID-data. Only useful, if you want to analyze the contents of the CID file.')
         
         # parse and save known args to _args. Everything else to _other_args
         self._args, self._other_args = self._argparser.parse_known_args()
@@ -113,7 +118,8 @@ class ArgumentHandler:
         # set force flag
         self._config.force = self._args.force
 
-        # set output path
+        # set CID nocomp flag
+        self._config.nocomp_cid = self._args.nocomp_cid
 
         # set compiler executable
         self._config.compiler_exec = self._args.compiler_exec

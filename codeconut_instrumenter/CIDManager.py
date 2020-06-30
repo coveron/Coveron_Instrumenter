@@ -198,21 +198,21 @@ class CIDManager:
 
         cid_string = json.dumps(self._cid_data.asJSON(), cls=CustomJSONEncoder, indent=4)
 
-        with open(os.path.join(self.config.output_abs_path, self.source_file.cid_file), 'w') as output_file_ptr:
-            try:
-                output_file_ptr.write(cid_string)
-            except:
-                raise(RuntimeError(self.source_file.cid_file + " can't be written!"))
-        return
+        if self.config.nocomp_cid:
+            with open(os.path.join(self.config.output_abs_path, self.source_file.cid_file), 'w') as output_file_ptr:
+                try:
+                    output_file_ptr.write(cid_string)
+                except:
+                    raise(RuntimeError(self.source_file.cid_file + " can't be written!"))
 
-        # Routine for saving gzip compressed data (not needed during first development)
-        #cid_bytes = cid_string.encode('utf-8')
+        else:
+            # Routine for saving gzip compressed data (not needed during first development)
+            cid_bytes = cid_string.encode('utf-8')
 
-        #with gzip.GzipFile(os.path.join(self.config.output_abs_path, self.source_file.cid_file), 'w') as output_file_ptr:
-        #    try:
-        #        output_file_ptr.write(cid_bytes)
-        #    except:
-        #        raise(RuntimeError(self.source_file.cid_file + " can't be written!"))
-        #return
+            with gzip.GzipFile(os.path.join(self.config.output_abs_path, self.source_file.cid_file), 'w') as output_file_ptr:
+                try:
+                    output_file_ptr.write(cid_bytes)
+                except:
+                    raise(RuntimeError(self.source_file.cid_file + " can't be written!"))
     # !SECTION
 # !SECTION

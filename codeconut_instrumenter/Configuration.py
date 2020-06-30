@@ -26,6 +26,7 @@ class Configuration:
     # SECTION   Configuration private attribute definitions
     __slots__ = ["verbose",
                  "force",
+                 "nocomp_cid",
                  "checkpoint_markers_enabled",
                  "evaluation_markers_enabled",
                  "source_files",
@@ -37,6 +38,7 @@ class Configuration:
 
     verbose: bool
     force: bool
+    nocomp_cid: bool
     checkpoint_markers_enabled: bool
     evaluation_markers_enabled: bool
     source_files: list
@@ -55,6 +57,7 @@ class Configuration:
         # set default values
         self.verbose = False
         self.force = False
+        self.nocomp_cid = False
         self.checkpoint_markers_enabled = True
         self.evaluation_markers_enabled = False
         self.source_files = list()
@@ -93,6 +96,7 @@ class Configuration:
     def print_config(self):
         print("Verbose enabled: " + str(self.verbose))
         print("New Instrumentation enforced: " + str(self.force))
+        print("CID-Compression disabled: " + str(self.nocomp_cid))
         print("Output absolute path: " + str(self.output_abs_path))
         print("Checkpoint markers enabled: " + str(self.checkpoint_markers_enabled))
         print("Evaluation markers enabled: " + str(self.evaluation_markers_enabled))

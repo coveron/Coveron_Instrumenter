@@ -563,8 +563,9 @@ class Parser:
                     CodePositionData(child_element.extent.end.line, child_element.extent.end.column))
 
                 # Create the IfBranchResult Data. Add id to list passed via args.
-                return_data['branch_results'].append(BranchResultData(evaluation_marker_id, condition_possibilities,
-                        conditions, result_evaluation_code_section, result_body_code_section))
+                if self.config.evaluation_markers_enabled:
+                    return_data['branch_results'].append(BranchResultData(evaluation_marker_id, condition_possibilities,
+                            conditions, result_evaluation_code_section, result_body_code_section))
 
             # Check the existence of a third element.
             if i == 2:

@@ -256,7 +256,6 @@ class ArgumentHandler:
             poll_ouput_lines = poll_output.splitlines()
             for line in poll_ouput_lines:
                 if line[:8] == "#define ":
-                    print("-D"+line[8:])
                     clang_args_list.append("-D" + line[8:])
             
 

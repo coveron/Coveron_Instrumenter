@@ -21,6 +21,7 @@ setup(name='codeconut_instrumenter',
       install_requires=[
           'jinja2',
           'lxml',
+          'colorama'
       ],
       package_data={
           'codeconut_instrumenter': ['codeconut_instrumenter/clang/*', 'codeconut_instrumenter/codeconut_runtime_helper/*']

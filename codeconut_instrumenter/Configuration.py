@@ -18,6 +18,8 @@ from typing import List
 from DataTypes import SourceFile
 
 # SECTION   Configuration class
+
+
 class Configuration:
     """Configuration class.
        Stores all configuration values for the instrumenter.
@@ -65,7 +67,8 @@ class Configuration:
         self.compiler_args = ""
         self.clang_args = ""
         self.runtime_helper_header_path = ""
-        self.output_abs_path = os.getcwd() # default output path is the current working path
+        # default output path is the current working path
+        self.output_abs_path = os.getcwd()
         return
     # !SECTION
 
@@ -75,7 +78,7 @@ class Configuration:
     # !SECTION
 
     # SECTION   Configuration setter functions
-    def _set_compiler_args(self, compiler_args:str):
+    def _set_compiler_args(self, compiler_args: str):
         if self.checkpoint_markers_enabled:
             compiler_args += " -D___CODECONUT_CHECKPOINT_ANALYSIS_ENABLED"
         if self.evaluation_markers_enabled:
@@ -83,10 +86,10 @@ class Configuration:
         self._compiler_args = compiler_args
     # !SECTION
 
-    # SECTION   Configuration property definitions  
+    # SECTION   Configuration property definitions
     compiler_args: str = property(fget=_get_compiler_args,
-                  fset=_set_compiler_args,
-                  doc="Stores arguments passed to the compiler")                  
+                                  fset=_set_compiler_args,
+                                  doc="Stores arguments passed to the compiler")
     # !SECTION
 
     # SECTION   Configuration private functions
@@ -98,11 +101,14 @@ class Configuration:
         print("New Instrumentation enforced: " + str(self.force))
         print("CID-Compression disabled: " + str(self.nocomp_cid))
         print("Output absolute path: " + str(self.output_abs_path))
-        print("Checkpoint markers enabled: " + str(self.checkpoint_markers_enabled))
-        print("Evaluation markers enabled: " + str(self.evaluation_markers_enabled))
+        print("Checkpoint markers enabled: " +
+              str(self.checkpoint_markers_enabled))
+        print("Evaluation markers enabled: " +
+              str(self.evaluation_markers_enabled))
         print("Compile exec: " + self.compiler_exec)
         print("Compiler pass thru arguments: " + self.compiler_args)
         print("Clang arguments: " + self.clang_args)
-        print("Compile source files: " + ' '.join(source_file.input_file for source_file in self.source_files))
+        print("Compile source files: " +
+              ' '.join(source_file.input_file for source_file in self.source_files))
     # !SECTION
 # !SECTION

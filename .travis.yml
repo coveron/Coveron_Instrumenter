@@ -41,7 +41,7 @@ matrix:
       before_script:
         - cd codeconut_instrumenter
       script:
-        - python3 -m flake8 --ignore=E501 --exclude tests
+        - python3 -m flake8 --ignore=E501,F405 --exclude tests,clang
 
     - language: ruby
       name: "Unit Tests Runtime Helper"

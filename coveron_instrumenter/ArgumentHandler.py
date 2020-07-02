@@ -72,37 +72,37 @@ class ArgumentHandler:
             Code coverage output files can be post-processed and reviewed
             with Coveron Analyzer.''')
 
-        self._argparser.add_argument('--CCN_COMPILER_EXEC',
+        self._argparser.add_argument('--CVR_COMPILER_EXEC',
                                      dest='compiler_exec',
                                      type=str, required=True,
                                      help='Path to executable of the compiler')
 
-        self._argparser.add_argument('--CCN_NO_CHECKPOINT',
+        self._argparser.add_argument('--CVR_NO_CHECKPOINT',
                                      dest='checkpoint_markers_enabled', action='store_const',
                                      const=False, default=True,
                                      help='Disable checkpoint markers')
 
-        self._argparser.add_argument('--CCN_NO_EVALUATION',
+        self._argparser.add_argument('--CVR_NO_EVALUATION',
                                      dest='evaluation_markers_enabled', action='store_const',
                                      const=False, default=True,
                                      help='Disable evaluation markers')
 
-        self._argparser.add_argument('--CCN_VERBOSE',
+        self._argparser.add_argument('--CVR_VERBOSE',
                                      dest='verbose', action='store_const',
                                      const=True, default=False,
                                      help='Let Coveron Instrumenter run in verbose mode')
 
-        self._argparser.add_argument('--CCN_FORCE',
+        self._argparser.add_argument('--CVR_FORCE',
                                      dest='force', action='store_const',
                                      const=True, default=False,
                                      help='Don\'t use cached files but always create new instrumentation')
 
-        self._argparser.add_argument('--CCN_POLL_PPD',
+        self._argparser.add_argument('--CVR_POLL_PPD',
                                      dest='poll_ppd', action='store_const',
                                      const=True, default=False,
                                      help='Poll all preprocessor defines from the given compiler (only for compilers with gcc/clang style CLI).')
 
-        self._argparser.add_argument('--CCN_NOCOMP_CID',
+        self._argparser.add_argument('--CVR_NOCOMP_CID',
                                      dest='nocomp_cid', action='store_const',
                                      const=True, default=False,
                                      help='Disable GZIP-compression of CID-data. Only useful, if you want to analyze the contents of the CID file.')
@@ -154,80 +154,30 @@ class ArgumentHandler:
                                               or argl.endswith('.cpp') or argl.endswith('.c++')):
                 self._config.source_files.append(SourceFile(arg))
                 continue
+
+            # check, if it's a output argument. If yes, set the output path for CID and CRI files
+            # in config by getting directory.
+            elif (argl == "--output" or argl == "-o"):
+                compiler_args_list.append(
+                    ' '.join([arg, self._other_args[index + 1]]))
+                next(islice(arg_iterator, 1, 1), None)
+
+                # we can use this to set the new output directory
+                # (single arg output args get checked below)
+                self._config.output_abs_path = os.path.dirname(
+                    os.path.abspath(self._other_args[index + 1]))
+                continue
+            elif (argl.startswith("-o")):
+                self._config.output_abs_path = os.path.dirname(
+                    os.path.abspath(arg[2:]))
+                continue
+            elif (argl.startswith("--output=")):
+                self._config.output_abs_path = os.path.dirname(
+                    os.path.abspath(arg[9:]))
+                continue
             else:
-                # this is not a source file, so automatically add it to compiler_args_list
-                # check, if it's a multi arg output argument. In this case just skip the next arg (improved pass thru compatibility)
-                if (argl == "--output" or argl == "-o"):
-                    compiler_args_list.append(
-                        ' '.join([arg, self._other_args[index + 1]]))
-                    next(islice(arg_iterator, 1, 1), None)
-
-                    # we can use this to set the new output directory
-                    # (single arg output args get checked below)
-                    self._config.output_abs_path = os.path.dirname(
-                        os.path.abspath(self._other_args[index + 1]))
-                    continue
-                elif (argl.startswith("-o")):
-                    self._config.output_abs_path = os.path.dirname(
-                        os.path.abspath(arg[2:]))
-                    continue
-                elif (argl.startswith("--output=")):
-                    self._config.output_abs_path = os.path.dirname(
-                        os.path.abspath(arg[9:]))
-                    continue
-                else:
-                    compiler_args_list.append(arg)
-
-                # check, if it's a output argument. If yes, set the output path for CID and CRI files
-                # in config by getting directory.
-
-            if self._args.poll_ppd:
-                # jump over argument handling, if user decided to use poll_ppd
-                continue
-
-            # check, if it's some kind of include with single arg
-            if (argl.startswith('-I') or argl.startswith('--include-directory=')
-                    or argl.startswith('-I-') or argl.startswith('--include-barrier')
-                    or argl.startswith('--cuda-path-ignore-env') or argl.startswith('--cuda-path=')
-                    or argl.startswith('-cxx-isystem')
-                    or argl.startswith('-idirafter') or argl.startswith('--include-directory-after=')
-                    or argl.startswith('-iframework')
-                    or argl.startswith('-iframeworkwithsysroot')
-                    or argl.startswith('-imacros') or argl.startswith('--imacros') or argl.startswith('--imacros=')
-                    or argl.startswith('-include') or argl.startswith('--include') or argl.startswith('--include=')
-                    or argl.startswith('-iprefix') or argl.startswith('--include-prefix=')
-                    or argl.startswith('-iquote') or argl.startswith('-isysroot')
-                    or argl.startswith('-isystem') or argl.startswith('-isystem-after')
-                    or argl.startswith('--include-with-prefix=') or argl.startswith('--include-with-prefix-after=')
-                    or argl.startswith('--system-header-prefix=') or argl.startswith('--no-system-header-prefix=')):
+                compiler_args_list.append(arg)
                 clang_args_list.append(arg)
-                continue
-
-            # check, if it's some kind of include with multi arg
-            if (argl == '--system-header-prefix' or argl == '--include-with-prefix-before'
-                    or argl == '--include-with-prefix' or argl == '--include-with-prefix-after'
-                    or argl == '--include-prefix' or argl == '--include-directory-after'
-                    or argl == '--include-directory'):
-                clang_args_list.append(
-                    ' '.join([arg, self._other_args[index + 1]]))
-                # skip next arg, since it's part of this arg
-                next(islice(arg_iterator, 1, 1), None)
-                continue
-
-            # check, if it's some kind of macro (un)definition with single arg
-            if (argl.startswith('-d') or argl.startswith('--define-macro=')
-                    or argl.startswith('-Wp,')
-                    or argl.startswith('-U') or argl.startswith('--undefine-macro')):
-                clang_args_list.append(arg)
-                continue
-
-            # check, if it's some kind of macro (un)definition with multi arg
-            if (argl == '--define-macro' or argl == '--undefine-macro'):
-                clang_args_list.append(
-                    ' '.join([arg, self._other_args[index + 1]]))
-                # skip next arg, since it's part of this arg
-                next(islice(arg_iterator, 1, 1), None)
-                continue
 
         # if user checked poll_ppd, we should do that right now
         if self._args.poll_ppd:
@@ -262,7 +212,10 @@ class ArgumentHandler:
             poll_ouput_lines = poll_output.splitlines()
             for line in poll_ouput_lines:
                 if line[:8] == "#define ":
-                    clang_args_list.append("-D" + line[8:])
+                    new_define = "-D" + line[8:].replace(' ', '=')
+                    if new_define not in clang_args_list:
+                        clang_args_list.append(
+                            "-D" + line[8:].replace(' ', '='))
 
         # write clang args list to config
         self._config.clang_args = ' '.join(clang_args_list)

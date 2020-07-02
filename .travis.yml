@@ -29,7 +29,7 @@ matrix:
         - pip install --upgrade pytest pytest-cov lxml jinja2
       before_script:
         - pip install -e .
-        - cd coveron_instrumenter/tests/unit_tests
+        - cd coveron_instrumenter
       script:
         - python3 -m pytest --cov=./
 
@@ -41,7 +41,7 @@ matrix:
       before_script:
         - cd coveron_instrumenter
       script:
-        - python3 -m flake8 --ignore=E501,F405 --exclude tests,clang
+        - python3 -m flake8 --ignore=E501,F405,W503 --exclude tests,clang
 
     - language: ruby
       name: "Unit Tests Runtime Helper"

@@ -395,7 +395,6 @@ class Parser:
             inner_traverse_args = dict(is_condition=True)
             inner_return_data = dict(
                 conditions=list(), condition_possibilities=dict(true=[], false=[]))
-            if self.config.evaluation_markers_enabled:
             self._traverse_evaluation(
                 ast_cursor, inner_traverse_args, inner_return_data)
             # append conditions
@@ -408,9 +407,8 @@ class Parser:
                 CodePositionData(ast_cursor.extent.start.line,
                                  ast_cursor.extent.start.column),
                 CodePositionData(ast_cursor.extent.end.line, ast_cursor.extent.end.column))
-            if self.config.evaluation_markers_enabled:
-                self.cid_manager.add_evaluation_marker(evaluation_marker_id, evaluation_code_section,
-                                                       EvaluationType.DECISION)
+            self.cid_manager.add_evaluation_marker(evaluation_marker_id, evaluation_code_section,
+                                                   EvaluationType.DECISION)
             return_data['evaluation_marker_id'] = evaluation_marker_id
             return_data['evaluation_code_section'] = evaluation_code_section
             return_data['conditions'] = conditions

@@ -3,11 +3,11 @@
 #
 # Copyright 2020 Glenn Töws
 #
-# This file is part of the Codeconut project
+# This file is part of the Coveron project
 #
-# The Codeconut project is licensed under the LGPL-3.0 license
+# The Coveron project is licensed under the LGPL-3.0 license
 
-"""ArgumentHandler for Codeconut Instrumenter.
+"""ArgumentHandler for Coveron Instrumenter.
    Parses the arguments given via command-line options.
 """
 
@@ -47,7 +47,7 @@ class ArgumentHandler:
         # Configure argparser
         self._argparse_config()
 
-        # Parse Codeconut arguments
+        # Parse Coveron arguments
         self._parse_args()
 
         # Parse all other arguments (including clang parsing args)
@@ -67,10 +67,10 @@ class ArgumentHandler:
     # SECTION   ArgumentHandler private functions
     def _argparse_config(self):
         # Configure the parser
-        self._argparser = argparse.ArgumentParser(description='''Codeconut Instrumenter.
+        self._argparser = argparse.ArgumentParser(description='''Coveron Instrumenter.
             Instrumentize C/C++ source code for runtime code coverage analysis.
             Code coverage output files can be post-processed and reviewed
-            with Codeconut Analyzer.''')
+            with Coveron Analyzer.''')
 
         self._argparser.add_argument('--CCN_COMPILER_EXEC',
                                      dest='compiler_exec',
@@ -90,7 +90,7 @@ class ArgumentHandler:
         self._argparser.add_argument('--CCN_VERBOSE',
                                      dest='verbose', action='store_const',
                                      const=True, default=False,
-                                     help='Let Codeconut Instrumenter run in verbose mode')
+                                     help='Let Coveron Instrumenter run in verbose mode')
 
         self._argparser.add_argument('--CCN_FORCE',
                                      dest='force', action='store_const',

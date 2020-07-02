@@ -3,11 +3,11 @@
 #
 # Copyright 2020 Glenn Töws
 #
-# This file is part of the Codeconut project
+# This file is part of the Coveron project
 #
-# The Codeconut project is licensed under the LGPL-3.0 license
+# The Coveron project is licensed under the LGPL-3.0 license
 
-"""Instrumenter for Codeconut Instrumenter.
+"""Instrumenter for Coveron Instrumenter.
    Modifies the input code to contain all the calls to the runtime helper.
 """
 
@@ -159,7 +159,7 @@ class Instrumenter:
 
     def _get_file_struct_name(self) -> str:
         """Build a file struct name out of the instrumentation random"""
-        return "___CODECONUT_FILE_" + self.cid_manager.get_instrumentation_random().upper()
+        return "___COVERON_FILE_" + self.cid_manager.get_instrumentation_random().upper()
 
     def _write_markers(self):
         """Modify the input source code to integrate the marker calls"""
@@ -170,14 +170,14 @@ class Instrumenter:
                 4, byteorder="big")
             insert_code = ""
             if marker.marker_type is InstrumenterMarkerType.CHECKPOINT:
-                insert_code = ("___CODECONUT_SET_CHECKPOINT_MARKER(" +
+                insert_code = ("___COVERON_SET_CHECKPOINT_MARKER(" +
                                "0x" + "%02x" % m_id_1 + ", " +
                                "0x" + "%02x" % m_id_2 + ", " +
                                "0x" + "%02x" % m_id_3 + ", " +
                                "0x" + "%02x" % m_id_4 + ", " +
                                "&" + self._get_file_struct_name() + ");")
             elif marker.marker_type is InstrumenterMarkerType.EVALUATION_START:
-                insert_code = ("___CODECONUT_SET_EVALUATION_MARKER(" +
+                insert_code = ("___COVERON_SET_EVALUATION_MARKER(" +
                                "0x" + "%02x" % m_id_1 + ", " +
                                "0x" + "%02x" % m_id_2 + ", " +
                                "0x" + "%02x" % m_id_3 + ", " +
@@ -200,16 +200,16 @@ class Instrumenter:
 
         # build byte array of hash(take hash string and split it every two chars)
         source_hash_string = self.cid_manager.get_source_code_hash()
-        source_hash_array = [source_hash_string[i:i+2]
+        source_hash_array = [source_hash_string[i:i + 2]
                              for i in range(0, len(source_hash_string), 2)]
-        source_hash_array = [("0x"+hexbyte.upper())
+        source_hash_array = [("0x" + hexbyte.upper())
                              for hexbyte in source_hash_array]  # add hex signature "0x"
 
         # build byte array of instrumentation random (take random string and split it every two chars)
         instr_random_string = self.cid_manager.get_instrumentation_random()
-        instr_random_array = [instr_random_string[i:i+2]
+        instr_random_array = [instr_random_string[i:i + 2]
                               for i in range(0, len(instr_random_string), 2)]
-        instr_random_array = [("0x"+hexbyte.upper())
+        instr_random_array = [("0x" + hexbyte.upper())
                               for hexbyte in instr_random_array]
 
         # build cri file string (with escaping for windows style paths)
@@ -217,10 +217,10 @@ class Instrumenter:
             self.config.output_abs_path, self.source_file.cri_file).replace("\\", "\\\\")
 
         # create file object string
-        file_object_string = ("___CODECONUT_FILE_T " + self._get_file_struct_name() + " = {\n" +
+        file_object_string = ("___COVERON_FILE_T " + self._get_file_struct_name() + " = {\n" +
                               "{" + ", ".join(source_hash_array) + "},\n" +
                               "{" + ", ".join(instr_random_array) + "},\n" +
-                              "___CODECONUT_BOOL_FALSE,\nNULL,\n " +
+                              "___COVERON_BOOL_FALSE,\nNULL,\n " +
                               "\"" + self.source_file.cri_file + "\"};")
 
         # create full wrapper string

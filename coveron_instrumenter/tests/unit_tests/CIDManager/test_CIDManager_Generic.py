@@ -3,9 +3,9 @@
 #
 # Copyright 2020 Glenn Töws
 #
-# This file is part of the Codeconut project
+# This file is part of the Coveron project
 #
-# The Codeconut project is licensed under the LGPL-3.0 license
+# The Coveron project is licensed under the LGPL-3.0 license
 
 """Unit Tests for the CID-Manager module.
 """
@@ -13,31 +13,33 @@
 from unittest.mock import Mock, patch
 import pytest
 
-from codeconut_instrumenter.DataTypes import *
+from coveron_instrumenter.DataTypes import *
 
-from codeconut_instrumenter.CIDManager import CIDManager
-from codeconut_instrumenter.Configuration import Configuration
+from coveron_instrumenter.CIDManager import CIDManager
+from coveron_instrumenter.Configuration import Configuration
 
 
-@patch('codeconut_instrumenter.Configuration.Configuration')
+@patch('coveron_instrumenter.Configuration.Configuration')
 def test_CIDManager_init(mock_config):
 
     mock_config.checkpoint_markers_enabled = True
     mock_config.evaluation_markers_enabled = True
 
-    cid_manager = CIDManager(mock_config, 'test_filename.c', 'test_code')
+    cid_manager = CIDManager(
+        mock_config, SourceFile('test_file.c'), 'test_code')
 
     assert isinstance(cid_manager, CIDManager) == True
 
 
-@patch('codeconut_instrumenter.Configuration.Configuration')
+@patch('coveron_instrumenter.Configuration.Configuration')
 def test_CIDManager_addCheckpointMarker(mock_config):
 
     # setup for configuration mock
     mock_config.checkpoint_markers_enabled = True
     mock_config.evaluation_markers_enabled = True
 
-    cid_manager = CIDManager(mock_config, 'test_filename.c', 'test_code')
+    cid_manager = CIDManager(
+        mock_config, SourceFile('test_file.c'), 'test_code')
 
     # add new marker
     new_code_position = CodePositionData(5, 3)
@@ -52,14 +54,15 @@ def test_CIDManager_addCheckpointMarker(mock_config):
     assert cid_manager.get_checkpoint_markers()[0].code_position.column == 3
 
 
-@patch('codeconut_instrumenter.Configuration.Configuration')
+@patch('coveron_instrumenter.Configuration.Configuration')
 def test_CIDManager_addDecisionMarker(mock_config):
 
     # setup for configuration mock
     mock_config.checkpoint_markers_enabled = True
     mock_config.evaluation_markers_enabled = True
 
-    cid_manager = CIDManager(mock_config, 'test_filename.c', 'test_code')
+    cid_manager = CIDManager(
+        mock_config, SourceFile('test_file.c'), 'test_code')
 
     # add new marker
     new_code_section = CodeSectionData(
@@ -84,14 +87,15 @@ def test_CIDManager_addDecisionMarker(mock_config):
     )[0].evaluation_type == EvaluationType.DECISION
 
 
-@patch('codeconut_instrumenter.Configuration.Configuration')
+@patch('coveron_instrumenter.Configuration.Configuration')
 def test_CIDManager_addConditionMarker(mock_config):
 
     # setup for configuration mock
     mock_config.checkpoint_markers_enabled = True
     mock_config.evaluation_markers_enabled = True
 
-    cid_manager = CIDManager(mock_config, 'test_filename.c', 'test_code')
+    cid_manager = CIDManager(
+        mock_config, SourceFile('test_file.c'), 'test_code')
 
     # add new marker
     new_code_section = CodeSectionData(
@@ -116,14 +120,15 @@ def test_CIDManager_addConditionMarker(mock_config):
     )[0].evaluation_type == EvaluationType.CONDITION
 
 
-@patch('codeconut_instrumenter.Configuration.Configuration')
+@patch('coveron_instrumenter.Configuration.Configuration')
 def test_CIDManager_addCheckpointMarker_badConfig(mock_config):
 
     # setup for configuration mock
     mock_config.checkpoint_markers_enabled = False
     mock_config.evaluation_markers_enabled = False
 
-    cid_manager = CIDManager(mock_config, 'test_filename.c', 'test_code')
+    cid_manager = CIDManager(
+        mock_config, SourceFile('test_file.c'), 'test_code')
 
     dummy_code_position = CodePositionData(1, 1)
 
@@ -132,14 +137,15 @@ def test_CIDManager_addCheckpointMarker_badConfig(mock_config):
             cid_manager.get_new_id(), dummy_code_position)
 
 
-@patch('codeconut_instrumenter.Configuration.Configuration')
+@patch('coveron_instrumenter.Configuration.Configuration')
 def test_CIDManager_addEvaluationMarker_badConfig(mock_config):
 
     # setup for configuration mock
     mock_config.checkpoint_markers_enabled = False
     mock_config.evaluation_markers_enabled = False
 
-    cid_manager = CIDManager(mock_config, 'test_filename.c', 'test_code')
+    cid_manager = CIDManager(
+        mock_config, SourceFile('test_file.c'), 'test_code')
 
     dummy_code_section = CodeSectionData(
         CodePositionData(1, 1),

@@ -1,8 +1,8 @@
 // Copyright 2020 Glenn Töws
 //
-// This file is part of the Codeconut project
+// This file is part of the Coveron project
 //
-// The Codeconut project is licensed under the LGPL-3.0 license
+// The Coveron project is licensed under the LGPL-3.0 license
 
 // MOCK FILE FOR STDIO SIMULATION
 

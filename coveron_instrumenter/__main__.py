@@ -3,11 +3,11 @@
 #
 # Copyright 2020 Glenn Töws
 #
-# This file is part of the Codeconut project
+# This file is part of the Coveron project
 #
-# The Codeconut project is licensed under the LGPL-3.0 license
+# The Coveron project is licensed under the LGPL-3.0 license
 
-"""Package main for Codeconut Instrumenter.
+"""Package main for Coveron Instrumenter.
 """
 
 import sys
@@ -16,8 +16,8 @@ import subprocess
 import colorama
 import json
 colorama.init()
-codeconut_path = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(codeconut_path)
+coveron_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(coveron_path)
 
 from Parser import ClangBridge, Parser
 from CIDManager import CIDManager
@@ -45,20 +45,20 @@ def main():
             os.makedirs(config.output_abs_path)
         except:
             print(colorama.Fore.RED +
-                  "CODECONUT ERROR: output folder couldn't be created." +
+                  "COVERON ERROR: output folder couldn't be created." +
                   colorama.Fore.RESET)
 
-    # check for existence of Codeconut runtime helper
-    runtime_helper_source_path = os.path.join(codeconut_path,
-                                              "codeconut_runtime_helper", "src",
-                                              "codeconut_helper.c")
-    runtime_helper_header_path = os.path.join(codeconut_path,
-                                              "codeconut_runtime_helper", "src",
-                                              "codeconut_helper.h")
+    # check for existence of Coveron runtime helper
+    runtime_helper_source_path = os.path.join(coveron_path,
+                                              "coveron_runtime_helper", "src",
+                                              "coveron_helper.c")
+    runtime_helper_header_path = os.path.join(coveron_path,
+                                              "coveron_runtime_helper", "src",
+                                              "coveron_helper.h")
     if not (os.path.isfile(runtime_helper_source_path) and
             os.path.isfile(runtime_helper_header_path)):
         print(colorama.Fore.RED +
-              "CODECONUT ERROR: Runtime helper not found!" + colorama.Fore.RESET)
+              "COVERON ERROR: Runtime helper not found!" + colorama.Fore.RESET)
         exit(1)
 
     # store runtime helper header path inside config for later use in instrumentation
@@ -156,8 +156,8 @@ def main():
 
 
 def print_title():
-    """Prints a Codeconut title to the console"""
-    print(colorama.Fore.CYAN + "Codeconut Instrumenter" + colorama.Fore.RESET)
+    """Prints a Coveron title to the console"""
+    print(colorama.Fore.CYAN + "Coveron Instrumenter" + colorama.Fore.RESET)
     print("======================")
 
 

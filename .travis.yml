@@ -29,7 +29,7 @@ matrix:
         - pip install --upgrade pytest pytest-cov lxml jinja2
       before_script:
         - pip install -e .
-        - cd codeconut_instrumenter/tests/unit_tests
+        - cd coveron_instrumenter/tests/unit_tests
       script:
         - python3 -m pytest --cov=./
 
@@ -39,7 +39,7 @@ matrix:
       install:
         - pip install --upgrade flake8
       before_script:
-        - cd codeconut_instrumenter
+        - cd coveron_instrumenter
       script:
         - python3 -m flake8 --ignore=E501,F405 --exclude tests,clang
 
@@ -49,7 +49,7 @@ matrix:
       install:
         - gem install ceedling
       before_script:
-        - cd codeconut_instrumenter/codeconut_runtime_helper
+        - cd coveron_instrumenter/coveron_runtime_helper
       script:
         - ceedling clobber gcov:all
 
@@ -59,9 +59,9 @@ matrix:
       install:
         - pip install --upgrade cpplint
       before_script:
-        - cd codeconut_instrumenter/codeconut_runtime_helper/src
+        - cd coveron_instrumenter/coveron_runtime_helper/src
       script:
-        - cpplint codeconut_helper.c codeconut_helper.h
+        - cpplint coveron_helper.c coveron_helper.h
     
 after_success:
   - bash <(curl -s https://codecov.io/bash)

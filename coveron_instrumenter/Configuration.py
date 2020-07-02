@@ -3,11 +3,11 @@
 #
 # Copyright 2020 Glenn Töws
 #
-# This file is part of the Codeconut project
+# This file is part of the Coveron project
 #
-# The Codeconut project is licensed under the LGPL-3.0 license
+# The Coveron project is licensed under the LGPL-3.0 license
 
-"""Configuration for Codeconut Instrumenter.
+"""Configuration for Coveron Instrumenter.
    Contains the configuration for all modules.
 """
 
@@ -80,9 +80,9 @@ class Configuration:
     # SECTION   Configuration setter functions
     def _set_compiler_args(self, compiler_args: str):
         if self.checkpoint_markers_enabled:
-            compiler_args += " -D___CODECONUT_CHECKPOINT_ANALYSIS_ENABLED"
+            compiler_args += " -D___COVERON_CHECKPOINT_ANALYSIS_ENABLED"
         if self.evaluation_markers_enabled:
-            compiler_args += " -D___CODECONUT_EVALUATION_ANALYSIS_ENABLED"
+            compiler_args += " -D___COVERON_EVALUATION_ANALYSIS_ENABLED"
         self._compiler_args = compiler_args
     # !SECTION
 

@@ -3,11 +3,11 @@
 #
 # Copyright 2020 Glenn Töws
 #
-# This file is part of the Codeconut project
+# This file is part of the Coveron project
 #
-# The Codeconut project is licensed under the LGPL-3.0 license
+# The Coveron project is licensed under the LGPL-3.0 license
 
-"""Custom type definitions for Codeconut Instrumenter.
+"""Custom type definitions for Coveron Instrumenter.
 """
 
 from typing import List
@@ -16,8 +16,6 @@ from json import JSONEncoder
 
 import re
 import os
-
-# SECTION   Custom JSON Encoder for classes
 
 # SECTION   CustomJSONEncoder class
 
@@ -58,22 +56,18 @@ class CustomJSONEncoder(JSONEncoder):
     # !SECTION
 # !SECTION
 
-# !SECTION
 
 # SECTION   Enums
 
 # SECTION   EvaluationType
-
-
 class EvaluationType(int, Enum):
     """Enum for the type of a marker"""
     DECISION = 1
     CONDITION = 2
 # !SECTION
 
+
 # SECTION   FunctionType
-
-
 class FunctionType(int, Enum):
     '''Enum for the type of a class'''
     NORMAL = 1
@@ -81,9 +75,8 @@ class FunctionType(int, Enum):
     DESTRUCTOR = 3
 # !SECTION
 
+
 # SECTION    StatementType
-
-
 class StatementType(int, Enum):
     '''Enum for the type of a function'''
     NORMAL = 1
@@ -93,18 +86,16 @@ class StatementType(int, Enum):
     GOTO = 5
 # !SECTION
 
+
 # SECTION   CaseType
-
-
 class CaseType(int, Enum):
     '''Enum for the type of a case'''
     CASE = 1
     DEFAULT = 2
 # !SECTION
 
+
 # SECTION   LoopType
-
-
 class LoopType(int, Enum):
     '''Enum for the type of a loop'''
     FOR = 1
@@ -114,9 +105,8 @@ class LoopType(int, Enum):
 
 # !SECTION
 
+
 # SECTION   SourceFile class
-
-
 class SourceFile:
     """SourceFile class.
        Contains all information about a source file passed to the instrumenter
@@ -196,9 +186,8 @@ class SourceFile:
 SourceCode = str
 #!SECTION
 
+
 # SECTION   CodePositionData class
-
-
 class CodePositionData:
     """CodePositionData class.
        Stores the information about a code position.
@@ -273,9 +262,8 @@ class CodePositionData:
     # !SECTION
 # !SECTION
 
+
 # SECTION   CodeSectionData class
-
-
 class CodeSectionData:
     """CodeSectionData class.
        Stores the information of a code section.
@@ -322,9 +310,8 @@ class CodeSectionData:
     # !SECTION
 # !SECTION
 
+
 # SECTION   CheckpointMarkerData class
-
-
 class CheckpointMarkerData:
     """CheckpointMarkerData class.
        Stores the information about a checkpoint marker
@@ -369,9 +356,8 @@ class CheckpointMarkerData:
     # !SECTION
 # !SECTION
 
+
 # SECTION   EvaluationMarkerData class
-
-
 class EvaluationMarkerData:
     """EvaluationMarkerData class.
        Stores the information about a evaluation marker
@@ -421,9 +407,8 @@ class EvaluationMarkerData:
     # !SECTION
 # !SECTION
 
+
 # SECTION   MarkerData class
-
-
 class MarkerData:
     """MarkerData class.
        Stores all markers
@@ -468,9 +453,8 @@ class MarkerData:
     # !SECTION
 # !SECTION
 
+
 # SECTION   ConditionData class
-
-
 class ConditionData:
     """ConditionData class.
        Stores the information for a condition inside a decision (if-branches and loops)
@@ -515,9 +499,8 @@ class ConditionData:
     # !SECTION
 # !SECTION
 
+
 # SECTION   CaseData class
-
-
 class CaseData:
     """CaseData class.
        Stores the information of a case in a switch branch
@@ -569,9 +552,8 @@ class CaseData:
     # !SECTION
 # !SECTION
 
+
 # SECTION   BranchResultData class
-
-
 class BranchResultData:
     """BranchResultData class.
        Stores the information for a branch result (if branch)
@@ -627,9 +609,8 @@ class BranchResultData:
     # !SECTION
 # !SECTION
 
+
 # SECTION   ClassData class
-
-
 class ClassData:
     """ClassData class.
        Stores the code information about a class.
@@ -674,9 +655,8 @@ class ClassData:
     # !SECTION
 # !SECTION
 
+
 # SECTION   FunctionData class
-
-
 class FunctionData:
     """FunctionData class.
        Stores the code information about a function.
@@ -741,9 +721,8 @@ class FunctionData:
     # !SECTION
 # !SECTION
 
+
 # SECTION   StatementData class
-
-
 class StatementData:
     """StatementData class.
        Stores the code information about a statement.
@@ -799,9 +778,8 @@ class StatementData:
     # !SECTION
 # !SECTION
 
+
 # SECTION   IfBranchData class
-
-
 class IfBranchData:
     """IfBranchData class.
        Stores the code information about a if branch.
@@ -849,9 +827,8 @@ class IfBranchData:
     # !SECTION
 # !SECTION
 
+
 # SECTION   SwitchBranchData class
-
-
 class SwitchBranchData:
     """SwitchBranchData class.
        Stores the code information about a switch branch.
@@ -904,9 +881,8 @@ class SwitchBranchData:
     # !SECTION
 # !SECTION
 
+
 # SECTION   TernaryExpressionData class
-
-
 class TernaryExpressionData:
     """TernaryExpressionData class.
        Stores information about a ternary expression
@@ -974,9 +950,8 @@ class TernaryExpressionData:
     # !SECTION
 # !SECTION
 
+
 # SECTION   LoopData class
-
-
 class LoopData:
     """LoopData class.
        Stores the code information about a loop.
@@ -1044,9 +1019,8 @@ class LoopData:
     # !SECTION
 # !SECTION
 
+
 # SECTION   CodeData class
-
-
 class CodeData:
     """CodeData class.
        Stores all information about the parsed code
@@ -1107,12 +1081,11 @@ class CodeData:
     # !SECTION
 # !SECTION
 
+
 # SECTION   CIDData class
-
-
 class CIDData:
     """CIDData class.
-       Stores the data of a "Codeconut Instrumentation Data" object.
+       Stores the data of a "Coveron Instrumentation Data" object.
     """
 
     # SECTION   CIDData private attribute definitions

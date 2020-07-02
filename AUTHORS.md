@@ -1,3 +1,3 @@
-Codeconut Instrumenter is maintained and developed by:
+Coveron Instrumenter is maintained and developed by:
 
     Glenn Töws

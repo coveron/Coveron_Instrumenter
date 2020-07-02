@@ -3,11 +3,11 @@
 #
 # Copyright 2020 Glenn Töws
 #
-# This file is part of the Codeconut project
+# This file is part of the Coveron project
 #
-# The Codeconut project is licensed under the LGPL-3.0 license
+# The Coveron project is licensed under the LGPL-3.0 license
 
-"""CID-Manager for Codeconut Instrumenter.
+"""CID-Manager for Coveron Instrumenter.
    Contains all instrumentation data during runtime.
 """
 
@@ -29,7 +29,7 @@ from Configuration import Configuration
 # SECTION   CIDManager class
 class CIDManager:
     """CIDManager class.
-       Stores Codeconut Instrumentation Data for a source file
+       Stores Coveron Instrumentation Data for a source file
     """
 
     # SECTION   CIDManager private attribute definitions
@@ -107,6 +107,9 @@ class CIDManager:
                               code_position: CodePositionData) -> int:
         '''Create new checkpoint marker. Returns new checkpoint_marker_id'''
 
+        if not self.config.checkpoint_markers_enabled:
+            raise RuntimeError("Checkpoint markers are disabled!")
+
         self._cid_data.marker_data.checkpoint_markers.append(
             CheckpointMarkerData(checkpoint_marker_id, code_position))
         return checkpoint_marker_id
@@ -114,6 +117,10 @@ class CIDManager:
     def add_evaluation_marker(self, evaluation_marker_id: int,
                               code_section: CodeSectionData, evaluation_type: EvaluationType) -> int:
         '''Create new evaluation marker. Returns new evaluation_marker_id'''
+
+        if not self.config.evaluation_markers_enabled:
+            raise RuntimeError("Evaluation markers are disabled!")
+
         self._cid_data.marker_data.evaluation_markers.append(
             EvaluationMarkerData(evaluation_marker_id, evaluation_type, code_section))
         return evaluation_marker_id
@@ -200,7 +207,7 @@ class CIDManager:
         '''Writes a CID file from the curretly stored information to the specified filepath'''
         cid_file = self.source_file.cid_file
 
-        cid_string = json.dumps(self._cid_data.asJSON(),
+        cid_string = json.dumps(self._cid_data.as_json(),
                                 cls=CustomJSONEncoder, indent=4)
 
         if self.config.nocomp_cid:

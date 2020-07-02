@@ -41,7 +41,7 @@ def get_config():
     cfg = VersioneerConfig()
     cfg.VCS = "git"
     cfg.style = "pep440"
-    cfg.tag_prefix = "codeconut-analyzer-"
+    cfg.tag_prefix = "coveron-analyzer-"
     cfg.parentdir_prefix = "None"
     cfg.versionfile_source = "_version.py"
     cfg.verbose = False

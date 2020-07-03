@@ -10,9 +10,9 @@ MC/DC coverage.
 [GitHub](https://github.com/coveron-project/)
 
 [![Travis CI build
-status](https://travis-ci.org/coveron-project/Coveron_Instrumenter.svg?branch=master)](https://travis-ci.org/coveron-project/Coveron_Instrumenter)
+status](https://travis-ci.org/coveron/Coveron_Instrumenter.svg?branch=master)](https://travis-ci.org/coveron/Coveron_Instrumenter)
 [![Codecov code coverage
-status](https://codecov.io/gh/coveron-project/Coveron_Instrumenter/branch/master/graph/badge.svg)](https://codecov.io/gh/coveron-project/Coveron_Instrumenter)
+status](https://codecov.io/gh/coveron/Coveron_Instrumenter/branch/master/graph/badge.svg)](https://codecov.io/gh/coveron/Coveron_Instrumenter)
 
 Coveron Instrumenter is a invasive code coverage utility used for C or C++ code.
 The provided metrics adhere to the standards and requirements of the

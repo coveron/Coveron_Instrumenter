@@ -97,10 +97,11 @@ class CIDManager:
         return self._cid_data.source_code_hash
 
     def get_checkpoint_markers(self) -> list:
-        # reutrn deepcopy to prevent accidental changes
+        # return deepcopy to prevent accidental changes
         return copy.deepcopy(self._cid_data.marker_data.checkpoint_markers)
 
     def get_evaluation_markers(self) -> list:
+        # return deepcopy to prevent accidental changes
         return copy.deepcopy(self._cid_data.marker_data.evaluation_markers)
 
     def add_checkpoint_marker(self, checkpoint_marker_id: int,

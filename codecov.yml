@@ -7,3 +7,4 @@ ignore:
   - "**/tests/**/*.c"  # ignore all code inside the test folder (we just care for our source)
   - "**/tests/**/*.cpp"  # ignore all code inside the test folder (we just care for our source)
   - "**/tests/**/*.py"  # ignore all code inside the test folder (we just care for our source)
+  - "coveron_instrumenter/clang/**" # ignore libclang, since that's none of our business

@@ -21,7 +21,8 @@ setup(name='coveron_instrumenter',
       install_requires=[
           'jinja2',
           'lxml',
-          'colorama'
+          'colorama',
+          'jsonschema'
       ],
       package_data={
           'coveron_instrumenter': ['coveron_instrumenter/clang/*', 'coveron_instrumenter/coveron_runtime_helper/*']

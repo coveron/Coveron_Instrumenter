@@ -12,6 +12,9 @@
 
 from unittest.mock import Mock, patch
 import pytest
+import json
+import jsonschema
+import gzip
 
 from coveron_instrumenter.DataTypes import *
 
@@ -216,8 +219,8 @@ def test_CIDManager_getSourceCodeHash(mock_config):
 def test_CIDManager_addClassData(mock_config):
 
     # setup for configuration mock
-    mock_config.checkpoint_markers_enabled = False
-    mock_config.evaluation_markers_enabled = False
+    mock_config.checkpoint_markers_enabled = True
+    mock_config.evaluation_markers_enabled = True
 
     cid_manager = CIDManager(
         mock_config, SourceFile('test_file.c'), 'test_code')
@@ -238,8 +241,8 @@ def test_CIDManager_addClassData(mock_config):
 def test_CIDManager_addFunctionData(mock_config):
 
     # setup for configuration mock
-    mock_config.checkpoint_markers_enabled = False
-    mock_config.evaluation_markers_enabled = False
+    mock_config.checkpoint_markers_enabled = True
+    mock_config.evaluation_markers_enabled = True
 
     cid_manager = CIDManager(
         mock_config, SourceFile('test_file.c'), 'test_code')
@@ -286,8 +289,8 @@ def test_CIDManager_addFunctionData(mock_config):
 def test_CIDManager_addStatementData(mock_config):
 
     # setup for configuration mock
-    mock_config.checkpoint_markers_enabled = False
-    mock_config.evaluation_markers_enabled = False
+    mock_config.checkpoint_markers_enabled = True
+    mock_config.evaluation_markers_enabled = True
 
     cid_manager = CIDManager(
         mock_config, SourceFile('test_file.c'), 'test_code')
@@ -317,3 +320,288 @@ def test_CIDManager_addStatementData(mock_config):
     assert element.code_section.start_position.column == 2
     assert element.code_section.end_position.line == 10
     assert element.code_section.end_position.column == 9
+
+
+@patch('coveron_instrumenter.Configuration.Configuration')
+def test_CIDManager_addIfBranchData(mock_config):
+
+    # setup for configuration mock
+    mock_config.checkpoint_markers_enabled = True
+    mock_config.evaluation_markers_enabled = True
+
+    cid_manager = CIDManager(
+        mock_config, SourceFile('test_file.c'), 'test_code')
+
+    if_branch_id = 40
+    function_id = 18
+    branch_results = [
+        BranchResultData(20,
+                         # dummy condition
+                         [ConditionPossibility(True, [ConditionResult(5, True)]),
+                          ConditionPossibility(False, [ConditionResult(5, False)])],
+                         [ConditionData(95, CodeSectionData(
+                             CodePositionData(10, 2), CodePositionData(19, 8)))],
+                         CodeSectionData(CodePositionData(
+                             10, 1), CodePositionData(19, 9)),  # evaluation code section
+                         CodeSectionData(CodePositionData(20, 2), CodePositionData(29, 5)))  # bode code section
+    ]
+
+    cid_manager.add_if_branch_data(if_branch_id,
+                                   function_id,
+                                   branch_results)
+
+    # get stored element (access directly, although private element)
+    element = cid_manager._cid_data.code_data.if_branches[0]
+
+    # assert, if data was stored correctly
+    assert element.if_branch_id == if_branch_id
+    assert element.function_id == function_id
+    assert element.branch_results == branch_results
+
+
+@patch('coveron_instrumenter.Configuration.Configuration')
+def test_CIDManager_addSwitchBranchData(mock_config):
+
+    # setup for configuration mock
+    mock_config.checkpoint_markers_enabled = True
+    mock_config.evaluation_markers_enabled = True
+
+    cid_manager = CIDManager(
+        mock_config, SourceFile('test_file.c'), 'test_code')
+
+    switch_branch_id = 48
+    function_id = 92
+    switch_branch_code_section = CodeSectionData(
+        CodePositionData(5, 2), CodePositionData(18, 5))
+    cases = [CaseData(18,
+                      CaseType.CASE,
+                      CodeSectionData(CodePositionData(21, 2),
+                                      CodePositionData(21, 19)),
+                      CodeSectionData(CodePositionData(22, 5), CodePositionData(25, 9)))]
+
+    cid_manager.add_switch_branch_data(switch_branch_id,
+                                       function_id,
+                                       switch_branch_code_section,
+                                       cases)
+
+    # get stored element (access directly, although private element)
+    element = cid_manager._cid_data.code_data.switch_branches[0]
+
+    # assert, if data was stored correctly
+    assert element.switch_branch_id == switch_branch_id
+    assert element.function_id == function_id
+    assert element.switch_branch_code_section == switch_branch_code_section
+    assert element.cases == cases
+
+
+@patch('coveron_instrumenter.Configuration.Configuration')
+def test_CIDManager_addTernaryExpressionData(mock_config):
+
+    # setup for configuration mock
+    mock_config.checkpoint_markers_enabled = False
+    mock_config.evaluation_markers_enabled = False
+
+    cid_manager = CIDManager(
+        mock_config, SourceFile('test_file.c'), 'test_code')
+
+    ternary_expression_id = 882
+    function_id = 428
+    evaluation_marker_id = 381
+    evaluation_code_section = CodeSectionData(
+        CodePositionData(15, 10), CodePositionData(15, 16))
+    condition_possibilities = [ConditionPossibility(True, [ConditionResult(5, True)]),
+                               ConditionPossibility(False, [ConditionResult(5, False)])]
+    conditions = [ConditionData(28, CodeSectionData(
+        CodePositionData(15, 11), CodePositionData(15, 15)))]
+    true_code_section = CodeSectionData(
+        CodePositionData(15, 20), CodePositionData(15, 26))
+    false_code_section = CodeSectionData(
+        CodePositionData(15, 30), CodePositionData(15, 42))
+
+    cid_manager.add_ternary_expression_data(ternary_expression_id,
+                                            function_id,
+                                            evaluation_marker_id,
+                                            evaluation_code_section,
+                                            condition_possibilities,
+                                            conditions,
+                                            true_code_section,
+                                            false_code_section)
+
+    # get stored element (access directly, although private element)
+    element = cid_manager._cid_data.code_data.ternary_expressions[0]
+
+    # assert, if data was stored correctly
+    assert element.ternary_expression_id == ternary_expression_id
+    assert element.function_id == function_id
+    assert element.evaluation_marker_id == evaluation_marker_id
+    assert element.evaluation_code_section == evaluation_code_section
+    assert element.condition_possibilities == condition_possibilities
+    assert element.conditions == conditions
+
+
+@patch('coveron_instrumenter.Configuration.Configuration')
+def test_CIDManager_addLoopData(mock_config):
+
+    # setup for configuration mock
+    mock_config.checkpoint_markers_enabled = False
+    mock_config.evaluation_markers_enabled = False
+
+    cid_manager = CIDManager(
+        mock_config, SourceFile('test_file.c'), 'test_code')
+
+    loop_id = 841
+    loop_type = LoopType.FOR
+    function_id = 32
+    evaluation_marker_id = 48
+    evaluation_code_section = CodeSectionData(
+        CodePositionData(19, 2), CodePositionData(19, 17)),
+    body_code_section = CodeSectionData(
+        CodePositionData(20, 2), CodePositionData(25, 3))
+    condition_possibilities = [ConditionPossibility(True, [ConditionResult(5, True)]),
+                               ConditionPossibility(False, [ConditionResult(5, False)])]
+    conditions = [ConditionData(29, CodeSectionData(
+        CodePositionData(19, 3), CodePositionData(19, 16)))]
+
+    cid_manager.add_loop_data(loop_id,
+                              loop_type,
+                              function_id,
+                              evaluation_marker_id,
+                              evaluation_code_section,
+                              body_code_section,
+                              condition_possibilities,
+                              conditions)
+
+    # get stored element (access directly, although private element)
+    element = cid_manager._cid_data.code_data.loops[0]
+
+    # assert, if data was stored correctly
+    assert element.loop_id == loop_id
+    assert element.loop_type == loop_type
+    assert element.function_id == function_id
+    assert element.evaluation_marker_id == evaluation_marker_id
+    assert element.evaluation_code_section == evaluation_code_section
+    assert element.body_code_section == body_code_section
+    assert element.condition_possibilities == condition_possibilities
+    assert element.conditions == conditions
+
+
+@patch('coveron_instrumenter.Configuration.Configuration')
+def test_CIDManager_writeCidFile(mock_config, tmpdir):
+
+    # setup for configuration mock
+    mock_config.checkpoint_markers_enabled = True
+    mock_config.evaluation_markers_enabled = True
+    mock_config.output_abs_path = tmpdir
+
+    cid_manager = CIDManager(
+        mock_config, SourceFile('test_file.c'), 'test_code')
+
+    # add checkpoint marker
+    cid_manager.add_checkpoint_marker(4, CodePositionData(1, 6))
+
+    # add evaluation marker
+    cid_manager.add_evaluation_marker(5,
+                                      CodeSectionData(CodePositionData(
+                                          1, 5), CodePositionData(1, 15)),
+                                      EvaluationType.DECISION)
+
+    # add class
+    cid_manager.add_class_data(483, 'test_class')
+
+    # add function
+    cid_manager.add_function_data(10,
+                                  "test_function",
+                                  FunctionType.NORMAL,
+                                  55,
+                                  4,
+                                  CodeSectionData(
+                                      CodePositionData(1, 5),
+                                      CodePositionData(2, 4)),
+                                  CodeSectionData(
+                                      CodePositionData(30, 5),
+                                      CodePositionData(35, 9))
+                                  )
+
+    # add statement
+    cid_manager.add_statement_data(20,
+                                   StatementType.NORMAL,
+                                   83,
+                                   844,
+                                   CodeSectionData(
+                                       CodePositionData(1, 5),
+                                       CodePositionData(2, 4)))
+
+    # add if-branch
+    cid_manager.add_if_branch_data(40,
+                                   18,
+                                   [BranchResultData(20,
+                                                     # dummy condition
+                                                     [ConditionPossibility(True, [ConditionResult(5, True)]),
+                                                      ConditionPossibility(False, [ConditionResult(5, False)])],
+                                                     [ConditionData(95, CodeSectionData(
+                                                         CodePositionData(10, 2), CodePositionData(19, 8)))],
+                                                     CodeSectionData(
+                                                         CodePositionData(10, 1), CodePositionData(19, 9)),  # evaluation code section
+                                                     CodeSectionData(
+                                                         CodePositionData(20, 2), CodePositionData(29, 5)))])
+
+    # add switch-branch
+    cid_manager.add_switch_branch_data(48,
+                                       92,
+                                       CodeSectionData(
+                                           CodePositionData(5, 2), CodePositionData(18, 5)),
+                                       [CaseData(18,
+                                                 CaseType.CASE,
+                                                 CodeSectionData(CodePositionData(21, 2),
+                                                                 CodePositionData(21, 19)),
+                                                 CodeSectionData(CodePositionData(22, 5), CodePositionData(25, 9)))])
+
+    # add ternary-expression
+    cid_manager.add_ternary_expression_data(882, 428, 381, CodeSectionData(
+        CodePositionData(15, 10), CodePositionData(15, 16)),
+        [ConditionPossibility(True, [ConditionResult(5, True)]),
+         ConditionPossibility(False, [ConditionResult(5, False)])],
+        [ConditionData(28, CodeSectionData(
+            CodePositionData(15, 11), CodePositionData(15, 15)))],
+        CodeSectionData(CodePositionData(15, 20), CodePositionData(15, 26)),
+        CodeSectionData(CodePositionData(15, 30), CodePositionData(15, 42)))
+
+    # add loop
+    cid_manager.add_loop_data(841,
+                              LoopType.FOR,
+                              32,
+                              48,
+                              CodeSectionData(
+                                  CodePositionData(19, 2),
+                                  CodePositionData(19, 17)),
+                              CodeSectionData(
+                                  CodePositionData(20, 2),
+                                  CodePositionData(25, 3)),
+                              [ConditionPossibility(True, [ConditionResult(5, True)]),
+                                  ConditionPossibility(False, [ConditionResult(5, False)])],
+                              [ConditionData(29, CodeSectionData(
+                                  CodePositionData(19, 3), CodePositionData(19, 16)))])
+
+    # load JSON Validation Schema
+    with open(os.path.join(os.path.dirname(__file__), 'CID_Schema.json'), 'r') as cid_schema_ptr:
+        json_schema = json.loads(cid_schema_ptr.read())
+
+    # write non-compressed and check
+    mock_config.nocomp_cid = True
+    cid_manager.write_cid_file()
+
+    with open(tmpdir.join('test_file.cid'), 'r') as output_cid_ptr:
+        cid_data = json.loads(output_cid_ptr.read())
+
+    # validate the CID-File
+    jsonschema.validate(cid_data, json_schema)
+
+    # write compressed and check
+    mock_config.nocomp_cid = False
+    cid_manager.write_cid_file()
+
+    with gzip.GzipFile(tmpdir.join('test_file.cid'), 'r') as output_cid_ptr:
+        cid_data = json.loads(output_cid_ptr.read())
+
+    # validate the compressed CID-File
+    jsonschema.validate(cid_data, json_schema)

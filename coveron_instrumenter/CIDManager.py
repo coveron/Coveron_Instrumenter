@@ -168,11 +168,11 @@ class CIDManager:
     def add_switch_branch_data(self,
                                switch_branch_id: int,
                                function_id: int,
-                               expression_code_section: CodeSectionData,
+                               switch_branch_code_section: CodeSectionData,
                                cases: List[CaseData]) -> int:
         '''Create new switch branch in code data. Returns new switch_branch_id'''
         self._cid_data.code_data.switch_branches.append(SwitchBranchData(switch_branch_id, function_id,
-                                                                         expression_code_section, cases))
+                                                                         switch_branch_code_section, cases))
         return switch_branch_id
 
     def add_ternary_expression_data(self,

@@ -433,7 +433,7 @@ class Parser:
                     # create the necessary pass thru variables
                     inner_traverse_args = dict(is_condition=True)
                     inner_return_data = dict(
-                        conditions=list(), condition_possibilities=dict(true=[], false=[]))
+                        conditions=list(), condition_possibilities=list())
                     self._traverse_evaluation(
                         child_element, inner_traverse_args, inner_return_data)
                     # append conditions
@@ -454,32 +454,23 @@ class Parser:
                         ast_cursor.binary_operator == clang.cindex.BinaryOperator.LAnd):
                     condition_possibilities = list()
 
-                    for left_condition_result in filter(lambda x: x['decision_result'] == "true", left_condition_possibilities):
-                        for right_condition_result in filter(lambda x: x['decision_result'] == "true", right_condition_possibilities):
+                    for left_condition_result in filter(lambda x: x.decision_result == True, left_condition_possibilities):
+                        for right_condition_result in filter(lambda x: x.decision_result == True, right_condition_possibilities):
                             # both sides are true, so add this to the possible compound condition results for true
-                            condition_possibilities.append(dict(
-                                decision_result="true",
-                                condition_combination=left_condition_result['condition_combination'] + right_condition_result['condition_combination']))
+                            condition_possibilities.append(
+                                ConditionPossibility(True,
+                                                     left_condition_result.condition_combination + right_condition_result.condition_combination))
 
-                        for right_condition_result in filter(lambda x: x['decision_result'] == "false", right_condition_possibilities):
+                        for right_condition_result in filter(lambda x: x.decision_result == False, right_condition_possibilities):
                             # right side is false, so add this to the possible compound condition results for false
-                            condition_possibilities.append(dict(
-                                decision_result="false",
-                                condition_combination=left_condition_result['condition_combination'] + right_condition_result['condition_combination']))
+                            condition_possibilities.append(
+                                ConditionPossibility(False,
+                                                     left_condition_result.condition_combination + right_condition_result.condition_combination))
 
-                    for left_condition_result in filter(lambda x: x['decision_result'] == "false", left_condition_possibilities):
+                    for left_condition_result in filter(lambda x: x.decision_result == False, left_condition_possibilities):
                         # left side is false, so add this to the possible compound condition results for false
-                        # fill right side with X (don't care)
-                        right_condition_results = list()
-                        for right_condition_result in (right_condition_possibilities[0]["condition_combination"]):
-                            right_condition_results.append(dict(
-                                evaluation_marker_id=right_condition_result['evaluation_marker_id'],
-                                result="x"))
-                        condition_possibilities.append(dict(
-                            decision_result="false",
-                            condition_combination=left_condition_result['condition_combination'] +
-                            right_condition_results
-                        ))
+                        # right side is ignoreds
+                        condition_possibilities.append(left_condition_result)
 
                     return_data['condition_possibilities'] = condition_possibilities
 
@@ -487,32 +478,23 @@ class Parser:
                         ast_cursor.binary_operator == clang.cindex.BinaryOperator.LOr):
                     condition_possibilities = list()
 
-                    for left_condition_result in filter(lambda x: x['decision_result'] == "true", left_condition_possibilities):
+                    for left_condition_result in filter(lambda x: x.decision_result == True, left_condition_possibilities):
                         # left side is true, so add this to the possible compound condition results for true
-                        # fill right side with X (don't care)
-                        right_condition_results = list()
-                        for right_condition_result in (right_condition_possibilities[0]["condition_combination"]):
-                            right_condition_results.append(dict(
-                                evaluation_marker_id=right_condition_result['evaluation_marker_id'],
-                                result="x"))
-                        condition_possibilities.append(dict(
-                            decision_result="true",
-                            condition_combination=left_condition_result['condition_combination'] +
-                            right_condition_results
-                        ))
+                        # right side is ignored
+                        condition_possibilities.append(left_condition_result)
 
-                    for left_condition_result in filter(lambda x: x['decision_result'] == "false", left_condition_possibilities):
-                        for right_condition_result in filter(lambda x: x['decision_result'] == "true", right_condition_possibilities):
+                    for left_condition_result in filter(lambda x: x.decision_result == False, left_condition_possibilities):
+                        for right_condition_result in filter(lambda x: x.decision_result == True, right_condition_possibilities):
                             # right side is true, so add this to the possible compound condition results for true
-                            condition_possibilities.append(dict(
-                                decision_result="true",
-                                condition_combination=left_condition_result['condition_combination'] + right_condition_result['condition_combination']))
+                            condition_possibilities.append(
+                                ConditionPossibility(True,
+                                                     left_condition_result.condition_combination + right_condition_result.condition_combination))
 
-                        for right_condition_result in filter(lambda x: x['decision_result'] == "false", right_condition_possibilities):
+                        for right_condition_result in filter(lambda x: x.decision_result == False, right_condition_possibilities):
                             # both sides are false, so add this to the possible compound condition results for false
-                            condition_possibilities.append(dict(
-                                decision_result="false",
-                                condition_combination=left_condition_result['condition_combination'] + right_condition_result['condition_combination']))
+                            condition_possibilities.append(
+                                ConditionPossibility(False,
+                                                     left_condition_result.condition_combination + right_condition_result.condition_combination))
 
                     return_data['condition_possibilities'] = condition_possibilities
 
@@ -531,16 +513,10 @@ class Parser:
                 return_data['conditions'] = [condition]
                 # create condition possibilities for MC/DC analysis
                 return_data['condition_possibilities'] = [
-                    dict(
-                        decision_result="true",
-                        condition_combination=[
-                            dict(evaluation_marker_id=evaluation_marker_id, result='true')]
-                    ),
-                    dict(
-                        decision_result="false",
-                        condition_combination=[
-                            dict(evaluation_marker_id=evaluation_marker_id, result='false')]
-                    )]
+                    ConditionPossibility(
+                        True, [ConditionResult(evaluation_marker_id, True)]),
+                    ConditionPossibility(
+                        False, [ConditionResult(evaluation_marker_id, False)])]
 
     def _traverse_if_statement(self, ast_cursor: clang.cindex.Cursor, args: dict, return_data: dict):
         """Start analysis of if statement"""

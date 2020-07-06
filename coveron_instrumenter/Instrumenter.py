@@ -122,9 +122,9 @@ class Instrumenter:
                 marker: EvaluationMarkerData  # type hint for IDE
 
                 # get evaluation type
-                conditionMarker: bool = False
-                if marker.evaluation_type is EvaluationType.CONDITION:
-                    conditionMarker = True
+                condition_marker: bool = False
+                if marker.evaluation_type == EvaluationType.CONDITION:
+                    condition_marker = True
 
                 # store start marker
                 self._instrumenter_marker_list.append(InstrumenterMarker(
@@ -132,7 +132,7 @@ class Instrumenter:
                     marker.code_section.start_position.column,
                     InstrumenterMarkerType.EVALUATION_START,
                     marker.evaluation_marker_id,
-                    conditionMarker))
+                    condition_marker))
 
                 # store end marker
                 self._instrumenter_marker_list.append(InstrumenterMarker(
@@ -140,7 +140,7 @@ class Instrumenter:
                     marker.code_section.end_position.column,
                     InstrumenterMarkerType.EVALUATION_END,
                     marker.evaluation_marker_id,
-                    conditionMarker))
+                    condition_marker))
 
         # sort for right direction
         # (last items come first, evaluations of condition type come in front of decision type)

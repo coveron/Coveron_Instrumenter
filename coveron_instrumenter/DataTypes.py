@@ -454,6 +454,98 @@ class MarkerData:
 # !SECTION
 
 
+# SECTION   ConditionResult class
+class ConditionResult:
+    """ConditionResult class.
+       Condition result. Stores marker id and result
+    """
+
+    # SECTION   ConditionResult private attribute definitions
+    __slots__ = ["evaluation_marker_id", "condition_result"]
+
+    evaluation_marker_id: int
+    condition_result: bool
+    # !SECTION
+
+    # SECTION   ConditionResult public attribute definitions
+    # !SECTION
+
+    # SECTION   ConditionResult initialization
+    def __init__(self, evaluation_marker_id: int, condition_result: bool):
+        self.evaluation_marker_id = evaluation_marker_id
+        self.condition_result = condition_result
+        return
+    # !SECTION
+
+    # SECTION   ConditionResult getter functions
+    # !SECTION
+
+    # SECTION   ConditionResult setter functions
+    # !SECTION
+
+    # SECTION   ConditionResult property definitions
+    # !SECTION
+
+    # SECTION   ConditionResult private functions
+    # !SECTION
+
+    # SECTION   ConditionResult public functions
+    def as_json(self):
+        # JSON encoding helper
+        return dict(
+            evaluation_marker_id=self.evaluation_marker_id,
+            condition_result=self.condition_result
+        )
+    # !SECTION
+# !SECTION
+
+
+# SECTION   ConditionPossibility class
+class ConditionPossibility:
+    """ConditionPossibility class.
+       Stores possible condition combinations for true or false decision result
+    """
+
+    # SECTION   ConditionPossibility private attribute definitions
+    __slots__ = ["decision_result", "condition_combination"]
+
+    decision_result: bool
+    condition_combination: List[ConditionResult]
+    # !SECTION
+
+    # SECTION   ConditionPossibility public attribute definitions
+    # !SECTION
+
+    # SECTION   ConditionPossibility initialization
+    def __init__(self, decision_result: bool, condition_combination: List[ConditionResult]):
+        self.decision_result = decision_result
+        self.condition_combination = condition_combination
+        return
+    # !SECTION
+
+    # SECTION   ConditionPossibility getter functions
+    # !SECTION
+
+    # SECTION   ConditionPossibility setter functions
+    # !SECTION
+
+    # SECTION   ConditionPossibility property definitions
+    # !SECTION
+
+    # SECTION   ConditionPossibility private functions
+    # !SECTION
+
+    # SECTION   ConditionPossibility public functions
+    def as_json(self):
+        # JSON encoding helper
+        return dict(
+            decision_result=self.decision_result,
+            condition_combination=self.condition_combination
+        )
+    # !SECTION
+# !SECTION
+
+
 # SECTION   ConditionData class
 class ConditionData:
     """ConditionData class.
@@ -564,7 +656,7 @@ class BranchResultData:
                  "result_evaluation_code_section", "result_body_code_section"]
 
     evaluation_marker_id: int
-    condition_possibilities: List[List[str]]
+    condition_possibilities: List[ConditionPossibility]
     conditions: List[ConditionData]
     result_evaluation_code_section: CodeSectionData
     result_body_code_section: CodeSectionData
@@ -575,7 +667,7 @@ class BranchResultData:
 
     # SECTION   BranchResultData initialization
     def __init__(self, evaluation_marker_id: int,
-                 condition_possibilities: List[List[str]],
+                 condition_possibilities: List[ConditionPossibility],
                  conditions: List[ConditionData],
                  result_evaluation_code_section: CodeSectionData,
                  result_body_code_section: CodeSectionData):
@@ -897,7 +989,7 @@ class TernaryExpressionData:
     function_id: int
     evaluation_marker_id: int
     evaluation_code_section: CodeSectionData
-    condition_possibilities: List[List[str]]
+    condition_possibilities: List[ConditionPossibility]
     conditions: ConditionData
     true_code_section: CodeSectionData
     false_code_section: CodeSectionData
@@ -908,7 +1000,7 @@ class TernaryExpressionData:
 
     # SECTION   TernaryExpressionData initialization
     def __init__(self, ternary_expression_id: int, function_id: int, evaluation_marker_id: int,
-                 evaluation_code_section: CodeSectionData, condition_possibilities: List[List[str]],
+                 evaluation_code_section: CodeSectionData, condition_possibilities: List[ConditionPossibility],
                  conditions: ConditionData,
                  true_code_section: CodeSectionData, false_code_section: CodeSectionData):
         self.ternary_expression_id = ternary_expression_id
@@ -968,7 +1060,7 @@ class LoopData:
     evaluation_marker_id: int
     evaluation_code_section: CodeSectionData
     body_code_section: CodeSectionData
-    condition_possibilities: List[List[str]]
+    condition_possibilities: List[ConditionPossibility]
     conditions: List[ConditionData]
     # !SECTION
 
@@ -978,7 +1070,7 @@ class LoopData:
     # SECTION   LoopData initialization
     def __init__(self, loop_id: int, loop_type: LoopType, function_id: int,
                  evaluation_marker_id: int, evaluation_code_section: CodeSectionData,
-                 body_code_section: CodeSectionData, condition_possibilities: List[List[str]],
+                 body_code_section: CodeSectionData, condition_possibilities: List[ConditionPossibility],
                  conditions: List[ConditionData]):
         self.loop_id = loop_id
         self.loop_type = loop_type

@@ -33,15 +33,16 @@ matrix:
       script:
         - python3 -m pytest --cov=./
 
-    - language: python
-      name: "Style check Instrumenter"
-      python: 3.7
-      install:
-        - pip install --upgrade flake8
-      before_script:
-        - cd coveron_instrumenter
-      script:
-        - python3 -m flake8 --ignore=E501,F405,W503 --exclude tests,clang
+    allow_failures:
+      - language: python
+        name: "Style check Instrumenter"
+        python: 3.7
+        install:
+          - pip install --upgrade flake8
+        before_script:
+          - cd coveron_instrumenter
+        script:
+          - python3 -m flake8 --ignore=E501,F405,W503 --exclude tests,clang
 
     - language: ruby
       name: "Unit Tests Runtime Helper"
@@ -53,15 +54,16 @@ matrix:
       script:
         - ceedling clobber gcov:all
 
-    - language: python
-      name: "Style check Runtime Helper"
-      python: 3.7
-      install:
-        - pip install --upgrade cpplint
-      before_script:
-        - cd coveron_instrumenter/coveron_runtime_helper/src
-      script:
-        - cpplint coveron_helper.c coveron_helper.h
+    allow_failures:
+      - language: python
+        name: "Style check Runtime Helper"
+        python: 3.7
+        install:
+          - pip install --upgrade cpplint
+        before_script:
+          - cd coveron_instrumenter/coveron_runtime_helper/src
+        script:
+          - cpplint coveron_helper.c coveron_helper.h
     
 after_success:
   - bash <(curl -s https://codecov.io/bash)

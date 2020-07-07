@@ -250,6 +250,12 @@ class CodePositionData:
     # !SECTION
 
     # SECTION   CodePositionData private functions
+    def __eq__(self, other):
+        if (self.line == other.line and
+                self.column == other.column):
+            return True
+        else:
+            return False
     # !SECTION
 
     # SECTION   CodePositionData public functions
@@ -296,6 +302,10 @@ class CodeSectionData:
     # !SECTION
 
     # SECTION   CodeSectionData private functions
+    def __eq__(self, other):
+        if self.start_position != other.start_position or self.end_position != other.end_position:
+            return False
+        return True
     # !SECTION
 
     # SECTION   CodeSectionData public functions

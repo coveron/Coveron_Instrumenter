@@ -34,8 +34,9 @@ class ClangBridge:
 
     # SECTION   ClangBridge initialization
     def __init__(self):
-        clang.cindex.Config.set_library_path(os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "clang", "bin"))
+        if not clang.cindex.Config.loaded:
+            clang.cindex.Config.set_library_path(os.path.join(
+                os.path.dirname(os.path.realpath(__file__)), "clang", "bin"))
         return
     # !SECTION
 
@@ -181,6 +182,10 @@ class Parser:
         return_data['new_parent_checkpoint_required'] = False
         # status variable to check, if a new checkpoint is neccessary
         new_checkpoint_required = False
+
+        # set first_checkpoint_set to true, if 'start_checkpoint_marker_id' was set
+        if args.get('start_checkpoint_marker_id') is not None:
+            first_checkpoint_set = True
 
         # get all child elements
         child_elements = ast_cursor.get_children()

@@ -7,7 +7,7 @@
 #
 # The Coveron project is licensed under the LGPL-3.0 license
 
-"""Unit Tests for the CID-Manager module.
+"""Unit Tests for the Configuration module.
 """
 
 from unittest.mock import Mock, patch

@@ -6,9 +6,11 @@ addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
+    - llvm-toolchain-xenial-9
     packages:
     - gcc-9
     - g++-9
+    - clang-9
 
 env:
   global:
@@ -28,6 +30,8 @@ matrix:
       language: python
       name: "Unit Tests Instrumenter"
       python: 3.7
+      env:
+        - CXX=clang++-9 CC=clang-9
       install:
         - pip install --upgrade pytest pytest-cov lxml jinja2
       before_script:

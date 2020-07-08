@@ -57,7 +57,7 @@ def test_Parser_Loops_for(mock_config, mock_cid_manager):
                                           CodeSectionData(
                                               CodePositionData(5, 21), CodePositionData(5, 27)),
                                           CodeSectionData(
-                                              CodePositionData(6, 5), CodePositionData(12, 6)),
+                                              CodePositionData(6, 5), CodePositionData(13, 6)),
                                           ANY,
                                           ANY)
 
@@ -65,6 +65,8 @@ def test_Parser_Loops_for(mock_config, mock_cid_manager):
     checkpoint_call_args_list = mock_cid_manager.add_checkpoint_marker.call_args_list
 
     assert checkpoint_call_args_list[1] == call(ANY, CodePositionData(7, 9))
+    assert checkpoint_call_args_list[2] == call(ANY, CodePositionData(9, 13))
+    assert checkpoint_call_args_list[3] == call(ANY, CodePositionData(10, 13))
 
 
 @patch('coveron_instrumenter.CIDManager.CIDManager')
@@ -101,7 +103,7 @@ def test_Parser_Loops_while(mock_config, mock_cid_manager):
                                           CodeSectionData(
                                               CodePositionData(5, 12), CodePositionData(5, 18)),
                                           CodeSectionData(
-                                              CodePositionData(6, 5), CodePositionData(8, 6)),
+                                              CodePositionData(6, 5), CodePositionData(10, 6)),
                                           ANY,
                                           ANY)
 
@@ -109,6 +111,7 @@ def test_Parser_Loops_while(mock_config, mock_cid_manager):
     checkpoint_call_args_list = mock_cid_manager.add_checkpoint_marker.call_args_list
 
     assert checkpoint_call_args_list[1] == call(ANY, CodePositionData(7, 9))
+    assert checkpoint_call_args_list[2] == call(ANY, CodePositionData(9, 9))
 
 
 @patch('coveron_instrumenter.CIDManager.CIDManager')

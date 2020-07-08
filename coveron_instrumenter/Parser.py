@@ -200,9 +200,24 @@ class Parser:
             child_kind: clang.cindex.CursorKind = child_element.kind
 
             # check, if the active statement is a label statement.
-            # If yes, we should skip it and create a new checkpoint
+            # If yes, we should create a new checkpoint directly after it and then skip it
             if child_kind == clang.cindex.CursorKind.LABEL_STMT:
-                new_checkpoint_required = True
+                # get position of new checkpoint marker.
+                # if a child element exists, we use it's start point as reference.
+                # Otherwise we use end of the label statement extent
+                if (any(child_element.get_children())):
+                    for first_child in child_element.get_children():
+                        checkpoint_position = CodePositionData(
+                            first_child.extent.start.line, first_child.extent.start.column)
+                        break  # leave loop to just get the first item
+                else:
+                    checkpoint_position = CodePositionData(
+                        child_element.extent.end.line, child_element.extent.end.column + 1)
+                # get new id for new checkpoint
+                active_checkpoint_marker_id = self.cid_manager.get_new_id()
+                # insert new checkpoint marker
+                self.cid_manager.add_checkpoint_marker(
+                    active_checkpoint_marker_id, checkpoint_position)
                 continue
 
             # check, if the first checkpoint wasn't set. If no, set it up.
@@ -314,19 +329,6 @@ class Parser:
                     child_element, inner_traverse_args, inner_return_data)
 
                 # check, if new checkpoint marker is neccessary
-                if inner_return_data.get('new_parent_checkpoint_required', True):
-                    new_checkpoint_required = True
-                    return_data['new_parent_checkpoint_required'] = True
-
-            elif child_kind == clang.cindex.CursorKind.CONDITIONAL_OPERATOR:
-                # found a ternary expression, so open the ternary expression handler
-                inner_traverse_args = dict(
-                    parent_function_id=args['parent_function_id'])
-                inner_return_data = dict()
-                self._traverse_ternary_statement(
-                    child_element, inner_traverse_args, inner_return_data)
-
-                # check, if new checkpoint marker is necessary
                 if inner_return_data.get('new_parent_checkpoint_required', True):
                     new_checkpoint_required = True
                     return_data['new_parent_checkpoint_required'] = True
@@ -769,8 +771,15 @@ class Parser:
                         if inner_return_data.get('new_parent_checkpoint_required', False):
                             return_data['new_parent_checkpoint_required'] = True
 
+                        # manually create a checkpoint marker directly after the evaluation code section
+                        case_checkpoint_marker_id = self.cid_manager.get_new_id()
+                        case_checkpoint_marker_position = CodePositionData(
+                            case_evaluation_code_section.end_position.line, case_evaluation_code_section.end_position.column + 1)
+                        self.cid_manager.add_checkpoint_marker(
+                            case_checkpoint_marker_id, case_checkpoint_marker_position)
+
                         # take inner code section from first item in return data, since it's the same for nested cases
-                        case = CaseData(inner_return_data['switch_cases'][0].checkpoint_marker_id, CaseType.DEFAULT,
+                        case = CaseData(case_checkpoint_marker_id, CaseType.DEFAULT,
                                         case_evaluation_code_section, inner_return_data['switch_cases'][0].body_code_section)
                         return_data['switch_cases'].append(case)
                     elif (i == 0):

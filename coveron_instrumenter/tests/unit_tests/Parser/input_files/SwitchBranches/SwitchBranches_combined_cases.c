@@ -20,5 +20,13 @@ int main()
         b = 3;
     }
 
+    switch (a)
+    {
+    default:
+    case 10:
+        b = 10;
+        break;
+    }
+
     return 0;
 }

@@ -6,7 +6,8 @@ int main()
     {
         if (i == 10)
         {
-            continue;
+            continue; // include continue statement to test checkpoint marker creation for next statement
+            a++;
         }
         a++;
     }

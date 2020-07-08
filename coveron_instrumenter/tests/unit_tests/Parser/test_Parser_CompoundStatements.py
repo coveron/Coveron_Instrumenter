@@ -23,7 +23,7 @@ abs_path_current_dir = os.path.abspath(
 @patch('coveron_instrumenter.CIDManager.CIDManager')
 @patch('coveron_instrumenter.Configuration.Configuration')
 def test_Parser_CompoundStatements_nested(mock_config, mock_cid_manager):
-    # set seource file path
+    # set source file path
     source_file_path = os.path.join(
         abs_path_current_dir, "input_files", "CompoundStatements", "CompoundStatements_nested.c")
 

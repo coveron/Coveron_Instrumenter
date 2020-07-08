@@ -704,8 +704,15 @@ class Parser:
                         if inner_return_data.get('new_parent_checkpoint_required', False):
                             return_data['new_parent_checkpoint_required'] = True
 
+                        # manually create a checkpoint marker directly after the evaluation code section
+                        case_checkpoint_marker_id = self.cid_manager.get_new_id()
+                        case_checkpoint_marker_position = CodePositionData(
+                            case_evaluation_code_section.end_position.line, case_evaluation_code_section.end_position.column + 1)
+                        self.cid_manager.add_checkpoint_marker(
+                            case_checkpoint_marker_id, case_checkpoint_marker_position)
+
                         # take inner code section from first item in return data, since it's the same for nested cases
-                        case = CaseData(inner_return_data['switch_cases'][0].checkpoint_marker_id, CaseType.CASE,
+                        case = CaseData(case_checkpoint_marker_id, CaseType.CASE,
                                         case_evaluation_code_section, inner_return_data['switch_cases'][0].body_code_section)
                         return_data['switch_cases'].append(case)
                     elif (i == 1):

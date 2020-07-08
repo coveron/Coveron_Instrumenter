@@ -13,6 +13,7 @@ int main()
         break;
     default:
         b = 3;
+        break;
     }
 
     return 0;

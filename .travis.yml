@@ -6,7 +6,7 @@ addons:
   apt:
     sources:
     - ubuntu-toolchain-r-test
-    - llvm-toolchain-xenial-9
+    - sourceline: 'deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-9 main'
     packages:
     - gcc-9
     - g++-9

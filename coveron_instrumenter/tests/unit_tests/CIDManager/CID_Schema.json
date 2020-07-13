@@ -5,6 +5,7 @@
         "source_code_path",
         "source_code_hash",
         "instrumentation_random",
+        "cri_path",
         "checkpoint_markers_enabled",
         "evaluation_markers_enabled",
         "marker_data",
@@ -24,6 +25,10 @@
             "type": "string",
             "description": "Random 32 char string generated during instrumentation time (link to CRI file)",
             "pattern": "^[0-9a-fA-F]{32}$"
+        },
+        "cri_path": {
+            "type": "string",
+            "description": "Absolute path to the cri file"
         },
         "checkpoint_markers_enabled": {
             "type": "boolean",

@@ -1192,7 +1192,7 @@ class CIDData:
 
     # SECTION   CIDData private attribute definitions
     __slots__ = ['source_code_path', 'source_code_hash', 'source_code_base64',
-                 'instrumentation_random', 'checkpoint_markers_enabled',
+                 'instrumentation_random', 'cri_path', 'checkpoint_markers_enabled',
                  'evaluation_markers_enabled',
                  'marker_data', 'code_data']
 
@@ -1200,6 +1200,7 @@ class CIDData:
     source_code_hash: str
     source_code_base64: str
     instrumentation_random: str
+    cri_path: str
     checkpoint_markers_enabled: bool
     evaluation_markers_enabled: bool
     marker_data: MarkerData
@@ -1215,12 +1216,14 @@ class CIDData:
                  source_code_hash: str,
                  source_code_base64: str,
                  instrumentation_random: str,
+                 cri_path: str,
                  checkpoint_markers_enabled: bool,
                  evaluation_markers_enabled: bool):
         self.source_code_path = source_code_path
         self.source_code_hash = source_code_hash
         self.source_code_base64 = source_code_base64
         self.instrumentation_random = instrumentation_random
+        self.cri_path = cri_path
         self.checkpoint_markers_enabled = checkpoint_markers_enabled
         self.evaluation_markers_enabled = evaluation_markers_enabled
         self.marker_data = MarkerData()
@@ -1248,6 +1251,7 @@ class CIDData:
             source_code_hash=self.source_code_hash,
             source_code_base64=self.source_code_base64,
             instrumentation_random=self.instrumentation_random,
+            cri_path=self.cri_path,
             checkpoint_markers_enabled=self.checkpoint_markers_enabled,
             evaluation_markers_enabled=self.evaluation_markers_enabled,
             marker_data=self.marker_data,

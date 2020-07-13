@@ -66,6 +66,8 @@ class CIDManager:
                                  source_code_base64=str(
                                      base64.b64encode(source_code.encode("utf-8")), "utf-8"),
                                  instrumentation_random=instrumentation_random,
+                                 cri_path=os.path.join(self.config.output_abs_path,
+                                                       self.source_file.cri_file),
                                  checkpoint_markers_enabled=self.config.checkpoint_markers_enabled,
                                  evaluation_markers_enabled=self.config.evaluation_markers_enabled)
         return

@@ -15,6 +15,7 @@ import os
 import subprocess
 import colorama
 import json
+import gzip
 colorama.init()
 coveron_path = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(coveron_path)
@@ -99,13 +100,18 @@ def main():
                 with open(source_file.cid_file, 'r') as cid_file_ptr:
                     try:
                         cid_data = json.load(cid_file_ptr)
-                        if cid_data["source_code_hash"] == cid_manager.get_source_code_hash():
-                            if config.verbose:
-                                print("Using cached version for " +
-                                      source_file.input_file)
-                            continue
                     except:
-                        pass
+                        try:
+                            with gzip.GzipFile(source_file.cid_file, 'r') as cid_comp_file_ptr:
+                                cid_data = json.load(cid_comp_file_ptr)
+                        except:
+                            pass
+
+                    if cid_data["source_code_hash"] == cid_manager.get_source_code_hash():
+                        if config.verbose:
+                            print("Using cached version for " +
+                                  source_file.input_file)
+                        continue
 
         # create a clang bridge and get a clang AST from the source file
         clang_tree = clang_bridge.clang_parse(

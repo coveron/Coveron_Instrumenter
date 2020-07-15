@@ -154,6 +154,11 @@ class ArgumentHandler:
                                               or argl.endswith('.cpp') or argl.endswith('.c++')):
                 self._config.source_files.append(SourceFile(arg))
                 continue
+            elif (argl == "-c"):
+                self._config.source_files.append(
+                    SourceFile(self._other_args[index + 1]))
+                next(islice(arg_iterator, 1, 1), None)
+                continue
 
             # check, if it's a output argument. If yes, set the output path for CID and CRI files
             # in config by getting directory.
@@ -201,11 +206,9 @@ class ArgumentHandler:
 
             poll_command_string = self._args.compiler_exec + \
                 " -dM -E " + " ".join(poll_args)
-            print(poll_command_string)
             poll_process = subprocess.run(
                 poll_command_string, stdout=subprocess.PIPE)
             poll_output = poll_process.stdout.decode('utf-8')
-            print(poll_output)
 
             poll_ouput_lines = poll_output.splitlines()
             for line in poll_ouput_lines:

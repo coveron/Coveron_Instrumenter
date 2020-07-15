@@ -185,16 +185,12 @@ class ArgumentHandler:
             poll_args = list()
             # pass other args except output file arg, since we otherwise won't get the info we need
             # check, if it's a multi arg output argument. In this case just skip the next arg (improved pass thru compatibility)
-            for arg in self._other_args:
+            arg_iterator = iter(enumerate(self._other_args))
+            for index, arg in arg_iterator:
                 argl = arg.lower()
 
                 if (argl == "--output" or argl == "-o"):
                     next(islice(arg_iterator, 1, 1), None)
-
-                    # we can use this to set the new output directory
-                    # (single arg output args get checked below)
-                    self._config.output_abs_path = os.path.dirname(
-                        os.path.abspath(self._other_args[index + 1]))
                     continue
                 elif (argl.startswith("-o")):
                     continue
@@ -205,9 +201,11 @@ class ArgumentHandler:
 
             poll_command_string = self._args.compiler_exec + \
                 " -dM -E " + " ".join(poll_args)
+            print(poll_command_string)
             poll_process = subprocess.run(
                 poll_command_string, stdout=subprocess.PIPE)
             poll_output = poll_process.stdout.decode('utf-8')
+            print(poll_output)
 
             poll_ouput_lines = poll_output.splitlines()
             for line in poll_ouput_lines:

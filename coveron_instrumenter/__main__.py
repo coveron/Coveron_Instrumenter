@@ -17,7 +17,7 @@ import colorama
 import json
 import gzip
 colorama.init()
-coveron_path = os.path.dirname(os.path.realpath(__file__))
+coveron_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(coveron_path)
 
 from Parser import ClangBridge, Parser

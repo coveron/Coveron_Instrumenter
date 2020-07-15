@@ -57,6 +57,8 @@ class ClangBridge:
         """Invoke libclang to parse the given source file"""
         clang_index = clang.cindex.Index.create()
         tu = clang_index.parse(file, [parse_args]).cursor
+
+        tu: clang.cindex.
         return tu
     # !SECTION
 # !SECTION
@@ -165,8 +167,15 @@ class Parser:
                 self._traverse_compound_statement(
                     function_child, inner_traverse_args, inner_return_data)
 
-        self.cid_manager.add_function_data(function_id, function_name, function_type, parent_function_id,
-                                           inner_return_data['first_checkpoint_marker_id'], header_code_section, inner_code_section)
+        # check if data is set, otherwise ignore (this is just a declaration)
+        if 'first_checkpoint_marker_id' in inner_return_data:
+            self.cid_manager.add_function_data(function_id,
+                                               function_name,
+                                               function_type,
+                                               parent_function_id,
+                                               inner_return_data['first_checkpoint_marker_id'],
+                                               header_code_section,
+                                               inner_code_section)
         return
 
     def _traverse_compound_statement(self, ast_cursor: clang.cindex.Cursor, args: dict, return_data: dict):

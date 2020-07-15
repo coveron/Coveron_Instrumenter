@@ -11,8 +11,7 @@
    Parses the arguments given via command-line options.
 """
 
-from Configuration import Configuration
-from DataTypes import SourceFile
+from Configuration import SourceFile, Configuration
 
 import argparse
 from itertools import islice
@@ -123,6 +122,13 @@ class ArgumentHandler:
         # set compiler executable
         self._config.compiler_exec = self._args.compiler_exec
 
+        # set poll ppd flag
+        self._config.poll_ppd = self._args.poll_ppd
+        if (self._config.poll_ppd):
+            Configuration.parser_line_offset = 1
+        else:
+            Configuration.parser_line_offset = 0
+
         # configure checkpoint and evaluation marker switches
         self._config.checkpoint_markers_enabled = self._args.checkpoint_markers_enabled
         self._config.evaluation_markers_enabled = self._args.evaluation_markers_enabled
@@ -186,40 +192,37 @@ class ArgumentHandler:
 
         # if user checked poll_ppd, we should do that right now
         if self._args.poll_ppd:
-            # user wants us to poll the compiler, so execute the compiler with additional "-dM -E" and use the outputs
-            poll_args = list()
-            # pass other args except output file arg, since we otherwise won't get the info we need
-            # check, if it's a multi arg output argument. In this case just skip the next arg (improved pass thru compatibility)
-            arg_iterator = iter(enumerate(self._other_args))
-            for index, arg in arg_iterator:
-                argl = arg.lower()
-
-                if (argl == "--output" or argl == "-o"):
-                    next(islice(arg_iterator, 1, 1), None)
-                    continue
-                elif (argl.startswith("-o")):
-                    continue
-                elif (argl.startswith("--output=")):
-                    continue
-                else:
-                    poll_args.append(arg)
-
+            # user wants us to poll the compiler
+            # so execute the compiler with additional "-dM -E" and use the outputs
             poll_command_string = self._args.compiler_exec + \
-                " -dM -E " + " ".join(poll_args)
+                " -x c nul -dM -E"
             poll_process = subprocess.run(
                 poll_command_string, stdout=subprocess.PIPE)
             poll_output = poll_process.stdout.decode('utf-8')
 
-            poll_ouput_lines = poll_output.splitlines()
-            for line in poll_ouput_lines:
-                if line[:8] == "#define ":
-                    new_define = "-D" + line[8:].replace(' ', '=')
-                    if new_define not in clang_args_list:
-                        clang_args_list.append(
-                            "-D" + line[8:].replace(' ', '='))
+            # write the poll output to config
+            with open("poll_ppd_results.h", "w") as poll_result_ptr:
+                poll_result_ptr.write(poll_output)
+                self._config.poll_ppd_file = os.path.abspath(
+                    "poll_ppd_results.h")
+
+        # fetch default isystem paths from target compiler
+        isystem_fetch_command_string = self._args.compiler_exec + \
+            " -xc -E -v nul"
+        isystem_fetch_process = subprocess.run(
+            isystem_fetch_command_string, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        isystem_fetch_output = isystem_fetch_process.stderr.decode(
+            'utf-8').splitlines()
+
+        start_index = isystem_fetch_output.index(
+            "#include <...> search starts here:") + 1
+        end_index = isystem_fetch_output.index("End of search list.")
+        for isystem_path in isystem_fetch_output[start_index:end_index]:
+            clang_args_list.append("-isystem " + isystem_path.strip())
 
         # write clang args list to config
-        self._config.clang_args = ' '.join(clang_args_list)
+        self._config.clang_args = ' '.join(
+            clang_args_list)
 
         # write compile pass thru args list to config
         self._config.compiler_args = ' '.join(compiler_args_list)

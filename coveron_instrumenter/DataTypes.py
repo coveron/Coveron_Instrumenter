@@ -13,6 +13,7 @@
 from typing import List
 from enum import Enum
 from json import JSONEncoder
+from Configuration import Configuration
 
 import re
 import os
@@ -106,82 +107,6 @@ class LoopType(int, Enum):
 # !SECTION
 
 
-# SECTION   SourceFile class
-class SourceFile:
-    """SourceFile class.
-       Contains all information about a source file passed to the instrumenter
-    """
-
-    # SECTION   SourceFile private attribute definitions
-    __slots__ = ['_input_file', '_output_file', '_cid_file', '_cri_file']
-
-    _input_file: str
-    _output_file: str
-    _cid_file: str
-    _cri_file: str
-    # !SECTION
-
-    # SECTION   SourceFile public attribute definitions
-    # !SECTION
-
-    # SECTION   SourceFile initialization
-    def __init__(self, source_file: str):
-        # set input_file
-        self._input_file = os.path.abspath(source_file).replace("\\\\", "\\")
-
-        # determine instrumented source name and cid name
-        self._output_file = self._input_file[0:self._input_file.rindex(
-            '.') + 1] + "instr." + self._input_file[self._input_file.rindex(
-                '.') + 1:]
-
-        # determine cid file, this is only the relative path!
-        self._cid_file = (
-            os.path.basename(self._input_file)[
-                0:os.path.basename(self._input_file).rindex('.') + 1] + "cid")
-
-        # determine cri file, this is only the relative path!
-        self._cri_file = (
-            os.path.basename(self._input_file)[
-                0:os.path.basename(self._input_file).rindex('.') + 1] + "cri")
-        return
-    # !SECTION
-
-    # SECTION   SourceFile getter functions
-    def _get_input_file(self) -> str:
-        return self._input_file
-
-    def _get_output_file(self) -> str:
-        return self._output_file
-
-    def _get_cid_file(self) -> str:
-        return self._cid_file
-
-    def _get_cri_file(self) -> str:
-        return self._cri_file
-    # !SECTION
-
-    # SECTION   SourceFile setter functions
-    # !SECTION
-
-    # SECTION   SourceFile property definitions
-    input_file: str = property(fget=_get_input_file,
-                               doc="Stores the input file path of the source file")
-    output_file: str = property(fget=_get_output_file,
-                                doc="Stores the output file path of the instrumented source file")
-    cid_file: str = property(fget=_get_cid_file,
-                             doc="Stores the output file path of the CID file")
-    cri_file: str = property(fget=_get_cri_file,
-                             doc="Stores the output file path of the CRI file")
-    # !SECTION
-
-    # SECTION   SourceFile private functions
-    # !SECTION
-
-    # SECTION   SourceFile public functions
-    # !SECTION
-# !SECTION
-
-
 # SECTION    SourceCode class
 SourceCode = str
 #!SECTION
@@ -262,7 +187,7 @@ class CodePositionData:
     def as_json(self):
         # JSON encoding helper
         return dict(
-            line=self.line,
+            line=self.line - Configuration.parser_line_offset,
             column=self.column
         )
     # !SECTION

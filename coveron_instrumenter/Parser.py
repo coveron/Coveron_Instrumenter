@@ -108,7 +108,7 @@ class Parser:
             location_file = location_file.replace(
                 '\\\\', '/').replace('\\', '/').split('/')[-1]
 
-            if location_file != os.path.basename(self.cid_manager.source_file.input_file):
+            if location_file != os.path.basename(self.cid_manager.source_file.input_tmp_file):
                 # Child is not in the correct file, so we can ignore it
                 continue
 
@@ -123,6 +123,7 @@ class Parser:
 
     def _traverse_function(self, ast_cursor: clang.cindex.Cursor, args: dict):
         """Parses a function passed to it"""
+
         function_id = self.cid_manager.get_new_id()
         function_name = ast_cursor.displayname
         function_type = FunctionType.NORMAL

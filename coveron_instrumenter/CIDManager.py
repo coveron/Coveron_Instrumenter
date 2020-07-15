@@ -23,7 +23,7 @@ import base64
 from typing import List
 
 from DataTypes import *
-from Configuration import Configuration
+from Configuration import SourceFile, Configuration
 
 
 # SECTION   CIDManager class

@@ -17,12 +17,13 @@ import colorama
 import json
 import gzip
 colorama.init()
-coveron_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.realpath(__file__)))
+coveron_path = getattr(
+    sys, '_MEIPASS', os.path.dirname(os.path.realpath(__file__)))
 sys.path.append(coveron_path)
 
 from Parser import ClangBridge, Parser
 from CIDManager import CIDManager
-from Configuration import Configuration
+from Configuration import SourceFile, Configuration
 from ArgumentHandler import ArgumentHandler
 from Instrumenter import Instrumenter
 from DataTypes import *
@@ -113,9 +114,25 @@ def main():
                                   source_file.input_file)
                         continue
 
+        # create a temporary copy of the input_file in order to add custom defines from polling
+        with open(source_file.input_file, 'r') as input_source_file:
+            try:
+                tmp_input_source = ""
+                if config.poll_ppd:
+                    tmp_input_source = "#include \"" + config.poll_ppd_file + \
+                        "\"\n" + input_source_file.read()
+                else:
+                    tmp_input_source = input_source_file.read()
+                    
+                with open(source_file.input_tmp_file, "w") as input_tmp_file_ptr:
+                    input_tmp_file_ptr.write(tmp_input_source)
+                    input_tmp_file_ptr.close()
+            except:
+                raise(RuntimeError("Couldn't create temporary source code copy!"))
+
         # create a clang bridge and get a clang AST from the source file
         clang_tree = clang_bridge.clang_parse(
-            source_file.input_file, config.clang_args)
+            source_file.input_tmp_file, config.clang_args)
 
         # create a parser instance, pass the clang AST. Start the parser
         parser = Parser(config, cid_manager, clang_tree)

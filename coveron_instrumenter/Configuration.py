@@ -110,16 +110,11 @@ class Configuration:
        Stores all configuration values for the instrumenter.
     """
 
-    # SECTION   COnfiguration STATIC vars
-    parser_line_offset: int
-    # !SECTION
-
     # SECTION   Configuration private attribute definitions
     __slots__ = ["verbose",
                  "force",
                  "nocomp_cid",
                  "poll_ppd",
-                 "poll_ppd_file",
                  "checkpoint_markers_enabled",
                  "evaluation_markers_enabled",
                  "source_files",
@@ -133,7 +128,6 @@ class Configuration:
     force: bool
     nocomp_cid: bool
     poll_ppd: bool
-    poll_ppd_file: ""
     checkpoint_markers_enabled: bool
     evaluation_markers_enabled: bool
     source_files: list
@@ -154,7 +148,6 @@ class Configuration:
         self.force = False
         self.nocomp_cid = False
         self.poll_ppd = False
-        self.poll_ppd_file = ""
         self.checkpoint_markers_enabled = True
         self.evaluation_markers_enabled = False
         self.source_files = list()
@@ -198,7 +191,6 @@ class Configuration:
         print("CID-Compression disabled: " + str(self.nocomp_cid))
         print("Output absolute path: " + self.output_abs_path)
         print("Poll PPDs from compiler: " + str(self.poll_ppd))
-        print("Temp store file for PPDs: " + self.poll_ppd_file)
         print("Checkpoint markers enabled: " +
               str(self.checkpoint_markers_enabled))
         print("Evaluation markers enabled: " +

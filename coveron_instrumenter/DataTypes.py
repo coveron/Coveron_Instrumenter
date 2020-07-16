@@ -187,7 +187,7 @@ class CodePositionData:
     def as_json(self):
         # JSON encoding helper
         return dict(
-            line=self.line - Configuration.parser_line_offset,
+            line=self.line,
             column=self.column
         )
     # !SECTION

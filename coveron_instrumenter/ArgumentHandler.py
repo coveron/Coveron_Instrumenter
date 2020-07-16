@@ -124,10 +124,6 @@ class ArgumentHandler:
 
         # set poll ppd flag
         self._config.poll_ppd = self._args.poll_ppd
-        if (self._config.poll_ppd):
-            Configuration.parser_line_offset = 1
-        else:
-            Configuration.parser_line_offset = 0
 
         # configure checkpoint and evaluation marker switches
         self._config.checkpoint_markers_enabled = self._args.checkpoint_markers_enabled
@@ -198,13 +194,14 @@ class ArgumentHandler:
                 " -x c nul -dM -E"
             poll_process = subprocess.run(
                 poll_command_string, stdout=subprocess.PIPE)
-            poll_output = poll_process.stdout.decode('utf-8')
+            poll_output = poll_process.stdout.decode('utf-8').splitlines()
 
-            # write the poll output to config
-            with open("poll_ppd_results.h", "w") as poll_result_ptr:
-                poll_result_ptr.write(poll_output)
-                self._config.poll_ppd_file = os.path.abspath(
-                    "poll_ppd_results.h")
+            # replace "#define " with "-D", set following data in quotation marks and replace the first space with equal sign
+            for argument in poll_output:
+                argument = "-D\"" + argument[8:].replace(" ", "=", 1) + "\""
+
+            # append definitions to clang parsing args
+            clang_args_list.extend(poll_output)
 
         # fetch default isystem paths from target compiler
         isystem_fetch_command_string = self._args.compiler_exec + \

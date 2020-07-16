@@ -48,7 +48,7 @@ class InstrumenterMarker:
 
     def __init__(self, code_line: int, code_column: int, marker_type: InstrumenterMarkerType,
                  marker_id: int, condition: bool):
-        self.code_line = code_line - Configuration.parser_line_offset
+        self.code_line = code_line
         self.code_column = code_column
         self.marker_type = marker_type
         self.marker_id = marker_id

@@ -108,7 +108,7 @@ class Parser:
             location_file = location_file.replace(
                 '\\\\', '/').replace('\\', '/').split('/')[-1]
 
-            if location_file != os.path.basename(self.cid_manager.source_file.input_tmp_file):
+            if location_file != os.path.basename(self.cid_manager.source_file.input_file):
                 # Child is not in the correct file, so we can ignore it
                 continue
 

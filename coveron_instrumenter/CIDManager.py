@@ -33,10 +33,12 @@ class CIDManager:
     """
 
     # SECTION   CIDManager private attribute definitions
-    __slots__ = ['config', '_cid_data', 'source_file', '_current_id']
+    __slots__ = ['config', '_cid_data',
+                 '_compound_statement_inserts', 'source_file', '_current_id']
 
     config: Configuration
     _cid_data: CIDData
+    _compound_statement_inserts: List
     source_file: SourceFile
     _current_id: int
     # !SECTION
@@ -49,6 +51,7 @@ class CIDManager:
         self.config = config
         self.source_file = source_file
         self._current_id = 1  # starting with ID 1
+        self._compound_statement_inserts = list()
 
         # get SHA256 hash
         source_code_sha256 = hashlib.sha256(
@@ -106,6 +109,10 @@ class CIDManager:
         # return deepcopy to prevent accidental changes
         return copy.deepcopy(self._cid_data.marker_data.evaluation_markers)
 
+    def get_compound_statement_inserts(self) -> list:
+        # return deepcopy to prevent accidental changes
+        return copy.deepcopy(self._compound_statement_inserts)
+
     def add_checkpoint_marker(self, checkpoint_marker_id: int,
                               code_position: CodePositionData) -> int:
         '''Create new checkpoint marker. Returns new checkpoint_marker_id'''
@@ -127,6 +134,10 @@ class CIDManager:
         self._cid_data.marker_data.evaluation_markers.append(
             EvaluationMarkerData(evaluation_marker_id, evaluation_type, code_section))
         return evaluation_marker_id
+
+    def add_compound_statement(self, code_section: CodeSectionData):
+        '''Create curly braces for a new compound statement.'''
+        self._compound_statement_inserts.append(code_section)
 
     def add_class_data(self, class_id: int, class_name: str) -> int:
         '''Create new class in code data. Returns new class_id'''

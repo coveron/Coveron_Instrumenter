@@ -30,7 +30,7 @@
 /*
  * SECTION   VERSION INFORMATION
  */
-uint8_t ___COVERON_CRI_VERSION[2] = {
+___COVERON_BYTE ___COVERON_CRI_VERSION[2] = {
     0x00, // High byte
     0x01  // Low byte
 };
@@ -39,7 +39,7 @@ uint8_t ___COVERON_CRI_VERSION[2] = {
 /*
  * SECTION   MAGIC NUMBER
  */
-const uint8_t ___COVERON_MAGIC_NUMBER[8] = {
+const ___COVERON_BYTE ___COVERON_MAGIC_NUMBER[8] = {
     0x49, // I
     0x4D, // M
     0x41, // A
@@ -63,16 +63,16 @@ ___COVERON_BOOL_T ___COVERON_CREATE_NEW_OUTPUT_FILE(
     ___COVERON_FILE_T *coveronFile);
 
 // compares arrays (useful for validation of existing files)
-___COVERON_BOOL_T ___COVERON_EQUAL_ARRAYS(uint8_t *Array1,
-                                          uint8_t *Array2,
+___COVERON_BOOL_T ___COVERON_EQUAL_ARRAYS(___COVERON_BYTE *Array1,
+                                          ___COVERON_BYTE *Array2,
                                           int byteCount);
 
 // copies array contents to another array for given length
-void ___COVERON_COPY_ARRAY(uint8_t *SrcArray, uint8_t *DestArray, int byteCount);
+void ___COVERON_COPY_ARRAY(___COVERON_BYTE *SrcArray, ___COVERON_BYTE *DestArray, int byteCount);
 
 // generates correct header out of the given coveronFile pointer
 void ___COVERON_GENERATE_HEADER(___COVERON_FILE_T *coveronFile,
-                                uint8_t emptyArray[59]);
+                                ___COVERON_BYTE emptyArray[59]);
 
 // generates execution marker
 void ___COVERON_GENERATE_EXECUTION_MARKER(___COVERON_FILE_T *coveronFile);
@@ -105,11 +105,11 @@ ___COVERON_BOOL_T ___COVERON_SETUP_INSTRUMENTATION(
      * check header
      */
     // create correct header to compare to
-    uint8_t headerSample[59];
+    ___COVERON_BYTE headerSample[59];
     ___COVERON_GENERATE_HEADER(coveronFile, headerSample);
 
     // read header from input file
-    uint8_t headerRead[59];
+    ___COVERON_BYTE headerRead[59];
     fseek(coveronFile->criFile, 0, SEEK_SET);
     fread(&headerRead[0], 1, 59, coveronFile->criFile);
 
@@ -160,7 +160,7 @@ ___COVERON_BOOL_T ___COVERON_CREATE_NEW_OUTPUT_FILE(
      * generate header
      */
     // create header in array
-    uint8_t headerArray[59];
+    ___COVERON_BYTE headerArray[59];
     ___COVERON_GENERATE_HEADER(coveronFile, headerArray);
 
     // write to file
@@ -177,8 +177,8 @@ ___COVERON_BOOL_T ___COVERON_CREATE_NEW_OUTPUT_FILE(
     coveronFile->helperInitialized = ___COVERON_BOOL_TRUE;
 }
 
-___COVERON_BOOL_T ___COVERON_EQUAL_ARRAYS(uint8_t *Array1,
-                                          uint8_t *Array2,
+___COVERON_BOOL_T ___COVERON_EQUAL_ARRAYS(___COVERON_BYTE *Array1,
+                                          ___COVERON_BYTE *Array2,
                                           int byteCount)
 {
     // iterate over arrays for given byte length
@@ -194,7 +194,7 @@ ___COVERON_BOOL_T ___COVERON_EQUAL_ARRAYS(uint8_t *Array1,
     return ___COVERON_BOOL_TRUE;
 }
 
-void ___COVERON_COPY_ARRAY(uint8_t *SrcArray, uint8_t *DestArray, int byteCount)
+void ___COVERON_COPY_ARRAY(___COVERON_BYTE *SrcArray, ___COVERON_BYTE *DestArray, int byteCount)
 {
     // iterate over arrays for given byte length
     for (int i = 0; i < byteCount; i++)
@@ -205,13 +205,13 @@ void ___COVERON_COPY_ARRAY(uint8_t *SrcArray, uint8_t *DestArray, int byteCount)
 }
 
 void ___COVERON_GENERATE_HEADER(___COVERON_FILE_T *coveronFile,
-                                uint8_t emptyArray[59])
+                                ___COVERON_BYTE emptyArray[59])
 {
     // write magic number
-    ___COVERON_COPY_ARRAY((uint8_t *)&___COVERON_MAGIC_NUMBER[0], &emptyArray[0], 8);
+    ___COVERON_COPY_ARRAY((___COVERON_BYTE *)&___COVERON_MAGIC_NUMBER[0], &emptyArray[0], 8);
 
     // write version
-    ___COVERON_COPY_ARRAY((uint8_t *)&___COVERON_CRI_VERSION[0], &emptyArray[8], 2);
+    ___COVERON_COPY_ARRAY((___COVERON_BYTE *)&___COVERON_CRI_VERSION[0], &emptyArray[8], 2);
 
     // write SHA256 hash
     ___COVERON_COPY_ARRAY(&coveronFile->SHA256Hash[0], &emptyArray[10], 32);
@@ -227,7 +227,7 @@ void ___COVERON_GENERATE_HEADER(___COVERON_FILE_T *coveronFile,
 void ___COVERON_GENERATE_EXECUTION_MARKER(___COVERON_FILE_T *coveronFile)
 {
     // generate execution marker array
-    uint8_t executionMarkerArray[10 + sizeof(CMD_STRING(COVERON_EXECUTION_COMMENT))];
+    ___COVERON_BYTE executionMarkerArray[10 + sizeof(CMD_STRING(COVERON_EXECUTION_COMMENT))];
 
     // fill first 5 bytes with padding
     executionMarkerArray[0] = 0x00;
@@ -245,7 +245,7 @@ void ___COVERON_GENERATE_EXECUTION_MARKER(___COVERON_FILE_T *coveronFile)
     // fill in execution comment
     char commentString[sizeof(CMD_STRING(COVERON_EXECUTION_COMMENT))] =
         CMD_STRING(COVERON_EXECUTION_COMMENT);
-    ___COVERON_COPY_ARRAY((uint8_t *)commentString,
+    ___COVERON_COPY_ARRAY((___COVERON_BYTE *)commentString,
                           &executionMarkerArray[9],
                           sizeof(CMD_STRING(COVERON_EXECUTION_COMMENT)));
 
@@ -263,10 +263,10 @@ void ___COVERON_GENERATE_EXECUTION_MARKER(___COVERON_FILE_T *coveronFile)
  * SECTION   PUBLIC FUNCTION DEFINITIONS
  */
 #ifdef ___COVERON_CHECKPOINT_ANALYSIS_ENABLED
-inline void ___COVERON_SET_CHECKPOINT_MARKER(uint8_t markerId_B0,
-                                             uint8_t markerId_B1,
-                                             uint8_t markerId_B2,
-                                             uint8_t markerId_B3,
+inline void ___COVERON_SET_CHECKPOINT_MARKER(___COVERON_BYTE markerId_B0,
+                                             ___COVERON_BYTE markerId_B1,
+                                             ___COVERON_BYTE markerId_B2,
+                                             ___COVERON_BYTE markerId_B3,
                                              ___COVERON_FILE_T *coveronFile)
 {
     // check, if the helper was initialized
@@ -276,17 +276,17 @@ inline void ___COVERON_SET_CHECKPOINT_MARKER(uint8_t markerId_B0,
         return;
     }
 
-    uint8_t markerData[5] = {markerId_B0, markerId_B1, markerId_B2, markerId_B3, 0x00};
+    ___COVERON_BYTE markerData[5] = {markerId_B0, markerId_B1, markerId_B2, markerId_B3, 0x00};
     fwrite(markerData, 1, 5, coveronFile->criFile);
 }
 #endif
 
 #ifdef ___COVERON_EVALUATION_ANALYSIS_ENABLED
 inline ___COVERON_BOOL_T ___COVERON_SET_EVALUATION_MARKER(
-    uint8_t markerId_B0,
-    uint8_t markerId_B1,
-    uint8_t markerId_B2,
-    uint8_t markerId_B3,
+    ___COVERON_BYTE markerId_B0,
+    ___COVERON_BYTE markerId_B1,
+    ___COVERON_BYTE markerId_B2,
+    ___COVERON_BYTE markerId_B3,
     ___COVERON_FILE_T *coveronFile,
     ___COVERON_BOOL_T evaluation)
 {
@@ -298,7 +298,7 @@ inline ___COVERON_BOOL_T ___COVERON_SET_EVALUATION_MARKER(
     }
 
     // create output array
-    uint8_t markerData[5] = {markerId_B0, markerId_B1, markerId_B2, markerId_B3, 0x59};
+    ___COVERON_BYTE markerData[5] = {markerId_B0, markerId_B1, markerId_B2, markerId_B3, 0x59};
     if (evaluation == ___COVERON_BOOL_TRUE)
     {
         markerData[4] = 0xA6;

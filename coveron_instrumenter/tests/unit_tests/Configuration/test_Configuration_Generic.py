@@ -14,7 +14,7 @@ from unittest.mock import Mock, patch
 
 from coveron_instrumenter.DataTypes import *
 
-from coveron_instrumenter.Configuration import Configuration
+from coveron_instrumenter.Configuration import Configuration, SourceFile
 
 
 def test_Configuration_Init(tmpdir):

@@ -16,6 +16,7 @@ from pytest import fixture
 
 
 from coveron_instrumenter.DataTypes import *
+from coveron_instrumenter.Configuration import SourceFile
 
 from coveron_instrumenter.Parser import ClangBridge, Parser
 

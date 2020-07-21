@@ -19,7 +19,7 @@ import gzip
 from coveron_instrumenter.DataTypes import *
 
 from coveron_instrumenter.Instrumenter import Instrumenter, InstrumenterMarker, InstrumenterMarkerType
-from coveron_instrumenter.Configuration import Configuration
+from coveron_instrumenter.Configuration import Configuration, SourceFile
 from coveron_instrumenter.CIDManager import CIDManager
 
 dummySourceCode: SourceCode = "int main() {\n    test0;\n    test1;\n    test2;\n}"

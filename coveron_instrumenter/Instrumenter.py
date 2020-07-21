@@ -236,15 +236,11 @@ class Instrumenter:
         instr_random_array = [("0x" + hexbyte.upper())
                               for hexbyte in instr_random_array]
 
-        # build cri file string (with escaping for windows style paths)
-        cri_file_path = os.path.join(
-            self.config.output_abs_path, self.source_file.cri_file).replace("\\", "\\\\")
-
         # create file object string
         file_object_string = ("___COVERON_FILE_T " + self._get_file_struct_name() + " = {\n" +
                               "{" + ", ".join(source_hash_array) + "},\n" +
                               "{" + ", ".join(instr_random_array) + "},\n" +
-                              "___COVERON_BOOL_FALSE,\nNULL,\n " +
+                              "___COVERON_BOOL_FALSE,\n(void *)0,\n " +
                               "\"" + self.source_file.cri_file + "\"};")
 
         # create full wrapper string

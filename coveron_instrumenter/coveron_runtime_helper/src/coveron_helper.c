@@ -8,6 +8,8 @@
  * SECTION   INCLUDES
  */
 #include "coveron_helper.h"
+#include <stdint.h>
+#include <stdio.h>
 // !SECTION
 
 /*

@@ -10,8 +10,6 @@
 /*
  * SECTION   INCLUDES
  */
-#include <stdint.h>
-#include <stdio.h>
 // !SECTION
 
 /*
@@ -31,6 +29,8 @@
 /*
  * SECTION   TYPEDEFS
  */
+typedef unsigned char uint8_t;
+
 typedef enum
 {
     ___COVERON_BOOL_FALSE,
@@ -52,7 +52,7 @@ typedef struct ___COVERON_FILE_S
     ___COVERON_BOOL_T helperInitialized;
 
     // File pointer
-    FILE *criFile;
+    void *criFile;
 
     // Filename for the output file (last item because of variable size)
     char outputFilename[];

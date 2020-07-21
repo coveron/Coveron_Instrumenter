@@ -119,7 +119,7 @@ def main():
             source_file.input_file, config.clang_args)
 
         # create a parser instance, pass the clang AST. Start the parser
-        parser = Parser(config, cid_manager, clang_tree)
+        parser = Parser(config, cid_manager, clang_tree, source_code)
         parser.start_parser()
 
         # write cid data

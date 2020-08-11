@@ -8,7 +8,6 @@
  * SECTION   INCLUDES
  */
 #include "coveron_helper.h"
-#include <stdint.h>
 #include <stdio.h>
 // !SECTION
 
@@ -299,7 +298,7 @@ inline ___COVERON_BOOL_T ___COVERON_SET_EVALUATION_MARKER(
 
     // create output array
     ___COVERON_BYTE markerData[5] = {markerId_B0, markerId_B1, markerId_B2, markerId_B3, 0x59};
-    if (evaluation == ___COVERON_BOOL_TRUE)
+    if (evaluation != ___COVERON_BOOL_FALSE)
     {
         markerData[4] = 0xA6;
     }

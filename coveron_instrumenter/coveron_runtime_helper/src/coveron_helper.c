@@ -297,11 +297,11 @@ inline ___COVERON_BOOL_T ___COVERON_SET_EVALUATION_MARKER(
     }
 
     // create output array
-    ___COVERON_BYTE markerData[5] = {markerId_B0, markerId_B1, markerId_B2, markerId_B3, 0x59};
-    if (evaluation != ___COVERON_BOOL_FALSE)
-    {
-        markerData[4] = 0xA6;
-    }
+    ___COVERON_BYTE markerData[5] = {markerId_B0, markerId_B1, markerId_B2, markerId_B3, (___COVERON_BYTE) !(!evaluation)};
+    //if (evaluation != ___COVERON_BOOL_FALSE)
+    //{
+    //    markerData[4] = 0xA6;
+    //}
 
     // write marker to output file
     fwrite(markerData, 1, 5, coveronFile->criFile);

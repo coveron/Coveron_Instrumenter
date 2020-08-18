@@ -76,7 +76,7 @@ ___COVERON_BOOL_T ___COVERON_SET_EVALUATION_MARKER(___COVERON_BYTE markerId_B0,
                                                    ___COVERON_BYTE markerId_B2,
                                                    ___COVERON_BYTE markerId_B3,
                                                    ___COVERON_FILE_T *coveronFile,
-                                                   ___COVERON_BOOL_T evaluation);
+                                                   int evaluation);
 #endif
 // !SECTION
 

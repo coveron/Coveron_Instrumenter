@@ -275,7 +275,7 @@ inline void ___COVERON_SET_CHECKPOINT_MARKER(___COVERON_BYTE markerId_B0,
         return;
     }
 
-    ___COVERON_BYTE markerData[5] = {markerId_B0, markerId_B1, markerId_B2, markerId_B3, 0x00};
+    ___COVERON_BYTE markerData[5] = {markerId_B0, markerId_B1, markerId_B2, markerId_B3, 0xFF};
     fwrite(markerData, 1, 5, coveronFile->criFile);
 }
 #endif
@@ -287,7 +287,7 @@ inline ___COVERON_BOOL_T ___COVERON_SET_EVALUATION_MARKER(
     ___COVERON_BYTE markerId_B2,
     ___COVERON_BYTE markerId_B3,
     ___COVERON_FILE_T *coveronFile,
-    ___COVERON_BOOL_T evaluation)
+    int evaluation)
 {
     // check, if the helper was initialized
     if (coveronFile->helperInitialized == ___COVERON_BOOL_FALSE &&

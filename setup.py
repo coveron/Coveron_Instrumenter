@@ -19,8 +19,6 @@ setup(name='coveron_instrumenter',
       python_requires='>=3.7',
       packages=['coveron_instrumenter'],
       install_requires=[
-          'jinja2',
-          'lxml',
           'colorama',
           'jsonschema'
       ],

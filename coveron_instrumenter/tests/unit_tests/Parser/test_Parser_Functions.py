@@ -27,6 +27,8 @@ def test_Parser_Functions(mock_config, mock_cid_manager):
     # set seource file path
     source_file_path = os.path.join(
         abs_path_current_dir, "input_files", "Functions", "Functions_basic.c")
+    with open(source_file_path) as input_file:
+        source_code = input_file.read()
 
     # configure the CIDManager mock
     mock_cid_manager.source_file = SourceFile(source_file_path)
@@ -38,7 +40,7 @@ def test_Parser_Functions(mock_config, mock_cid_manager):
     clang_cursor = clang_bridge.clang_parse(source_file_path, "")
 
     # Create the parser
-    parser = Parser(mock_config, mock_cid_manager, clang_cursor)
+    parser = Parser(mock_config, mock_cid_manager, clang_cursor, source_code)
 
     # traverse the given file
     parser.start_parser()

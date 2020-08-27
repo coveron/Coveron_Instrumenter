@@ -31,6 +31,8 @@ def test_Parser_IfBranches_basic(mock_config, mock_cid_manager):
     # set source file path
     source_file_path = os.path.join(
         abs_path_current_dir, "input_files", "IfBranches", "IfBranches_basic.c")
+    with open(source_file_path) as input_file:
+        source_code = input_file.read()
 
     # configure the CIDManager mock
     mock_cid_manager.source_file = SourceFile(source_file_path)
@@ -42,7 +44,7 @@ def test_Parser_IfBranches_basic(mock_config, mock_cid_manager):
     clang_cursor = clang_bridge.clang_parse(source_file_path, "")
 
     # Create the parser
-    parser = Parser(mock_config, mock_cid_manager, clang_cursor)
+    parser = Parser(mock_config, mock_cid_manager, clang_cursor, source_code)
 
     # traverse the given file
     parser.start_parser()
@@ -75,6 +77,8 @@ def test_Parser_IfBranches_else_ifs(mock_config, mock_cid_manager):
     # set source file path
     source_file_path = os.path.join(
         abs_path_current_dir, "input_files", "IfBranches", "IfBranches_else_ifs.c")
+    with open(source_file_path) as input_file:
+        source_code = input_file.read()
 
     # configure the CIDManager mock
     mock_cid_manager.source_file = SourceFile(source_file_path)
@@ -86,7 +90,7 @@ def test_Parser_IfBranches_else_ifs(mock_config, mock_cid_manager):
     clang_cursor = clang_bridge.clang_parse(source_file_path, "")
 
     # Create the parser
-    parser = Parser(mock_config, mock_cid_manager, clang_cursor)
+    parser = Parser(mock_config, mock_cid_manager, clang_cursor, source_code)
 
     # traverse the given file
     parser.start_parser()
@@ -117,6 +121,8 @@ def test_Parser_IfBranches_complex_decisions(mock_config, mock_cid_manager):
     # set source file path
     source_file_path = os.path.join(
         abs_path_current_dir, "input_files", "IfBranches", "IfBranches_complex_decisions.c")
+    with open(source_file_path) as input_file:
+        source_code = input_file.read()
 
     # configure the CIDManager mock
     mock_cid_manager.source_file = SourceFile(source_file_path)
@@ -130,7 +136,7 @@ def test_Parser_IfBranches_complex_decisions(mock_config, mock_cid_manager):
     clang_cursor = clang_bridge.clang_parse(source_file_path, "")
 
     # Create the parser
-    parser = Parser(mock_config, mock_cid_manager, clang_cursor)
+    parser = Parser(mock_config, mock_cid_manager, clang_cursor, source_code)
 
     # traverse the given file
     parser.start_parser()
@@ -218,8 +224,6 @@ def test_Parser_IfBranches_complex_decisions(mock_config, mock_cid_manager):
 
     # compare length of condition possibilities and all possibilities with ref list
     assert len(condition_possibilities) == 11
-
-    reference_result_not_found = False
 
     for reference_result in reference_results:
         found_in_stored_results = False

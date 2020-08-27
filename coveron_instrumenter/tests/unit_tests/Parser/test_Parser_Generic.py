@@ -41,9 +41,11 @@ def test_Parser_Init(mock_config, mock_cid_manager):
     # let the clang bridge parse the base file
     base_file_path = os.path.join(
         abs_path_current_dir, "input_files", "base_file.c")
+    with open(base_file_path) as input_file:
+        source_code = input_file.read()
     clang_cursor = clang_bridge.clang_parse(base_file_path, "")
 
     # Create the parser
-    parser = Parser(mock_config, mock_cid_manager, clang_cursor)
+    parser = Parser(mock_config, mock_cid_manager, clang_cursor, source_code)
 
     assert isinstance(parser, Parser) == True

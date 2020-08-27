@@ -31,6 +31,8 @@ def test_Parser_Loops_for(mock_config, mock_cid_manager):
     # set source file path
     source_file_path = os.path.join(
         abs_path_current_dir, "input_files", "Loops", "Loop_for.c")
+    with open(source_file_path) as input_file:
+        source_code = input_file.read()
 
     # configure the CIDManager mock
     mock_cid_manager.source_file = SourceFile(source_file_path)
@@ -42,7 +44,7 @@ def test_Parser_Loops_for(mock_config, mock_cid_manager):
     clang_cursor = clang_bridge.clang_parse(source_file_path, "")
 
     # Create the parser
-    parser = Parser(mock_config, mock_cid_manager, clang_cursor)
+    parser = Parser(mock_config, mock_cid_manager, clang_cursor, source_code)
 
     # traverse the given file
     parser.start_parser()
@@ -77,6 +79,8 @@ def test_Parser_Loops_while(mock_config, mock_cid_manager):
     # set source file path
     source_file_path = os.path.join(
         abs_path_current_dir, "input_files", "Loops", "Loop_while.c")
+    with open(source_file_path) as input_file:
+        source_code = input_file.read()
 
     # configure the CIDManager mock
     mock_cid_manager.source_file = SourceFile(source_file_path)
@@ -88,7 +92,7 @@ def test_Parser_Loops_while(mock_config, mock_cid_manager):
     clang_cursor = clang_bridge.clang_parse(source_file_path, "")
 
     # Create the parser
-    parser = Parser(mock_config, mock_cid_manager, clang_cursor)
+    parser = Parser(mock_config, mock_cid_manager, clang_cursor, source_code)
 
     # traverse the given file
     parser.start_parser()
@@ -122,6 +126,8 @@ def test_Parser_Loops_dowhile(mock_config, mock_cid_manager):
     # set source file path
     source_file_path = os.path.join(
         abs_path_current_dir, "input_files", "Loops", "Loop_dowhile.c")
+    with open(source_file_path) as input_file:
+        source_code = input_file.read()
 
     # configure the CIDManager mock
     mock_cid_manager.source_file = SourceFile(source_file_path)
@@ -133,7 +139,7 @@ def test_Parser_Loops_dowhile(mock_config, mock_cid_manager):
     clang_cursor = clang_bridge.clang_parse(source_file_path, "")
 
     # Create the parser
-    parser = Parser(mock_config, mock_cid_manager, clang_cursor)
+    parser = Parser(mock_config, mock_cid_manager, clang_cursor, source_code)
 
     # traverse the given file
     parser.start_parser()
